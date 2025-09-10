@@ -1,16 +1,9 @@
 import React from "react";
+import "./dashboard.css";
 
 const Dashboard = () => {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        fontSize: "2rem",
-      }}
-    >
+    <div className="dashboard-container">
       Bienvenido al Dashboard
     </div>
   );
