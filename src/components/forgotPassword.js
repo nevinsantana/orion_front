@@ -42,8 +42,8 @@ const ForgotPassword = () => {
             {/* Imagen mediana centrada arriba */}
             <div className="text-center mb-4 mt-4 mt-md-0">
               <img
-                src="https://placehold.co/200x100/888888/ffffff?text=Recuperar+Contraseña"
-                alt="Imagen Forgot"
+                src="https://placehold.co/400x100/888888/ffffff?text=Imagen+Login"
+                alt="Imagen Login"
                 className="img-fluid"
               />
             </div>
