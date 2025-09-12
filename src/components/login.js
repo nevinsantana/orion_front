@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css"; // Bootstrap
+import { useNavigate, Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
 const Login = () => {
@@ -16,7 +16,7 @@ const Login = () => {
   return (
     <div className="container-fluid vh-100">
       <div className="row h-100">
-        {/* Lado izquierdo: imagen o logo */}
+        {/* Lado izquierdo: imagen o placeholder */}
         <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-light">
           <img
             src="https://via.placeholder.com/300x300?text=Logo"
@@ -28,7 +28,7 @@ const Login = () => {
         {/* Lado derecho: formulario */}
         <div className="col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            {/* Logo arriba del formulario */}
+            {/* Logo arriba del formulario en pantallas pequeñas */}
             <div className="text-center mb-4 d-md-none">
               <img
                 src="https://via.placeholder.com/150x50?text=Logo"
@@ -49,7 +49,7 @@ const Login = () => {
                 />
               </div>
 
-              <div className="mb-3">
+              <div className="mb-2">
                 <label className="form-label">Contraseña</label>
                 <input
                   type="password"
@@ -58,6 +58,13 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+              </div>
+
+              {/* Texto de Olvidaste tu contraseña */}
+              <div className="text-end mb-3">
+                <Link to="/forgot-password" className="forgot-link">
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
 
               <button type="submit" className="btn btn-sesion w-100">
@@ -72,3 +79,4 @@ const Login = () => {
 };
 
 export default Login;
+

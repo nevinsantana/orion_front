@@ -57,3 +57,15 @@
   font-size: 2rem;
 }
 
+.forgot-link {
+  color: #fff;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.forgot-link:hover {
+  color: #ccc;
+  text-decoration: underline;
+}
+
