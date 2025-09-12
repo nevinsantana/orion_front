@@ -24,6 +24,10 @@ const ForgotPassword = () => {
     navigate("/"); // Regresa al login
   };
 
+  const handleBack = () => {
+    navigate("/"); // 🔹 Botón regresar al login
+  };
+
   return (
     <div className="container-fluid vh-100">
       <div className="row h-100">
@@ -42,8 +46,8 @@ const ForgotPassword = () => {
             {/* Imagen mediana centrada arriba */}
             <div className="text-center mb-4 mt-4 mt-md-0">
               <img
-                src="https://placehold.co/400x100/888888/ffffff?text=Imagen+Login"
-                alt="Imagen Login"
+                src="https://placehold.co/400x100/888888/ffffff?text=Recuperar+Contraseña"
+                alt="Imagen Forgot"
                 className="img-fluid"
               />
             </div>
@@ -75,9 +79,19 @@ const ForgotPassword = () => {
                 />
               </div>
 
-              <button type="submit" className="btn btn-sesion w-100">
-                Guardar nueva contraseña
-              </button>
+              {/* 🔹 Botones centrados */}
+              <div className="d-flex justify-content-center gap-3">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={handleBack}
+                >
+                  Regresar
+                </button>
+                <button type="submit" className="btn btn-sesion">
+                  Guardar nueva contraseña
+                </button>
+              </div>
             </form>
           </div>
         </div>

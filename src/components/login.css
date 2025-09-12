@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(180deg, #3a2451, #5c3676); /* degradado 90 grados */
+  background: linear-gradient(180deg, #3a2451, #5c3676);
   color: white;
 }
 
