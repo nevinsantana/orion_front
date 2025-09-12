@@ -3,6 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
+// Importa la imagen de tu proyecto
+import loginImage from "../assets/images/img-login/img-orion.png"; // reemplaza con tu archivo real
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -14,25 +17,19 @@ const Login = () => {
   };
 
   return (
-    <div className="container-fluid vh-100">
-      <div className="row h-100">
-        {/* Lado izquierdo: placeholder */}
-        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center fondo-columna-izquierda order-1 order-md-1">
-          <img
-            src="https://placehold.co/550x550/cccccc/000000?text=Placeholder+Image"
-            alt="Placeholder"
-            className="img-fluid"
-          />
-        </div>
+    <div className="container-fluid vh-100 p-0">
+      <div className="row h-100 g-0">
+        {/* Columna izquierda: imagen ORION BILLING */}
+        <div className="col-12 col-md-6 d-none d-md-flex d-dm-block login-left"></div>
 
-        {/* Lado derecho: formulario */}
-        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form order-2 order-md-2">
+        {/* Columna derecha: formulario */}
+        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            {/* Imagen mediana centrada arriba del formulario */}
+            {/* Imagen mediana arriba del formulario */}
             <div className="text-center mb-4 mt-4 mt-md-0">
               <img
-                src="https://placehold.co/400x100/888888/ffffff?text=Imagen+Login"
-                alt="Imagen Login"
+                src="https://placehold.co/400x100/888888/ffffff?text=Imagen"
+                alt=""
                 className="img-fluid"
               />
             </div>

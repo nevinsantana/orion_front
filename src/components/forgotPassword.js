@@ -32,13 +32,7 @@ const ForgotPassword = () => {
     <div className="container-fluid vh-100">
       <div className="row h-100">
         {/* Lado izquierdo con placeholder */}
-        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center fondo-columna-izquierda order-1 order-md-1">
-          <img
-            src="https://placehold.co/550x550/cccccc/000000?text=Placeholder+Image"
-            alt="Placeholder"
-            className="img-fluid"
-          />
-        </div>
+        <div className="col-12 col-md-6 d-none d-md-flex d-dm-block login-left"></div>
 
         {/* Lado derecho */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form order-2 order-md-2">
@@ -46,8 +40,8 @@ const ForgotPassword = () => {
             {/* Imagen mediana centrada arriba */}
             <div className="text-center mb-4 mt-4 mt-md-0">
               <img
-                src="https://placehold.co/400x100/888888/ffffff?text=Recuperar+Contraseña"
-                alt="Imagen Forgot"
+                src="https://placehold.co/400x100/888888/ffffff?text=Imagen"
+                alt="Imagen"
                 className="img-fluid"
               />
             </div>

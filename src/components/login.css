@@ -12,6 +12,7 @@
   align-items: center;
   background: linear-gradient(180deg, #3a2451, #5c3676);
   color: white;
+  overflow: hidden;
 }
 
 .login-form {
@@ -90,4 +91,10 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-
+.login-left {
+  background-image: url('../assets/images/img-login/img-orion.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
