@@ -48,6 +48,9 @@
 
 .fondo-columna-izquierda {
   background-color: #E5E5E5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .forgot-link {
@@ -73,9 +76,18 @@
 
 /* Evitar que cambie el color al dar clic */
 .input-contra:focus,
-.input-correo:focus {
+.input-correo:focus,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px #262626 inset;
+  -webkit-text-fill-color: #ffffff;
   background-color: #262626 !important;
   color: #ffffff !important;
-  box-shadow: none; /* quitar borde azul de bootstrap */
+  box-shadow: none;
   outline: none;
+  transition: background-color 5000s ease-in-out 0s;
 }
+
+

@@ -16,8 +16,8 @@ const Login = () => {
   return (
     <div className="container-fluid vh-100">
       <div className="row h-100">
-        {/* Lado izquierdo: imagen con placeholder */}
-        <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center fondo-columna-izquierda">
+        {/* Lado izquierdo: placeholder */}
+        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center fondo-columna-izquierda order-1 order-md-1">
           <img
             src="https://placehold.co/550x550/cccccc/000000?text=Placeholder+Image"
             alt="Placeholder"
@@ -26,12 +26,12 @@ const Login = () => {
         </div>
 
         {/* Lado derecho: formulario */}
-        <div className="col-md-6 d-flex align-items-center justify-content-center back-form">
+        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form order-2 order-md-2">
           <div className="w-75">
             {/* Imagen mediana centrada arriba del formulario */}
-            <div className="text-center mb-4">
+            <div className="text-center mb-4 mt-4 mt-md-0">
               <img
-                src="https://placehold.co/200x100/888888/ffffff?text=Imagen+Login"
+                src="https://placehold.co/400x100/888888/ffffff?text=Imagen+Login"
                 alt="Imagen Login"
                 className="img-fluid"
               />
