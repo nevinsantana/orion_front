@@ -3,9 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
-// Importa la imagen de tu proyecto
-import loginImage from "../assets/images/img-login/img-orion.png"; // reemplaza con tu archivo real
-
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
