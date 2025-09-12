@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
@@ -7,6 +7,12 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // 🔹 Limpiar inputs al cargar la vista
+  useEffect(() => {
+    setNewPassword("");
+    setConfirmPassword("");
+  }, []);
 
   const handleReset = (e) => {
     e.preventDefault();
@@ -22,7 +28,7 @@ const ForgotPassword = () => {
     <div className="container-fluid vh-100">
       <div className="row h-100">
         {/* Lado izquierdo con placeholder */}
-        <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center fondo-columna-izquierda">
+        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center fondo-columna-izquierda order-1 order-md-1">
           <img
             src="https://placehold.co/550x550/cccccc/000000?text=Placeholder+Image"
             alt="Placeholder"
@@ -31,7 +37,7 @@ const ForgotPassword = () => {
         </div>
 
         {/* Lado derecho */}
-        <div className="col-md-6 d-flex align-items-center justify-content-center back-form">
+        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form order-2 order-md-2">
           <div className="w-75">
             {/* Imagen mediana centrada arriba */}
             <div className="text-center mb-4 mt-4 mt-md-0">
@@ -52,6 +58,7 @@ const ForgotPassword = () => {
                   className="form-control input-contra"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
+                  autoComplete="new-password"
                   required
                 />
               </div>
@@ -63,6 +70,7 @@ const ForgotPassword = () => {
                   className="form-control input-contra"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
                   required
                 />
               </div>
