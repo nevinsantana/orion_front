@@ -16,11 +16,11 @@ const Login = () => {
   return (
     <div className="container-fluid vh-100">
       <div className="row h-100">
-        {/* Lado izquierdo: imagen o placeholder */}
-        <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-light">
+        {/* Lado izquierdo: imagen con placeholder */}
+        <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center fondo-columna-izquierda">
           <img
-            src="https://via.placeholder.com/300x300?text=Logo"
-            alt="Logo"
+            src="https://placehold.co/550x550/cccccc/000000?text=Placeholder+Image"
+            alt="Placeholder"
             className="img-fluid"
           />
         </div>
@@ -28,11 +28,11 @@ const Login = () => {
         {/* Lado derecho: formulario */}
         <div className="col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            {/* Logo arriba del formulario en pantallas pequeñas */}
-            <div className="text-center mb-4 d-md-none">
+            {/* Imagen mediana centrada arriba del formulario */}
+            <div className="text-center mb-4">
               <img
-                src="https://via.placeholder.com/150x50?text=Logo"
-                alt="Logo"
+                src="https://placehold.co/200x100/888888/ffffff?text=Imagen+Login"
+                alt="Imagen Login"
                 className="img-fluid"
               />
             </div>
@@ -61,7 +61,7 @@ const Login = () => {
               </div>
 
               {/* Texto de Olvidaste tu contraseña */}
-              <div className="text-end mb-3">
+              <div className="text-end mb-4">
                 <Link to="/forgot-password" className="forgot-link">
                   ¿Olvidaste tu contraseña?
                 </Link>
@@ -79,4 +79,3 @@ const Login = () => {
 };
 
 export default Login;
-

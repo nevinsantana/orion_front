@@ -24,11 +24,11 @@ const ForgotPassword = () => {
   return (
     <div className="container-fluid vh-100">
       <div className="row h-100">
-        {/* Lado izquierdo con placeholder */}
-        <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-light">
+        {/* Lado izquierdo: imagen con placeholder */}
+        <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center fondo-columna-izquierda">
           <img
-            src="https://via.placeholder.com/300x300?text=Logo"
-            alt="Logo"
+            src="https://placehold.co/550x550/cccccc/000000?text=Placeholder+Image"
+            alt="Placeholder"
             className="img-fluid"
           />
         </div>

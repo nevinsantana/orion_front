@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(90deg, #3a2451, #5c3676); /* degradado 90 grados */
+  background: linear-gradient(180deg, #3a2451, #5c3676); /* degradado 90 grados */
   color: white;
 }
 
@@ -46,15 +46,8 @@
   background-color: grey;
 }
 
-/* Lado derecho: placeholder de imagen */
-.login-right {
-  flex: 1;
-  background-color: #87ceeb;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 2rem;
+.fondo-columna-izquierda {
+  background-color: #E5E5E5;
 }
 
 .forgot-link {
@@ -69,3 +62,20 @@
   text-decoration: underline;
 }
 
+.input-contra,
+.input-correo {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #262626 !important; /* fondo siempre oscuro */
+  color: #ffffff !important; /* texto siempre visible */
+}
+
+/* Evitar que cambie el color al dar clic */
+.input-contra:focus,
+.input-correo:focus {
+  background-color: #262626 !important;
+  color: #ffffff !important;
+  box-shadow: none; /* quitar borde azul de bootstrap */
+  outline: none;
+}
