@@ -25,7 +25,6 @@ const RequestPassword = () => {
           <div className="w-75 text-center">
             <div className="mb-4">
               <h4 className="mb-4">Recuperar Contraseña</h4>
-              <p className="mb-4">Ingresa tu correo electrónico</p>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -36,6 +35,7 @@ const RequestPassword = () => {
                   className="form-control input-correo"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Ingresa tu correo electrónico"
                   required
                 />
               </div>

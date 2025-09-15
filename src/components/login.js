@@ -39,6 +39,7 @@ const Login = () => {
                   className="form-control input-correo"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Ingresa tu correo electrónico"
                   required
                 />
               </div>
@@ -50,9 +51,9 @@ const Login = () => {
                   className="form-control input-contra"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Ingresa tu contraseña"
                   autoComplete="new-password"
                   required
-                  placeholder="Ingresa tu contraseña"
                 />
               </div>
 

@@ -98,3 +98,10 @@ input:-webkit-autofill:active {
   background-repeat: no-repeat;
   min-height: 100vh;
 }
+
+.input-correo::placeholder,
+.input-contra::placeholder {
+  color: #aaaaaa; /* color gris claro para que se vea sobre el fondo oscuro */
+  opacity: 1; /* para que siempre sea visible */
+}
+

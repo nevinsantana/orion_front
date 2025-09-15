@@ -57,6 +57,7 @@ const ForgotPassword = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   autoComplete="new-password"
+                  placeholder="Ingresa tu nueva contraseña"
                   required
                 />
               </div>
@@ -68,6 +69,7 @@ const ForgotPassword = () => {
                   className="form-control input-contra"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirma contraseña"
                   autoComplete="new-password"
                   required
                 />
