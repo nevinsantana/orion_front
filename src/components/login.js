@@ -57,7 +57,7 @@ const Login = () => {
 
               {/* Texto de Olvidaste tu contraseña */}
               <div className="text-end mb-4">
-                <Link to="/forgot-password" className="forgot-link">
+                <Link to="/request-password" className="forgot-link">
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
