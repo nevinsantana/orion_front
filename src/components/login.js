@@ -63,7 +63,7 @@ const Login = () => {
               </div>
 
               <button type="submit" className="btn btn-sesion w-100">
-                Iniciar sesión
+                Iniciar sesión hola
               </button>
             </form>
           </div>
