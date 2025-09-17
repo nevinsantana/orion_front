@@ -22,13 +22,25 @@ const RequestPassword = () => {
 
         {/* Columna derecha: formulario */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
-          <div className="w-75 text-center">
-            <div className="mb-4">
-              <h4 className="mb-4">Recuperar Contraseña</h4>
+          <div className="w-75">
+            {/* Botón regresar arriba */}
+            <div className="mb-4 text-start">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => navigate("/")}
+              >
+                Regresar
+              </button>
+            </div>
+
+            {/* Título */}
+            <div className="mb-4 text-center">
+              <h4 className="mb-0">Recuperar Contraseña</h4>
             </div>
 
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
+              <div className="mb-3 text-start">
                 <label className="form-label">Correo electrónico</label>
                 <input
                   type="email"
@@ -40,16 +52,9 @@ const RequestPassword = () => {
                 />
               </div>
 
-              <div className="d-flex justify-content-center gap-3">
+              <div className="d-flex justify-content-center">
                 <button type="submit" className="btn btn-sesion">
                   Enviar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => navigate("/")}
-                >
-                  Regresar
                 </button>
               </div>
             </form>

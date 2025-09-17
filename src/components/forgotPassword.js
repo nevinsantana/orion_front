@@ -1,3 +1,4 @@
+// src/pages/ForgotPassword.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,7 +9,6 @@ const ForgotPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // 🔹 Limpiar inputs al cargar la vista
   useEffect(() => {
     setNewPassword("");
     setConfirmPassword("");
@@ -21,26 +21,37 @@ const ForgotPassword = () => {
       return;
     }
     alert("Contraseña actualizada con éxito");
-    navigate("/"); // Regresa al login
+    navigate("/");
   };
 
   const handleBack = () => {
-    navigate("/"); // 🔹 Botón regresar al login
+    navigate("/");
   };
 
   return (
-    <div className="container-fluid vh-100">
-      <div className="row h-100">
+    <div className="container-fluid vh-100 p-0">
+      <div className="row g-0 h-100">
         {/* Lado izquierdo con placeholder */}
-        <div className="col-12 col-md-6 d-none d-md-flex d-dm-block login-left"></div>
+        <div className="col-12 col-md-6 d-none d-md-flex login-left"></div>
 
         {/* Lado derecho */}
-        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form order-2 order-md-2">
+        <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form position-relative">
           <div className="w-75">
-            {/* Imagen mediana centrada arriba */}
-            <div className="text-center mb-4 mt-4 mt-md-0">
+            {/* 🔹 Botón regresar arriba a la izquierda */}
+            <div className="position-absolute" style={{ top: "20px", left: "20px" }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleBack}
+              >
+                Regresar
+              </button>
+            </div>
+
+            {/* Imagen centrada */}
+            <div className="text-center mb-4 mt-5">
               <img
-                src="https://placehold.co/400x100/888888/ffffff?text=Imagen"
+                src="https://placehold.co/300x100/888888/ffffff?text=Imagen"
                 alt="Imagen"
                 className="img-fluid"
               />
@@ -75,17 +86,10 @@ const ForgotPassword = () => {
                 />
               </div>
 
-              {/* 🔹 Botones centrados */}
-              <div className="d-flex justify-content-center gap-3">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleBack}
-                >
-                  Regresar
-                </button>
+              {/* 🔹 Botón guardar centrado */}
+              <div className="d-flex justify-content-center">
                 <button type="submit" className="btn btn-sesion">
-                  Guardar nueva contraseña
+                  Guardar
                 </button>
               </div>
             </form>
