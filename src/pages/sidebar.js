@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaHome, FaChartBar, FaCog, FaUser, FaSignOutAlt } from "react-icons/fa";
-import "./sidebar.css"; // si quieres separar estilos también
+import "./sidebar.css";
 
-const Sidebar = () => {
+const Sidebar = ({ setActiveView }) => {
+  const [active, setActive] = useState("dashboard");
+
+  const handleClick = (view) => {
+    setActive(view);
+    setActiveView(view); // esto cambiará el contenido en dashboard-content
+  };
+
   return (
     <aside className="sidebar">
       {/* Logo */}
@@ -13,29 +20,48 @@ const Sidebar = () => {
       {/* Menú principal */}
       <nav className="sidebar-menu">
         <ul>
-          <li className="active">
-            <FaHome className="icon" />
-            <span>Inicio</span>
+          <li
+            className={`option ${active === "dashboard" ? "active" : ""}`}
+            onClick={() => handleClick("dashboard")}
+          >
+            <div className="icon-bg">
+              <FaHome className="icon" />
+            </div>
+            <span>Dashboard</span>
           </li>
-          <li>
-            <FaChartBar className="icon" />
-            <span>Reportes</span>
+          <li
+            className={`option ${active === "usuarios" ? "active" : ""}`}
+            onClick={() => handleClick("usuarios")}
+          >
+            <div className="icon-bg">
+              <FaChartBar className="icon" />
+            </div>
+            <span>Usuarios</span>
           </li>
-          <li>
-            <FaCog className="icon" />
+          <li
+            className={`option ${active === "config" ? "active" : ""}`}
+            onClick={() => handleClick("config")}
+          >
+            <div className="icon-bg">
+              <FaCog className="icon" />
+            </div>
             <span>Configuración</span>
           </li>
         </ul>
       </nav>
 
-      {/* Perfil y cerrar sesión */}
+      {/* Footer */}
       <div className="sidebar-footer">
         <div className="sidebar-profile">
-          <FaUser className="icon" />
+          <div className="icon-bg">
+            <FaUser className="icon" />
+          </div>
           <span>Mi Perfil</span>
         </div>
         <div className="sidebar-logout">
-          <FaSignOutAlt className="icon" />
+          <div className="icon-bg">
+            <FaSignOutAlt className="icon" />
+          </div>
           <span>Cerrar Sesión</span>
         </div>
       </div>

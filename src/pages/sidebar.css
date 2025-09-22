@@ -3,13 +3,15 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 250px;
+  width: 280px;
   height: 100vh;
   background: #0A0A0A;
   color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 15px; /* evita que quede pegado */
+  box-sizing: border-box;
 }
 
 /* Logo */
@@ -20,49 +22,57 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: #fff;
+  border-radius: 15px;
 }
 
 /* Menú */
 .sidebar-menu ul {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 20px 0;
 }
 
 .sidebar-menu li {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 15px 20px;
+  padding: 12px 18px;
+  margin-bottom: 10px;
   cursor: pointer;
-  transition: background 0.3s;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.05); /* fondo opaco */
+  transition: background 0.3s, transform 0.2s;
 }
 
 .sidebar-menu li:hover {
-  background: #1a1a1a;
+  /* background: rgba(139, 92, 246, 0.3); */
+  transform: scale(1.02);
+  background-color: #8A2CF1;
 }
 
 .sidebar-menu li.active {
-  background: #1f1f1f;
-  border-left: 4px solid #8B5CF6;
+  background-color: #8A2CF1;
+  /* background: rgba(139, 92, 246, 0.6); */
 }
 
-/* Íconos */
-.icon {
-  font-size: 18px;
-}
-
-/* Fondo de ícono Inicio */
-.sidebar-menu li.active .icon {
+/* Icono con fondo */
+.icon-bg {
   background: #8B5CF6;
-  color: white;
   padding: 8px;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  color: white;
+  font-size: 18px;
 }
 
 /* Footer */
 .sidebar-footer {
-  padding: 20px;
+  padding: 10px 0;
   border-top: 1px solid #1a1a1a;
 }
 
@@ -70,17 +80,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 0;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-/* Colores específicos de íconos en el footer */
-.sidebar-profile .icon,
-.sidebar-logout .icon {
-  color: #8B5CF6;
+  padding: 12px;
+  border-radius: 15px;
+  margin-top: 8px;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .sidebar-footer div:hover {
-  color: #8B5CF6;
+  /* background: rgba(139, 92, 246, 0.3); */
+  transform: scale(1.02);
+  background-color: #8A2CF1;
 }
