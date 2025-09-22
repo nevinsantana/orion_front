@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaHome,
-  FaChartBar,
   FaCog,
   FaUser,
   FaSignOutAlt,
+  FaUsers
 } from "react-icons/fa";
 import "./sidebar.css";
 
@@ -52,7 +52,7 @@ const Sidebar = ({ setActiveView }) => {
             onClick={() => handleClick("usuarios")}
           >
             <div className="icon-bg">
-              <FaChartBar className="icon" />
+              <FaUsers className="icon" />
             </div>
             <span>Usuarios</span>
           </li>
