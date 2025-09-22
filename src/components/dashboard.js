@@ -13,7 +13,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="container-fluid" style={{ display: "flex" }}>
       <Sidebar setActiveView={setActiveView} />
 
       <div className="dashboard-content" style={{ marginLeft: "280px", padding: "20px", width: "100%" }}>

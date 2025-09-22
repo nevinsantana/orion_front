@@ -1,20 +1,38 @@
 import React, { useState } from "react";
-import { FaHome, FaChartBar, FaCog, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import {
+  FaHome,
+  FaChartBar,
+  FaCog,
+  FaUser,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import "./sidebar.css";
 
 const Sidebar = ({ setActiveView }) => {
   const [active, setActive] = useState("dashboard");
+  const navigate = useNavigate();
 
   const handleClick = (view) => {
     setActive(view);
-    setActiveView(view); // esto cambiará el contenido en dashboard-content
+    setActiveView(view);
+  };
+
+  const handleLogout = () => {
+    // Aquí puedes limpiar localStorage/sessionStorage si lo usas
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
     <aside className="sidebar">
       {/* Logo */}
       <div className="sidebar-logo">
-        <h2>LOGO</h2>
+        <img
+          src="https://placehold.co/500x150/888888/ffffff?text=Imagen"
+          alt=""
+          className="img-fluid"
+        />
       </div>
 
       {/* Menú principal */}
@@ -52,16 +70,15 @@ const Sidebar = ({ setActiveView }) => {
 
       {/* Footer */}
       <div className="sidebar-footer">
-        <div className="sidebar-profile">
-          <div className="icon-bg">
-            <FaUser className="icon" />
-          </div>
+        <div
+          className={`sidebar-profile ${active === "profile" ? "active" : ""}`}
+          onClick={() => handleClick("profile")}
+        >
+          <FaUser className="icon-footer" />
           <span>Mi Perfil</span>
         </div>
-        <div className="sidebar-logout">
-          <div className="icon-bg">
-            <FaSignOutAlt className="icon" />
-          </div>
+        <div className="sidebar-logout" onClick={handleLogout}>
+          <FaSignOutAlt className="icon-footer" />
           <span>Cerrar Sesión</span>
         </div>
       </div>

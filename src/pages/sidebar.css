@@ -83,6 +83,8 @@
   padding: 12px;
   border-radius: 15px;
   margin-top: 8px;
+  cursor: pointer;
+  color: white;
   transition: background 0.3s, transform 0.2s;
 }
 
@@ -90,4 +92,23 @@
   /* background: rgba(139, 92, 246, 0.3); */
   transform: scale(1.02);
   background-color: #8A2CF1;
+  color: #fff;
+}
+
+.sidebar-footer .active {
+  background-color: #8A2CF1;
+  color: #fff;
+}
+
+.icon-footer {
+  color: #8A2CF1;
+  font-size: 18px;
+}
+
+.sidebar-footer div:hover .icon-footer {
+  color: #fff;
+}
+
+.sidebar-footer .active .icon-footer {
+  color: #fff;
 }
