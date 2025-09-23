@@ -60,17 +60,20 @@
 
 /* Botón "Ver más" */
 .btn-vermas {
-  background-color: transparent;
-  border: 1px solid #8B5CF6;
-  color: #8B5CF6;
-  border-radius: 8px;
-  padding: 5px 15px;
-  font-weight: bold;
-}
-.btn-vermas:hover {
   background-color: #8B5CF6;
   color: #fff;
+  border: none;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
 }
+.btn-vermas:hover {
+  background-color: #fff;
+  color: #8B5CF6;
+}
+
 
 /* ===== RESPONSIVE TABLET/MÓVIL ===== */
 @media (max-width: 1024px) {
