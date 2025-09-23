@@ -110,3 +110,74 @@
 .sidebar-footer .active .icon-footer {
   color: #fff;
 }
+
+/* ====== TOPBAR (visible solo en móviles/tablets) ====== */
+.topbar {
+  display: none;
+  width: 100%;
+  background: #0A0A0A;
+  color: #fff;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-topbar {
+  height: 40px;
+}
+
+.hamburger-btn {
+  background: #8B5CF6;
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ====== SIDEBAR DEFAULT (desktop) ====== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 270px;
+  min-height: 100vh;
+  background: #0A0A0A;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+/* ====== RESPONSIVE (mobile/tablet) ====== */
+@media (max-width: 1024px) {
+  .sidebar {
+    top: 60px; /* debajo del topbar */
+    left: 0;
+    width: 100%;
+    min-height: auto;
+    height: auto;
+    display: none; /* oculto por defecto */
+  }
+
+  .sidebar.open {
+    display: block; /* visible cuando se abre */
+    background: #111; /* fondo oscuro */
+    padding-bottom: 20px;
+  }
+
+  .topbar {
+    display: flex;
+    position: relative;
+  }
+}
+

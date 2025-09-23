@@ -47,7 +47,7 @@ const Dashboard = () => {
             {/* ========== FILA 2 ========== */}
             <div className="row mb-4">
               {/* Columna 1 (Gráfica) */}
-              <div className="col-md-4 mb-3">
+              <div className="col-lg-4 col-md-12 mb-3">
                 <div className="card-dark p-3 h-100">
                   <h5 className="text-white mb-3">Gráfica</h5>
                   <ResponsiveContainer width="95%" height={150}>
@@ -66,14 +66,14 @@ const Dashboard = () => {
               </div>
 
               {/* Columna 2 */}
-              <div className="col-md-4 mb-3">
+              <div className="col-lg-4 col-md-12 mb-3">
                 <div className="card-dark p-3 h-100">
                   <h5 className="text-white">Columna 2</h5>
                 </div>
               </div>
 
               {/* Columna 3 */}
-              <div className="col-md-4 mb-3">
+              <div className="col-lg-4 col-md-12 mb-3">
                 <div className="card-dark p-3 h-100">
                   <h5 className="text-white">Columna 3</h5>
                 </div>

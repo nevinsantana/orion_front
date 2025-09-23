@@ -1,9 +1,10 @@
 /* Ajusta contenedor principal */
 .contenedor-padre {
   display: flex;
+  flex-direction: row;
   min-height: 100vh;
   background-color: #0A0A0A;
-  overflow: hidden; /* evita scrollbars extra */
+  overflow: hidden;
   margin: 0;
   padding: 0;
 }
@@ -13,11 +14,12 @@
   flex: 1; /* ocupa todo el espacio sobrante */
   padding: 20px;
   overflow-x: hidden; /* evita scroll horizontal */
+  overflow-y: auto;
   background-color: #0A0A0A;
   color: #fff;
+  overflow-x: hidden;
   margin-left: 270px;
   min-height: 100vh;
-  overflow-y: auto;
 }
 
 /* Títulos */
@@ -57,7 +59,8 @@
   background-color: #1a1a1a;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-  height: 100%;
+  height: auto;
+  margin-bottom: 10px;
 }
 
 /* Botón "Ver más" */
@@ -73,4 +76,32 @@
 .btn-vermas:hover {
   background-color: #8B5CF6;
   color: #fff;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 1024px) {
+  .contenedor-padre {
+    flex-direction: column; /* Sidebar ya no a la izquierda */
+    min-height: auto;
+  }
+
+  .dashboard-content {
+    margin-left: 0;
+    padding-top: 80px; /* espacio para topbar */
+  }
+
+  /* Eliminamos márgenes extras debajo de las filas */
+  .dashboard-content .row {
+    margin-bottom: 10px; /* menos espacio entre filas */
+  }
+
+  /* Ajustamos altura de las tarjetas */
+  .dashboard-content .card-dark {
+    height: auto; /* que se adapte al contenido */
+  }
+
+  /* Tabla: eliminamos margen adicional */
+  .dashboard-content table {
+    margin-bottom: 0;
+  }
 }
