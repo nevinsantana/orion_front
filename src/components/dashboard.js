@@ -27,16 +27,14 @@ const Dashboard = () => {
       <div className="dashboard-content">
         {activeView === "dashboard" && (
           <div className="container-fluid">
+
             {/* ========== FILA 1 ========== */}
             <div className="row align-items-center mb-4">
-              {/* Columna izquierda */}
               <div className="col-md-6">
                 <h2 className="titulo-dashboard">Dashboard</h2>
               </div>
-
-              {/* Columna derecha */}
               <div className="col-md-6 d-flex flex-column align-items-center">
-                <div className="d-flex gap-3 mb-3 w-100 justify-content-end">
+                <div className="d-flex gap-3 mb-3">
                   <input type="date" className="form-control input-dark" />
                   <input type="date" className="form-control input-dark" />
                 </div>
@@ -46,7 +44,6 @@ const Dashboard = () => {
 
             {/* ========== FILA 2 ========== */}
             <div className="row mb-4">
-              {/* Columna 1 (Gráfica) */}
               <div className="col-lg-4 col-md-12 mb-3">
                 <div className="card-dark p-3 h-100">
                   <h5 className="text-white mb-3">Gráfica</h5>
@@ -65,14 +62,12 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Columna 2 */}
               <div className="col-lg-4 col-md-12 mb-3">
                 <div className="card-dark p-3 h-100">
                   <h5 className="text-white">Columna 2</h5>
                 </div>
               </div>
 
-              {/* Columna 3 */}
               <div className="col-lg-4 col-md-12 mb-3">
                 <div className="card-dark p-3 h-100">
                   <h5 className="text-white">Columna 3</h5>
@@ -82,7 +77,6 @@ const Dashboard = () => {
 
             {/* ========== FILA 3 ========== */}
             <div className="row">
-              {/* Columna izquierda (Tabla) */}
               <div className="col-md-8 mb-3">
                 <div className="card-dark p-3">
                   <h5 className="text-white mb-3">Tabla</h5>
@@ -110,7 +104,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Columna derecha (Título + Botón) */}
               <div className="col-md-4 mb-3">
                 <div className="card-dark p-3 d-flex flex-column h-100 justify-content-between">
                   <div className="d-flex justify-content-between align-items-center">
@@ -123,6 +116,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+
           </div>
         )}
 
