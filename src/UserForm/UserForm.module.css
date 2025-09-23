@@ -1,0 +1,129 @@
+.container {
+  background-color: #000000;
+  width: 1032px;
+  height: 535px;
+  color: #d4d4d4;
+  border-radius: 3px;
+  margin: 25%;
+  font-family: "Nunito Sans", sans-serif;
+  box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+  background-color: #8a2cf1;
+  color: #fff;
+}
+
+.headerContent {
+  display: flex;
+  width: 30%;
+  padding: 20px;
+  font-size: 15px;
+}
+
+.icon {
+  color: #fff;
+  margin-right: 5px;
+  width: 15px;
+}
+
+.formContainer {
+  padding: 5%;
+}
+
+.formGroup {
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.formGroup label {
+  display: flex;
+  flex-direction: row;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #ffffff80;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.required {
+  color: #e61610; /* Color rojo para el asterisco */
+  font-weight: bold;
+}
+
+.formGroup input {
+  width: 320px;
+  height: 39px;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #262626;
+  border: 1px solid #262626;
+  border-radius: 6px;
+  color: #d4d4d4;
+  font-size: 15px;
+}
+
+.formGroup input::placeholder {
+  color: #777;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #8a2cf1; /* Borde morado al enfocar */
+}
+
+.errorText {
+  color: #e61610;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.inputError {
+  border: 1px solid #e61610;
+}
+
+.passwordText {
+  color: #ffffff80;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.saveButton {
+  background-color: #8a2cf1;
+  color: #fafafa;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-sizing: border-box;
+  width: 141px;
+}
+
+.saveButton:hover {
+  background-color: #6e23c1;
+}
+
+/* @media screen and (max-width: 1024px) {}
+/* ============================================================
+TABLETS
+============================================================ 
+@media screen and (min-width: 601px) and (max-width: 912px) {
+
+}
+
+/* ============================================================
+PHONE
+============================================================ 
+@media screen and (max-width: 600px) {
+  
+} */
