@@ -36,6 +36,13 @@ const Sidebar = ({ setActiveView }) => {
 
       {/* Sidebar / menú */}
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+        {/* Logo escritorio */}
+        <img
+          src="https://placehold.co/150x50/888888/ffffff?text=Logo"
+          alt="Logo"
+          className="sidebar-logo"
+        />
+
         <nav className="sidebar-menu">
           <ul>
             <li className={active === "dashboard" ? "active" : ""} onClick={() => handleClick("dashboard")}>
@@ -52,7 +59,7 @@ const Sidebar = ({ setActiveView }) => {
 
         <div className="sidebar-footer">
           <div className={active === "profile" ? "active" : ""} onClick={() => handleClick("profile")}>
-            <FaUser className="icon-footer" /> <span>Mi Perfil</span>
+            <FaUser className="icon-footer" /> <span>Perfil</span>
           </div>
           <div className="sidebar-logout" onClick={handleLogout}>
             <FaSignOutAlt className="icon-footer" /> <span>Cerrar Sesión</span>

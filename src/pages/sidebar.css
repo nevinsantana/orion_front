@@ -5,7 +5,7 @@
   left: 0;
   width: 270px;
   min-height: 100vh;
-  background: #0A0A0A;
+  background: #0a0a0a;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,21 @@
   z-index: 1000;
 }
 
-.sidebar-menu ul { list-style: none; padding: 0; margin: 20px 0; }
+/* Logo escritorio */
+.sidebar-logo {
+  display: block;
+  margin-bottom: 20px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Menú principal */
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
 .sidebar-menu li {
   display: flex;
   align-items: center;
@@ -23,12 +37,22 @@
   margin-bottom: 10px;
   cursor: pointer;
   border-radius: 15px;
-  background: rgba(255,255,255,0.05);
-  transition: background 0.3s, transform 0.2s;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.3s, transform 0.2s, color 0.3s;
+}
+.sidebar-menu li span {
+  color: #fff; /* texto siempre blanco */
 }
 .sidebar-menu li:hover,
-.sidebar-menu li.active { background-color: #8B5CF6; }
+.sidebar-menu li.active {
+  background-color: #8b5cf6;
+  color: #fff;
+}
+.sidebar-menu li .icon {
+  color: white;
+}
 
+/* Footer (Perfil y Cerrar Sesión) */
 .sidebar-footer {
   padding: 10px 0;
   border-top: 1px solid #1a1a1a;
@@ -43,27 +67,36 @@
   border-radius: 15px;
   margin-top: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
+  color: #fff; /* texto siempre blanco */
+}
+.sidebar-footer div span {
+  color: #fff; /* texto siempre blanco */
+}
+.sidebar-footer div .icon-footer {
+  color: #8b5cf6; /* icono por defecto */
 }
 .sidebar-footer div:hover,
-.sidebar-footer div.active { background-color: #8B5CF6; color: #fff; }
-
-/* Iconos */
-.icon, .icon-footer { color: white; font-size: 18px; }
-.sidebar-footer .active .icon-footer { color: #fff; }
+.sidebar-footer div.active {
+  background-color: #8b5cf6;
+}
+.sidebar-footer div:hover .icon-footer,
+.sidebar-footer div.active .icon-footer {
+  color: #fff; /* icono blanco al hover o active */
+}
 
 /* Topbar tablet/móvil */
 .topbar {
   display: none;
   width: 100%;
-  background: #0A0A0A;
+  background: #0a0a0a;
   color: #fff;
   padding: 10px 20px;
   justify-content: space-between;
   align-items: center;
 }
 .hamburger-btn {
-  background: #8B5CF6;
+  background: #8b5cf6;
   border: none;
   color: #fff;
   padding: 8px 12px;
@@ -80,10 +113,12 @@
     min-height: auto;
     height: auto;
     display: none;
-    background: rgba(0,0,0,0.9);
-    transition: all 0.4s ease; /* apertura suave */
+    background: rgba(0, 0, 0, 0.9);
+    transition: all 0.4s ease;
   }
-  .sidebar.open { display: block; }
+  .sidebar.open {
+    display: block;
+  }
 
   .sidebar-menu li,
   .sidebar-footer div {
@@ -92,6 +127,15 @@
     justify-content: center;
   }
 
-  .topbar { display: flex; }
-  .sidebar-footer { align-items: center; }
+  .topbar {
+    display: flex;
+  }
+  .sidebar-footer {
+    align-items: center;
+  }
+
+  /* Ocultar logo en responsive */
+  .sidebar-logo {
+    display: none;
+  }
 }
