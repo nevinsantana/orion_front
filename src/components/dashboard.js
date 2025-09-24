@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import "./dashboard.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AdminUsers from './AdminUsers';
+import AdminUsers from '../components/AdminUsers';
 
 
 
@@ -220,7 +220,7 @@ const Dashboard = () => {
           </div>
         )}
 
-        {activeView === "AdminUsers" && <AdminUsers/>}
+        {activeView === "AdminUsers" && <AdminUsers />}
         {activeView === "config" && (
           <h2 className="text-white">Configuración (vista en construcción)</h2>
         )}
