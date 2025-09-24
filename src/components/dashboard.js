@@ -216,7 +216,7 @@ const Dashboard = () => {
         )}
 
         {activeView === "usuarios" && (
-          <h2 className="text-white">Usuarios (vista en construcción)</h2>
+          <h2 className="text-white"> Admin.Usuarios (vista en construcción)</h2>
         )}
         {activeView === "config" && (
           <h2 className="text-white">Configuración (vista en construcción)</h2>
