@@ -1,23 +1,22 @@
-/* Ajusta contenedor principal */
+/* Contenedor principal */
 .contenedor-padre {
   display: flex;
-  min-height: 100vh;
+  flex-direction: row;
   background-color: #0A0A0A;
-  overflow: hidden; /* evita scrollbars extra */
   margin: 0;
   padding: 0;
+  min-height: 100vh;
 }
 
 /* Contenido del dashboard */
 .dashboard-content {
-  flex: 1; /* ocupa todo el espacio sobrante */
+  flex: 1;
   padding: 20px;
-  overflow-x: hidden; /* evita scroll horizontal */
+  margin-left: 270px; /* espacio para sidebar */
   background-color: #0A0A0A;
   color: #fff;
-  margin-left: 270px;
-  min-height: 100vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Títulos */
@@ -32,7 +31,6 @@
   border: 1px solid #333;
   color: #fff;
 }
-
 .input-dark:focus {
   border-color: #8B5CF6;
   box-shadow: none;
@@ -46,7 +44,6 @@
   padding: 8px 20px;
   font-weight: bold;
 }
-
 .btn-filtrar:hover {
   background-color: #7C3AED;
   color: #fff;
@@ -57,22 +54,88 @@
   background-color: #1a1a1a;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-  height: 100%;
+  height: auto;
+  margin-bottom: 10px;
 }
 
 /* Botón "Ver más" */
 .btn-vermas {
-  background-color: transparent;
-  border: 1px solid #8B5CF6;
-  color: #8B5CF6;
-  border-radius: 8px;
-  padding: 5px 15px;
-  font-weight: bold;
-}
-
-.btn-vermas:hover {
   background-color: #8B5CF6;
   color: #fff;
+  border: none;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+<<<<<<< HEAD
+
+
+=======
+.btn-vermas:hover {
+  background-color: #fff;
+  color: #8B5CF6;
 }
 
 
+/* ===== RESPONSIVE TABLET/MÓVIL ===== */
+@media (max-width: 1024px) {
+  .contenedor-padre { 
+    flex-direction: column; 
+  }
+
+  .dashboard-content {
+    margin-left: 0;
+    padding-top: 70px; /* espacio para topbar */
+    height: auto;
+    flex: 0 1 auto;
+  }
+
+  /* === FILA 1 === */
+  .dashboard-content .row.align-items-center .col-md-6.d-flex {
+    flex-direction: column;
+    align-items: center;
+  }
+  .dashboard-content .d-flex.gap-3 {
+    width: auto;
+    gap: 10px;
+    justify-content: center;
+  }
+  .dashboard-content .btn-filtrar { 
+    margin-top: 10px;
+    align-self: center;
+  }
+
+  /* === FILA 2 (gráfica y tarjetas en columna) === */
+  .dashboard-content .row.mb-4 > [class*="col-"] {
+    width: 100%;
+  }
+
+  /* === FILA 3 (tabla y tarjeta lateral en columna) === */
+  .dashboard-content .row > [class*="col-"] {
+    width: 100%;
+  }
+
+  /* Separación entre elementos al volverse columna */
+  .dashboard-content .row.mb-4 > div,
+  .dashboard-content .row > div {
+    margin-bottom: 15px;
+  }
+
+  /* Ajustes generales */
+  .dashboard-content .card-dark { 
+    height: auto; 
+    margin-bottom: 10px; 
+  }
+  .dashboard-content table { 
+    margin-bottom: 0; 
+  }
+
+  .titulo-dashboard { 
+    text-align: center; 
+    margin-bottom: 15px; 
+  }
+}
+
+>>>>>>> e6d1d4beb05ba6633d82824e8259d82d9f7060df
