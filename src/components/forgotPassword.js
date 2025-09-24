@@ -1,6 +1,6 @@
 // src/pages/ForgotPassword.js
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
@@ -24,10 +24,6 @@ const ForgotPassword = () => {
     navigate("/");
   };
 
-  const handleBack = () => {
-    navigate("/");
-  };
-
   return (
     <div className="container-fluid vh-100 p-0">
       <div className="row g-0 h-100">
@@ -37,19 +33,15 @@ const ForgotPassword = () => {
         {/* Lado derecho */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form position-relative">
           <div className="w-75">
-            {/* 🔹 Botón regresar arriba a la izquierda */}
-            <div className="position-absolute" style={{ top: "20px", left: "20px" }}>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={handleBack}
-              >
-                Regresar
-              </button>
+            {/* Enlace regresar arriba */}
+            <div className="mb-2 text-start">
+              <Link to="/" className="text-decoration-none btn btn-link backTo">
+                ← Regresar
+              </Link>
             </div>
 
             {/* Imagen centrada */}
-            <div className="text-center mb-4 mt-5">
+            <div className="text-center mb-4 mt-3">
               <img
                 src="https://placehold.co/300x100/888888/ffffff?text=Imagen"
                 alt="Imagen"

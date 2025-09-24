@@ -1,10 +1,10 @@
-import { useState } from "react";
-import styles from "./UserForm.module.css";
+import { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
+import { Form, Button, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './UserForm.css'; // Mantenemos el archivo CSS para estilos personalizados
 
-
-const UserForm = () => {
+const UserForm = ({ user, onClose }) => {
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
@@ -15,8 +15,28 @@ const UserForm = () => {
 
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        nombre: user.nombre,
+        apellido: user.apellido,
+        email: user.email,
+        password: "",
+        confirmPassword: "",
+      });
+    } else {
+        setFormData({
+            nombre: "",
+            apellido: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+        });
+    }
+  }, [user]);
+
   const validate = () => {
-    const newErrors = {}; // almacena el error
+    const newErrors = {};
     if (!formData.nombre) {
       newErrors.nombre = "El nombre es obligatorio.";
     }
@@ -29,19 +49,16 @@ const UserForm = () => {
       newErrors.email = "El formato del correo electrónico es inválido.";
     }
 
-    if (formData.password.length > 0) {
-      if (formData.password.length < 8) {
-        newErrors.password = "La contraseña debe de tener almenos 8 caracteres";
-      }
+    if (formData.password.length > 0 && formData.password.length < 8) {
+        newErrors.password = "La contraseña debe de tener al menos 8 caracteres";
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Las contraseñas no coinciden.";
+    if (formData.password && formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "Las contraseñas no coinciden.";
     }
-
-    if (formData.password && formData.confirmPassword) {
-      newErrors.confirmPassword =
-        "Debes ingresar una contraseña para confirmarla.";
+    
+    if (formData.confirmPassword && !formData.password) {
+        newErrors.password = "Debes ingresar una contraseña para confirmarla.";
     }
 
     return newErrors;
@@ -59,128 +76,118 @@ const UserForm = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Datos guardados", formData);
-      alert("!Usuario guardado con exito!");
-      setFormData({
-        nombre: "",
-        apellido: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
-      setErrors({});
+      alert("¡Usuario guardado con éxito!");
+      onClose();
     }
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <FaUser className={styles.icon} />
-          <span>Usuarios</span>
+    <div className="user-form-container">
+      <Form onSubmit={handleSubmit}>
+        <div className="d-flex align-items-center mb-4">
+          <FaUser className="user-icon me-2" />
+          <h5 className="mb-0 text-white">Datos del usuario</h5>
         </div>
-      </div>
-      <div className={styles.formContainer}>
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.formGroup}>
-            <div className={styles.formContainerleft}>
-              <label>
-                Nombre <span className={styles.required}>*</span>
-              </label>
-              <input
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>
+                Nombre <span className="required">*</span>
+              </Form.Label>
+              <Form.Control
                 type="text"
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleChange}
                 placeholder="Nombre"
-                className={`${styles.input} ${
-                  errors.nombre ? styles.inputError : ""
-                }`}
+                className={`custom-input ${errors.nombre ? 'input-error' : ''}`}
               />
-              {errors.nombre && (
-                <p className={styles.errorText}>{errors.nombre}</p>
-              )}
-
-              <label>
-                Correo Electrónico <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Correo electrónico"
-                className={`${styles.input} ${
-                  errors.email ? styles.inputError : ""
-                }`}
-              />
-              {errors.email && (
-                <p className={styles.errorText}>{errors.email}</p>
-              )}
-
-              <label>Confirmación de contraseña</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirmar contraseña"
-                className={`${styles.input} ${
-                  errors.confirmPassword ? styles.inputError : ""
-                }`}
-              />
-              {errors.confirmPassword ? (
-                <p className={styles.errorText}>{errors.confirmPassword}</p>
-              ) : (
-                <p className={styles.passwordText}>
-                  Deja este campo vacío si no deseas cambiar la contraseña
-                </p>
-              )}
-            </div>
-            <div className={styles.formContainerleft}>
-              <label>
-                Apellido <span className={styles.required}>*</span>
-              </label>
-              <input
+              {errors.nombre && <p className="error-text">{errors.nombre}</p>}
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>
+                Apellido <span className="required">*</span>
+              </Form.Label>
+              <Form.Control
                 type="text"
                 name="apellido"
                 value={formData.apellido}
                 onChange={handleChange}
                 placeholder="Apellido"
-                className={`${styles.input} ${
-                  errors.apellido ? styles.inputError : ""
-                }`}
+                className={`custom-input ${errors.apellido ? 'input-error' : ''}`}
               />
-              {errors.apellido && (
-                <p className={styles.errorText}>{errors.apellido}</p>
-              )}
-              <label>Contraseña</label>
-              <input
+              {errors.apellido && <p className="error-text">{errors.apellido}</p>}
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>
+                Correo Electrónico <span className="required">*</span>
+              </Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Correo electrónico"
+                className={`custom-input ${errors.email ? 'input-error' : ''}`}
+              />
+              {errors.email && <p className="error-text">{errors.email}</p>}
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Contraseña"
-                className={`${styles.input} ${
-                  errors.password ? styles.inputError : ""
-                }`}
+                className={`custom-input ${errors.password ? 'input-error' : ''}`}
               />
               {errors.password ? (
-                <p className={styles.errorText}>{errors.password}</p>
+                <p className="error-text">{errors.password}</p>
               ) : (
-                <p className={styles.passwordText}>
+                <p className="password-text">
                   Deja este campo vacío si no deseas cambiar la contraseña
                 </p>
               )}
-            </div>
-          </div>
-          <div className={styles.buttonContainer}>
-            <button type="submit" className={styles.saveButton}>
-              Guardar
-            </button>
-          </div>
-        </form>
-      </div>
-      <form></form>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Form.Group className="mb-3">
+              <Form.Label>Confirmación de contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirmar contraseña"
+                className={`custom-input ${errors.confirmPassword ? 'input-error' : ''}`}
+              />
+              {errors.confirmPassword ? (
+                <p className="error-text">{errors.confirmPassword}</p>
+              ) : (
+                <p className="password-text">
+                  Deja este campo vacío si no deseas cambiar la contraseña
+                </p>
+              )}
+            </Form.Group>
+          </Col>
+        </Row>
+        <div className="d-flex justify-content-end mt-4">
+          <Button type="submit" className="save-button">
+            Guardar
+          </Button>
+        </div>
+      </Form>
     </div>
   );
 };

@@ -1,0 +1,96 @@
+/* Estilos para el contenedor del formulario */
+.user-form-container {
+    padding: 20px;
+}
+
+/* Encabezado del modal (estilos de bootstrap) */
+.modal-header {
+    background-color: #8a2cf1 !important;
+    border-bottom: none !important;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+.modal-body {
+    background-color: #121212 !important;
+    color: #d4d4d4 !important;
+}
+
+/* Estilos de los inputs */
+.custom-input {
+    background-color: #262626 !important;
+    border: 1px solid #262626 !important;
+    border-radius: 6px !important;
+    color: #d4d4d4 !important;
+    font-size: 15px !important;
+}
+
+.custom-input::placeholder {
+    color: #777 !important;
+}
+
+.custom-input:focus {
+    outline: none !important;
+    border-color: #8a2cf1 !important;
+    box-shadow: 0 0 0 0.25rem rgba(138, 44, 241, 0.25) !important;
+}
+
+.input-error {
+    border: 1px solid #e61610 !important;
+}
+
+/* Estilos de etiquetas y texto de ayuda */
+.form-label {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #ffffff80 !important;
+}
+
+.required {
+    color: #e61610 !important;
+    font-weight: bold !important;
+}
+
+.error-text {
+    color: #e61610 !important;
+    font-size: 0.75rem !important;
+    margin-top: 0.25rem !important;
+}
+
+.password-text {
+    color: #ffffff80 !important;
+    font-size: 0.85rem !important;
+    margin-top: 0.25rem !important;
+}
+
+/* Estilo de los botones */
+.save-button {
+    background-color: #8a2cf1 !important;
+    color: #fafafa !important;
+    font-weight: bold !important;
+    font-size: 15px !important;
+    padding: 10px 20px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s !important;
+}
+
+.save-button:hover {
+    background-color: #6e23c1 !important;
+}
+
+/* Estilos del icono de usuario en el modal */
+.user-icon {
+    color: #ffffff;
+}
+
+/* Media queries para responsividad */
+@media screen and (max-width: 767px) {
+    .modal-dialog {
+        margin: 0;
+        width: 100% !important;
+    }
+}

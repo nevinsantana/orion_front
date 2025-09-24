@@ -1,11 +1,78 @@
-.dashboard-container {
+/* Ajusta contenedor principal */
+.contenedor-padre {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 2rem;
-  background-color: #f0f0f0;
+  min-height: 100vh;
+  background-color: #0A0A0A;
+  overflow: hidden; /* evita scrollbars extra */
+  margin: 0;
+  padding: 0;
 }
 
+/* Contenido del dashboard */
+.dashboard-content {
+  flex: 1; /* ocupa todo el espacio sobrante */
+  padding: 20px;
+  overflow-x: hidden; /* evita scroll horizontal */
+  background-color: #0A0A0A;
+  color: #fff;
+  margin-left: 270px;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Títulos */
+.titulo-dashboard {
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Input en fondo oscuro */
+.input-dark {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.input-dark:focus {
+  border-color: #8B5CF6;
+  box-shadow: none;
+}
+
+/* Botón principal */
+.btn-filtrar {
+  background-color: #8B5CF6;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: bold;
+}
+
+.btn-filtrar:hover {
+  background-color: #7C3AED;
+  color: #fff;
+}
+
+/* Tarjetas */
+.card-dark {
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  height: 100%;
+}
+
+/* Botón "Ver más" */
+.btn-vermas {
+  background-color: transparent;
+  border: 1px solid #8B5CF6;
+  color: #8B5CF6;
+  border-radius: 8px;
+  padding: 5px 15px;
+  font-weight: bold;
+}
+
+.btn-vermas:hover {
+  background-color: #8B5CF6;
+  color: #fff;
+}
 
 

@@ -1,12 +1,13 @@
-import styles from './UserTable.module.css'
+import { Table, Button } from 'react-bootstrap';
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
-
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './UserTable.css';
 
 const UserTable = ({ users, onEdit, onDelete}) => {
   return (
-    <table className={styles.userTable}>
+    <div className="table-responsive">
+      <Table className="user-table">
         <thead>
             <tr>
                 <th>Usuario</th>
@@ -20,18 +21,19 @@ const UserTable = ({ users, onEdit, onDelete}) => {
                     <td>Usuario {user.id}</td>
                     <td>{user.email}</td>
                     <td>
-                        <button className={styles.editButton} onClick={()=> onEdit(user.id)}>
-                        <FaPen />
-                        </button>
-                        <button className={styles.deleteButton} onClick={()=> onDelete(user.id)}>
-                        <AiFillDelete />
-                        </button>
+                        <Button className="edit-button" onClick={()=> onEdit(user.id)}>
+                            <FaPen />
+                        </Button>
+                        <Button className="delete-button" onClick={()=> onDelete(user.id)}>
+                            <AiFillDelete />
+                        </Button>
                     </td>
                 </tr>
             ))}
         </tbody>
-    </table>
-  )
-}
+      </Table>
+    </div>
+  );
+};
 
 export default UserTable;

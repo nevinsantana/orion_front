@@ -1,6 +1,5 @@
-// src/pages/RequestPassword.js
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // 👈 importa Link
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
@@ -23,15 +22,11 @@ const RequestPassword = () => {
         {/* Columna derecha: formulario */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            {/* Botón regresar arriba */}
+            {/* Enlace regresar arriba */}
             <div className="mb-4 text-start">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => navigate("/")}
-              >
-                Regresar
-              </button>
+              <Link to="/" className="text-decoration-none btn btn-link backTo">
+                ← Regresar
+              </Link>
             </div>
 
             {/* Título */}

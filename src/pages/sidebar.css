@@ -1,0 +1,112 @@
+/* Sidebar general */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 270px;
+  min-height: 100vh;
+  background: #0A0A0A;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px; /* evita que quede pegado */
+}
+
+/* Logo */
+.sidebar-logo {
+  padding: 20px;
+  text-align: center;
+  background: #111111;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Menú */
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.sidebar-menu li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.05); /* fondo opaco */
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sidebar-menu li:hover {
+  /* background: rgba(139, 92, 246, 0.3); */
+  transform: scale(1.02);
+  background-color: #8A2CF1;
+}
+
+.sidebar-menu li.active {
+  background-color: #8A2CF1;
+  /* background: rgba(139, 92, 246, 0.6); */
+}
+
+/* Icono con fondo */
+.icon-bg {
+  background: #8B5CF6;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  color: white;
+  font-size: 18px;
+}
+
+/* Footer */
+.sidebar-footer {
+  padding: 10px 0;
+  border-top: 1px solid #1a1a1a;
+}
+
+.sidebar-footer div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 15px;
+  margin-top: 8px;
+  cursor: pointer;
+  color: white;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sidebar-footer div:hover {
+  /* background: rgba(139, 92, 246, 0.3); */
+  transform: scale(1.02);
+  background-color: #8A2CF1;
+  color: #fff;
+}
+
+.sidebar-footer .active {
+  background-color: #8A2CF1;
+  color: #fff;
+}
+
+.icon-footer {
+  color: #8A2CF1;
+  font-size: 18px;
+}
+
+.sidebar-footer div:hover .icon-footer {
+  color: #fff;
+}
+
+.sidebar-footer .active .icon-footer {
+  color: #fff;
+}

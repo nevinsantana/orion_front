@@ -105,3 +105,10 @@ input:-webkit-autofill:active {
   opacity: 1; /* para que siempre sea visible */
 }
 
+.backTo {
+  color: white;
+}
+
+.backTo:hover {
+  color: white;
+}
