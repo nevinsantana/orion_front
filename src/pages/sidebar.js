@@ -58,7 +58,7 @@ const Sidebar = ({ setActiveView }) => {
               <FaHome className="icon" /> <span>Dashboard</span>
             </li>
             <li className={active === "AdminUsers" ? "active" : ""} onClick={() => handleClick("AdminUsers")}>
-              <FaUsers className="icon" /> <span>Usuarios</span>
+              <FaUsers className="icon" /> <span>Admin. Usuarios</span>
             </li>
             <li className={active === "config" ? "active" : ""} onClick={() => handleClick("config")}>
               <FaCog className="icon" /> <span>Configuración</span>

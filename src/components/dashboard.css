@@ -70,6 +70,11 @@
   transition: all 0.3s;
 }
 
+.btn-vermas:hover {
+  background-color: #7C3AED;
+  color: #fff;
+}
+
 
 /* ===== RESPONSIVE TABLET/MÓVIL ===== */
 @media (max-width: 1024px) {
