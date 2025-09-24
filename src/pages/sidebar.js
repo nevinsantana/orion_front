@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AdminUsers from "../components/AdminUsers";
+
 import {
   FaHome,
   FaCog,
@@ -9,7 +9,6 @@ import {
   FaUsers,
   FaTimes,
   FaBars
-
 } from "react-icons/fa";
 import "./sidebar.css";
 
@@ -58,7 +57,7 @@ const Sidebar = ({ setActiveView }) => {
             <li className={active === "dashboard" ? "active" : ""} onClick={() => handleClick("dashboard")}>
               <FaHome className="icon" /> <span>Dashboard</span>
             </li>
-            <li className={active === "usuarios" ? "active" : ""} onClick={() => handleClick("usuarios")}>
+            <li className={active === "AdminUsers" ? "active" : ""} onClick={() => handleClick("AdminUsers")}>
               <FaUsers className="icon" /> <span>Usuarios</span>
             </li>
             <li className={active === "config" ? "active" : ""} onClick={() => handleClick("config")}>
