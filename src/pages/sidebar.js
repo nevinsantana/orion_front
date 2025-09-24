@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHome, FaCog, FaUser, FaSignOutAlt, FaUsers, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaHome,
+  FaCog,
+  FaUser,
+  FaSignOutAlt,
+  FaUsers,
+  FaTimes,
+  FaBars
+} from "react-icons/fa";
 import "./sidebar.css";
 
 const Sidebar = ({ setActiveView }) => {

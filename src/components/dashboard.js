@@ -12,6 +12,9 @@ import {
   Cell,
 } from "recharts";
 import "./dashboard.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -223,6 +226,7 @@ const Dashboard = () => {
         )}
       </div>
     </div>
+    
   );
 };
 

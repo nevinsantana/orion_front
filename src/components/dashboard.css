@@ -69,11 +69,6 @@
   cursor: pointer;
   transition: all 0.3s;
 }
-.btn-vermas:hover {
-  background-color: #fff;
-  color: #8B5CF6;
-}
-
 
 /* ===== RESPONSIVE TABLET/MÓVIL ===== */
 @media (max-width: 1024px) {
