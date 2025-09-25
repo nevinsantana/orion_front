@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 import {
   FaHome,
-  FaCog,
   FaUser,
   FaSignOutAlt,
   FaUsers,
   FaTimes,
-  FaBars
+  FaBars,
 } from "react-icons/fa";
+import { FaUserGroup } from "react-icons/fa6";
 import "./sidebar.css";
 
 const Sidebar = ({ setActiveView }) => {
@@ -61,7 +61,7 @@ const Sidebar = ({ setActiveView }) => {
               <FaUsers className="icon" /> <span>Admin. Usuarios</span>
             </li>
             <li className={active === "config" ? "active" : ""} onClick={() => handleClick("config")}>
-              <FaCog className="icon" /> <span>Configuración</span>
+              <FaUserGroup className="icon" /> <span>Clientes</span>
             </li>
           </ul>
         </nav>

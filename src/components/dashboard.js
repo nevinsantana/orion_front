@@ -19,6 +19,7 @@ import AdminUsers from '../components/AdminUsers';
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
+  const userName = "Nevin Santana";
 
   // Datos de ejemplo
   const lineData = [
@@ -45,6 +46,14 @@ const Dashboard = () => {
       <div className="dashboard-content">
         {activeView === "dashboard" && (
           <div className="container-fluid">
+          {/* ========== HEADER USUARIO ========== */}
+          <div className="row align-items-center mb-4 border">
+            <div className="col-12 d-flex justify-content-end">
+              <span className="text-white fw-bold">
+                {userName}
+              </span>
+            </div>
+          </div>
             {/* ========== FILA 1 ========== */}
             <div className="row align-items-center mb-4">
               <div className="col-md-6">
@@ -206,11 +215,14 @@ const Dashboard = () => {
               </div>
 
               <div className="col-md-4 mb-3">
-                <div className="card-dark p-3 d-flex flex-column h-100 justify-content-between">
+                <div className="card-dark p-3 d-flex flex-column justify-content-between">
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-white">Ahorros</h5>
                     <button className="btn btn-vermas">Ver más</button>
                   </div>
+                  <p className="text-white mt-4">
+                    $1.725 <span className="text-white-50">de $5,000</span>
+                  </p>
                   <p className="text-white-50 mt-3">
                     Aquí puedes agregar más contenido...
                   </p>
@@ -222,7 +234,7 @@ const Dashboard = () => {
 
         {activeView === "AdminUsers" && <AdminUsers />}
         {activeView === "config" && (
-          <h2 className="text-white">Configuración (vista en construcción)</h2>
+          <h2 className="text-white">Clientes (vista en construcción)</h2>
         )}
       </div>
     </div>
