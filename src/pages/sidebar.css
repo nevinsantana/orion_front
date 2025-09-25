@@ -29,6 +29,7 @@
   padding: 0;
   margin: 20px 0;
 }
+
 .sidebar-menu li {
   display: flex;
   align-items: center;
@@ -40,16 +41,32 @@
   background: rgba(255, 255, 255, 0.05);
   transition: background 0.3s, transform 0.2s, color 0.3s;
 }
+
 .sidebar-menu li span {
   color: #fff; /* texto siempre blanco */
 }
+
 .sidebar-menu li:hover,
 .sidebar-menu li.active {
   background-color: #8b5cf6;
   color: #fff;
 }
+
 .sidebar-menu li .icon {
+  background-color: #8b5cf6;
   color: white;
+  transition: all 0.3s;
+  padding: 5px;
+  border-radius: 5px;
+  width: auto;
+  height: auto;
+}
+
+.sidebar-menu li.active .icon {
+  background-color: #fff; /* fondo blanco al icono */
+  color: #8b5cf6; /* icono morado */
+  width: auto;
+  height: auto;
 }
 
 /* Footer (Perfil y Cerrar Sesión) */

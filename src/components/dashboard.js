@@ -47,7 +47,7 @@ const Dashboard = () => {
         {activeView === "dashboard" && (
           <div className="container-fluid">
           {/* ========== HEADER USUARIO ========== */}
-          <div className="row align-items-center mb-4 border">
+          <div className="row align-items-center mb-4">
             <div className="col-12 d-flex justify-content-end">
               <span className="text-white fw-bold">
                 {userName}
