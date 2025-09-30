@@ -14,6 +14,7 @@ import {
 import "./dashboard.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminUsers from '../components/AdminUsers';
+import Clients from "../components/clients";
 
 
 
@@ -233,9 +234,7 @@ const Dashboard = () => {
         )}
 
         {activeView === "AdminUsers" && <AdminUsers />}
-        {activeView === "config" && (
-          <h2 className="text-white">Clientes (vista en construcción)</h2>
-        )}
+        {activeView === "Clients" && <Clients />}
       </div>
     </div>
     

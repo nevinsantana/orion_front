@@ -60,7 +60,7 @@ const Sidebar = ({ setActiveView }) => {
             <li className={active === "AdminUsers" ? "active" : ""} onClick={() => handleClick("AdminUsers")}>
               <FaUsers className="icon" /> <span>Admin. Usuarios</span>
             </li>
-            <li className={active === "config" ? "active" : ""} onClick={() => handleClick("config")}>
+            <li className={active === "Clients" ? "active" : ""} onClick={() => handleClick("Clients")}>
               <FaUserGroup className="icon" /> <span>Clientes</span>
             </li>
           </ul>
