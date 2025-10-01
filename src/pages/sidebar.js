@@ -9,7 +9,7 @@ import {
   FaTimes,
   FaBars,
 } from "react-icons/fa";
-import { FaUserGroup } from "react-icons/fa6";
+import { FaUserGroup, FaDollarSign } from "react-icons/fa6";
 import "./sidebar.css";
 
 const Sidebar = ({ setActiveView }) => {
@@ -80,6 +80,12 @@ const Sidebar = ({ setActiveView }) => {
               onClick={() => handleClick("Clients")}
             >
               <FaUserGroup className="icon" /> <span>Clientes</span>
+            </li>
+            <li
+              className={active === "Coins" ? "active" : ""}
+              onClick={() => handleClick("Coins")}
+            >
+              <FaDollarSign className="icon" /> <span>Monedas</span>
             </li>
           </ul>
         </nav>
