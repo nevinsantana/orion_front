@@ -101,51 +101,55 @@ function Clients() {
       </div>
 
       {/* Tabla responsiva */}
-      <div className="table-responsive clients-table-wrapper">
-        <table className="table table-dark table-striped clients-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayedClients.length > 0 ? (
-              displayedClients.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.nombre}</td>
-                  <td>{c.apellido}</td>
-                  <td>{c.fecha}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm me-2"
-                      style={{ backgroundColor: "#8A2CF1", color: "#fff" }}
-                      onClick={() => {
-                        setClientToEdit(c);
-                        setShowEditModal(true);
-                      }}
-                    >
-                      <FaPen />
-                    </button>
-                    <button
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#e61610", color: "#fff" }}
-                      onClick={() => handleDelete(c.id)}
-                    >
-                      <FaTrash />
-                    </button>
-                  </td>
+      <div className="row">
+        <div className="col-md-12">
+          <div className="table-responsive clients-table-wrapper">
+            <table className="table table-dark table-striped clients-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Apellido</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4">No se encontraron clientes</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {displayedClients.length > 0 ? (
+                  displayedClients.map((c) => (
+                    <tr key={c.id}>
+                      <td>{c.nombre}</td>
+                      <td>{c.apellido}</td>
+                      <td>{c.fecha}</td>
+                      <td>
+                        <button
+                          className="btn btn-sm me-2"
+                          style={{ backgroundColor: "#8A2CF1", color: "#fff" }}
+                          onClick={() => {
+                            setClientToEdit(c);
+                            setShowEditModal(true);
+                          }}
+                        >
+                          <FaPen />
+                        </button>
+                        <button
+                          className="btn btn-sm"
+                          style={{ backgroundColor: "#e61610", color: "#fff" }}
+                          onClick={() => handleDelete(c.id)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4">No se encontraron clientes</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Paginación */}
