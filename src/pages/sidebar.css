@@ -128,7 +128,8 @@
     position: fixed;
     top: 0;
     left: -100%;
-    width: 270px;
+    width: 330px;
+    /* width: 270px; */
     height: auto;
     background: rgba(0, 0, 0, 0.9);
     transition: left 0.4s ease;
@@ -171,5 +172,12 @@
   /* Ocultar logo en responsive */
   .sidebar-logo {
     display: none;
+  }
+}
+
+
+@media (max-width: 375px) {
+  .sidebar {
+    width: 270px;
   }
 }

@@ -76,7 +76,7 @@ function Clients() {
       <h1 className="mb-4">Clientes</h1>
 
       <div className="row mb-3 align-items-center">
-        <div className="col-lg-6 col-md-6 d-flex justify-content-start mb-2 mb-md-0">
+        <div className="col-lg-6 col-md-6 d-flex justify-content-start mb-2">
           <input
             type="text"
             placeholder="Buscar cliente..."

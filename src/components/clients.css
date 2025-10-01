@@ -140,12 +140,4 @@
 }
 
 /* Ajustes para tablets */
-@media (min-width: 768px) and (max-width: 991px) {
-  .buscarClientes {
-    margin-top: 15px;
-  }
-
-  .addCliente {
-    margin-top: 15px;
-  }
-}
+@media (min-width: 768px) and (max-width: 991px) {}

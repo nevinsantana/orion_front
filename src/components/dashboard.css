@@ -83,6 +83,10 @@
     flex-direction: column; 
   }
 
+  .header-usuario {
+    justify-content: center !important;
+  }
+
   .dashboard-content {
     margin-left: 0;
     padding-top: 70px; /* espacio para topbar */
@@ -91,10 +95,11 @@
   }
 
   /* === FILA 1 === */
-  .dashboard-content .row.align-items-center .col-md-6.d-flex {
+  /* .dashboard-content .row.align-items-center .col-md-6.d-flex {
     flex-direction: column;
     align-items: center;
-  }
+  } */
+
   .dashboard-content .d-flex.gap-3 {
     width: auto;
     gap: 10px;
@@ -106,12 +111,12 @@
   }
 
   /* === FILA 2 (gráfica y tarjetas en columna) === */
-  .dashboard-content .row.mb-4 > [class*="col-"] {
+  .dashboard-content .row.mb-4 > .cont-fila2 {
     width: 100%;
   }
 
   /* === FILA 3 (tabla y tarjeta lateral en columna) === */
-  .dashboard-content .row > [class*="col-"] {
+  .dashboard-content .row > .cont-fila3 {
     width: 100%;
   }
 
@@ -136,4 +141,8 @@
   }
 }
 
-
+@media (min-width: 1025px) {
+  .header-usuario {
+    justify-content: flex-end !important;
+  }
+}

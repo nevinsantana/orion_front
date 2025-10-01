@@ -12,11 +12,9 @@ import {
   Cell,
 } from "recharts";
 import "./dashboard.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import AdminUsers from '../components/AdminUsers';
+import "bootstrap/dist/css/bootstrap.min.css";
+import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
-
-
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -40,23 +38,21 @@ const Dashboard = () => {
   const COLORS = ["#8B5CF6", "#6B7280", "#10B981", "#F59E0B"];
 
   return (
-
     <div className="container-fluid contenedor-padre">
       <Sidebar setActiveView={setActiveView} />
 
       <div className="dashboard-content">
         {activeView === "dashboard" && (
           <div className="container-fluid">
-          {/* ========== HEADER USUARIO ========== */}
-          <div className="row align-items-center mb-4">
-            <div className="col-12 d-flex justify-content-end">
-              <span className="text-white fw-bold">
-                {userName}
-              </span>
-            </div>
-          </div>
-            {/* ========== FILA 1 ========== */}
+            {/* ========== HEADER USUARIO ========== */}
             <div className="row align-items-center mb-4">
+              <div className="col-12 d-flex header-usuario">
+                <span className="text-white fw-bold">{userName}</span>
+              </div>
+            </div>
+
+            {/* ========== FILA 1 ========== */}
+            <div className="row align-items-center mb-4 cont-fila1">
               <div className="col-md-6">
                 <h2 className="titulo-dashboard">Dashboard</h2>
               </div>
@@ -72,7 +68,7 @@ const Dashboard = () => {
             {/* ========== FILA 2 ========== */}
             <div className="row mb-4">
               {/* Resumen Saldo */}
-              <div className="col-lg-4 col-md-12 mb-3">
+              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
                 <div className="card-dark p-3 h-100 d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h5 className="text-white mb-0">Resumen Saldo</h5>
@@ -96,7 +92,7 @@ const Dashboard = () => {
               </div>
 
               {/* Gastos Pie */}
-              <div className="col-lg-4 col-md-12 mb-3">
+              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
                 <div className="card-dark p-3 h-100 d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h5 className="text-white mb-0">Gastos</h5>
@@ -128,7 +124,7 @@ const Dashboard = () => {
               </div>
 
               {/* Gastos Detallados (Tabla) */}
-              <div className="col-lg-4 col-md-12 mb-3">
+              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
                 <div className="card-dark p-3 h-100 d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h5 className="text-white mb-0">Próximos pagos</h5>
@@ -168,7 +164,7 @@ const Dashboard = () => {
 
             {/* ========== FILA 3 ========== */}
             <div className="row">
-              <div className="col-md-8 mb-3">
+              <div className="col-md-8 mb-3 cont-fila3">
                 <div className="card-dark p-3">
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="text-white mb-0">Transacciones Recientes</h5>
@@ -215,7 +211,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="col-md-4 mb-3">
+              <div className="col-md-4 mb-3 cont-fila3">
                 <div className="card-dark p-3 d-flex flex-column justify-content-between">
                   <div className="d-flex justify-content-between align-items-center">
                     <h5 className="text-white">Ahorros</h5>
@@ -237,7 +233,6 @@ const Dashboard = () => {
         {activeView === "Clients" && <Clients />}
       </div>
     </div>
-    
   );
 };
 
