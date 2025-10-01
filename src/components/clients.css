@@ -112,7 +112,6 @@
 
   .addCliente {
     width: auto; /* no ocupa todo el ancho */
-    min-width: 150px;
   }
 
   /* Columna derecha (Buscar) */

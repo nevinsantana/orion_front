@@ -125,23 +125,40 @@
 /* ====== RESPONSIVE tablet/móvil ≤1024px ====== */
 @media (max-width: 1024px) {
   .sidebar {
-    position: relative;
-    width: 100%;
-    min-height: auto;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 270px;
     height: auto;
-    display: none;
     background: rgba(0, 0, 0, 0.9);
-    transition: all 0.4s ease;
-  }
+    transition: left 0.4s ease;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 60px;
+    
+}
   .sidebar.open {
-    display: block;
+    left: 0;
+  }
+  
+  /* Fondo overlay */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1500;
   }
 
   .sidebar-menu li,
   .sidebar-footer div {
-    width: 50%;
+    width: 65%;
     margin: 5px auto;
-    justify-content: center;
+    /* justify-content: center; */
   }
 
   .topbar {

@@ -34,7 +34,11 @@ const Sidebar = ({ setActiveView }) => {
       {/* Topbar para tablet/móvil */}
       <div className="topbar">
         <div className="topbar-left">
-          <img src="https://placehold.co/150x50/888888/ffffff?text=Logo" alt="Logo" className="logo-topbar" />
+          <img
+            src="https://placehold.co/150x50/888888/ffffff?text=Logo"
+            alt="Logo"
+            className="logo-topbar"
+          />
         </div>
         <div className="topbar-right">
           <button className="hamburger-btn" onClick={() => setIsOpen(!isOpen)}>
@@ -42,6 +46,11 @@ const Sidebar = ({ setActiveView }) => {
           </button>
         </div>
       </div>
+
+      {/* Overlay */}
+      {isOpen && (
+        <div className="overlay" onClick={() => setIsOpen(false)}></div>
+      )}
 
       {/* Sidebar / menú */}
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
@@ -54,20 +63,32 @@ const Sidebar = ({ setActiveView }) => {
 
         <nav className="sidebar-menu">
           <ul>
-            <li className={active === "dashboard" ? "active" : ""} onClick={() => handleClick("dashboard")}>
+            <li
+              className={active === "dashboard" ? "active" : ""}
+              onClick={() => handleClick("dashboard")}
+            >
               <FaHome className="icon" /> <span>Dashboard</span>
             </li>
-            <li className={active === "AdminUsers" ? "active" : ""} onClick={() => handleClick("AdminUsers")}>
+            <li
+              className={active === "AdminUsers" ? "active" : ""}
+              onClick={() => handleClick("AdminUsers")}
+            >
               <FaUsers className="icon" /> <span>Admin. Usuarios</span>
             </li>
-            <li className={active === "Clients" ? "active" : ""} onClick={() => handleClick("Clients")}>
+            <li
+              className={active === "Clients" ? "active" : ""}
+              onClick={() => handleClick("Clients")}
+            >
               <FaUserGroup className="icon" /> <span>Clientes</span>
             </li>
           </ul>
         </nav>
 
         <div className="sidebar-footer">
-          <div className={active === "profile" ? "active" : ""} onClick={() => handleClick("profile")}>
+          <div
+            className={active === "profile" ? "active" : ""}
+            onClick={() => handleClick("profile")}
+          >
             <FaUser className="icon-footer" /> <span>Perfil</span>
           </div>
           <div className="sidebar-logout" onClick={handleLogout}>
