@@ -142,7 +142,7 @@ function Clients() {
                     </tr>
                   ))
                 ) : (
-                  <tr>
+                  <tr className="text-center">
                     <td colSpan="4">No se encontraron clientes</td>
                   </tr>
                 )}

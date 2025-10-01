@@ -11,6 +11,14 @@
   min-width: 150px;
 }
 
+.search-input:focus {
+  background-color: #1a1a1a;
+  color: #fff;
+  border-color: #444; /* opcional: mantiene el mismo borde */
+  outline: none; /* elimina el borde azul por defecto en algunos navegadores */
+}
+
+
 .search-input::placeholder {
   color: #ccc;
 }
