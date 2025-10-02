@@ -76,6 +76,11 @@
   color: #fff;
 }
 
+.header-usuario {
+  font-size: 24px;
+  margin-right: 15px;
+  justify-content: end;
+}
 
 /* ===== RESPONSIVE TABLET/MÓVIL ===== */
 @media (max-width: 1024px) {
@@ -142,7 +147,35 @@
 }
 
 @media (min-width: 1025px) {
+}
+
+/* Centrar el HEADER USUARIO en tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .topbar {
+    position: relative;
+  }
+
   .header-usuario {
+    position: absolute;
+    left: 55%;
+    transform: translateX(-50%);
+    top: 4%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: #fff;
     justify-content: flex-end !important;
+  }
+}
+
+/* ===== RESPONSIVE CELULAR ===== */
+@media (max-width: 767px) {
+  .header-usuario {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    margin-right: 0;
   }
 }

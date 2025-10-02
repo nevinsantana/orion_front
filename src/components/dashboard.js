@@ -47,8 +47,10 @@ const Dashboard = () => {
           <div className="container-fluid">
             {/* ========== HEADER USUARIO ========== */}
             <div className="row align-items-center mb-4">
-              <div className="col-12 d-flex header-usuario">
+              <div className="col-12 d-flex">
+              <div className="header-usuario">
                 <span className="text-white fw-bold">{userName}</span>
+              </div>
               </div>
             </div>
 
