@@ -76,12 +76,6 @@
   color: #fff;
 }
 
-.header-usuario {
-  font-size: 24px;
-  margin-right: 15px;
-  justify-content: end;
-}
-
 /* ===== RESPONSIVE TABLET/MÓVIL ===== */
 @media (max-width: 1024px) {
   .contenedor-padre { 
@@ -147,6 +141,16 @@
 }
 
 @media (min-width: 1025px) {
+  .header-usuario {
+    display: flex;
+    justify-content: flex-end; /* alineado a la izquierda */
+    width: auto;
+    margin-right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    text-align: left;
+  }
 }
 
 /* Centrar el HEADER USUARIO en tablets */
@@ -164,6 +168,7 @@
     font-weight: bold;
     color: #fff;
     justify-content: flex-end !important;
+    font-size: 24px;
   }
 }
 
@@ -177,5 +182,6 @@
     color: #fff;
     text-align: center;
     margin-right: 0;
+    font-size: 24px;
   }
 }
