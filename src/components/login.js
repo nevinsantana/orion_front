@@ -14,7 +14,7 @@ const Login = () => {
 
     // ⚡ Mostrar alerta antes de redirigir
     Swal.fire({
-      title: "¡Bienvenido!",
+      title: "¡Bienvenido a RAK Orion!",
       text: "Has iniciado sesión correctamente",
       icon: "success",
       confirmButtonText: "Continuar",
