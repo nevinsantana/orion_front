@@ -151,7 +151,7 @@ function Payments() {
                   ))
                 ) : (
                   <tr className="text-center">
-                    <td colSpan="4">No se encontraron historiales</td>
+                    <td colSpan="8">No se encontraron historiales</td>
                   </tr>
                 )}
               </tbody>

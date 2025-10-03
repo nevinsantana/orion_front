@@ -173,7 +173,7 @@ function Invoices() {
                   ))
                 ) : (
                   <tr className="text-center">
-                    <td colSpan="4">No se encontraron facturas</td>
+                    <td colSpan="5">No se encontraron facturas</td>
                   </tr>
                 )}
               </tbody>
