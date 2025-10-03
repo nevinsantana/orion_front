@@ -17,6 +17,7 @@ import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
 import Coins from "../components/coins";
 import Payments from "../components/payments";
+import Invoices from "./invoices";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -237,6 +238,7 @@ const Dashboard = () => {
         {activeView === "Clients" && <Clients />}
         {activeView === "Coins" && <Coins />}
         {activeView === "Payments" && <Payments />}
+        {activeView === "Invoices" && <Invoices />}
       </div>
     </div>
   );

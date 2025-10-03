@@ -1,23 +1,19 @@
 import React, { useState } from "react";
-import "./addPaymentsModal.css";
-import { FaUserGroup } from "react-icons/fa6";
+import "./addInvoicesModal.css";
 import { FaTimes } from "react-icons/fa";
+import { LiaFileInvoiceSolid } from "react-icons/lia";
 
-function  EditPaymentsModal({ payments, onClose, onSave }) {
-  const [email, setEmail] = useState(payments.email);
-    const [details, setDetails] = useState(payments.details);
-    const [amount, setAmount] = useState(payments.amount);
-    const [date, setDate] = useState(payments.date);
-    const [customer, setCustomer] = useState(payments.customer);
-    const [state, setState] = useState(payments.state);
-  
+function EditInvoicesModal({ invoices, onClose, onSave }) {
+  const [amount, setAmount] = useState(invoices.amount);
+  const [date, setDate] = useState(invoices.date);
+  const [customer, setCustomer] = useState(invoices.customer);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !details || !amount || !date || !customer || !state ) return;
+    if (!amount || !date || !customer) return;
 
     // Guardar los datos
-    onSave({ email, details, amount, date, customer, state });
+    onSave({ amount, date, customer });
 
     // Cerrar el modal automáticamente
     onClose();
@@ -35,7 +31,7 @@ function  EditPaymentsModal({ payments, onClose, onSave }) {
       <div className="modal-content-clients">
         {/* Header con icono de cerrar */}
         <div className="modal-header-clients p-3 d-flex justify-content-between align-items-center">
-          <h4 className="m-0">Editar Historial</h4>
+          <h4 className="m-0">Editar Facturas</h4>
           <FaTimes
             className="icon-close"
             onClick={onClose}
@@ -45,31 +41,31 @@ function  EditPaymentsModal({ payments, onClose, onSave }) {
 
         <div className="modal-body-clients p-4">
           <div className="tituloIconoClients d-flex align-items-center gap-2 mb-3">
-            <FaUserGroup className="icon" />
-            <h6 className="m-0">Datos de Historial</h6>
+            <LiaFileInvoiceSolid className="icon" />
+            <h6 className="m-0">Datos de Factura</h6>
           </div>
 
           <form onSubmit={handleSubmit} className="form-clientes">
             <div className="row g-2">
               <div className="col-md-6 col-12">
                 <div className="mb-3">
-                  <label className="form-label">Correo electrónico</label>
+                  <label className="form-label">Fecha</label>
                   <input
-                    type="text"
+                    type="date"
                     className="form-control"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
                   />
                 </div>
               </div>
               <div className="col-md-6 col-12">
                 <div className="mb-3">
-                  <label className="form-label">Detalles</label>
+                  <label className="form-label">Cliente</label>
                   <input
                     type="text"
                     className="form-control"
-                    value={details}
-                    onChange={(e) => setDetails(e.target.value)}
+                    value={customer}
+                    onChange={(e) => setCustomer(e.target.value)}
                   />
                 </div>
               </div>
@@ -84,42 +80,6 @@ function  EditPaymentsModal({ payments, onClose, onSave }) {
                     className="form-control"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 col-12">
-                <div className="mb-3">
-                  <label className="form-label">Fecha</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="row g-2">
-              <div className="col-md-6 col-12">
-                <div className="mb-3">
-                  <label className="form-label">Cliente</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={customer}
-                    onChange={(e) => setCustomer(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 col-12">
-                <div className="mb-3">
-                  <label className="form-label">Estado</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
                   />
                 </div>
               </div>
@@ -144,4 +104,4 @@ function  EditPaymentsModal({ payments, onClose, onSave }) {
   );
 }
 
-export default EditPaymentsModal;
+export default EditInvoicesModal;

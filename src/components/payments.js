@@ -120,7 +120,7 @@ function Payments() {
               <tbody>
                 {displayedPayments.length > 0 ? (
                   displayedPayments.map((m) => (
-                    <tr key={m.id}>
+                    <tr key={m.id} className="text-center">
                       <td>{m.id}</td>
                       <td>{m.email}</td>
                       <td>{m.details}</td>

@@ -130,7 +130,7 @@
     left: -100%;
     width: 330px;
     /* width: 270px; */
-    height: auto;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.9);
     transition: left 0.4s ease;
     z-index: 2000;
