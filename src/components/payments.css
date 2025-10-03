@@ -1,0 +1,129 @@
+.clients-container {
+  padding: 20px;
+}
+
+/* Input búsqueda */
+.search-input {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #444;
+  flex: 1;
+  min-width: 150px;
+}
+
+.search-input:focus {
+  background-color: #1a1a1a;
+  color: #fff;
+  border-color: #444; /* opcional: mantiene el mismo borde */
+  outline: none; /* elimina el borde azul por defecto en algunos navegadores */
+}
+
+
+.search-input::placeholder {
+  color: #ccc;
+}
+
+/* Botones */
+.buscarClientes {
+  background-color: #6e23c1;
+  color: #fff;
+  margin-left: 8px;
+}
+
+.buscarClientes:hover {
+  background-color: #6e23c1;
+  color: #fff;
+}
+
+.addCliente {
+  background-color: #6e23c1;
+  color: #fff;
+  margin-left: 0;
+}
+
+.addCliente:hover {
+  background-color: #6e23c1;
+  color: #fff;
+}
+
+/* Contenedor responsivo horizontal */
+.table-responsive.clients-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Asegurar que la tabla no se comprima demasiado */
+.clients-table {
+  min-width: 600px; /* ajustar según columnas */
+}
+
+/* Evitar que los textos se rompan */
+.clients-table td,
+.clients-table th {
+  white-space: nowrap;
+}
+
+/* Paginación */
+.pagination .page-link {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #6e23c1;
+  border-color: #6e23c1;
+  color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ajustes responsivos para móviles */
+@media (max-width: 767px) {
+  /* Contenedor de las columnas */
+  .row.mb-3.align-items-center {
+    flex-wrap: wrap; /* permite apilar columnas */
+  }
+
+  /* Columna izquierda (Añadir Cliente) */
+  .col-md-6.d-flex.justify-content-start {
+    width: 100%;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .addCliente {
+    width: auto; /* no ocupa todo el ancho */
+  }
+
+  /* Columna derecha (Buscar) */
+  .col-md-6.d-flex.justify-content-md-end {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0;
+  }
+
+  /* Input y botón Buscar */
+  .search-input {
+    width: calc(70% - 8px); /* deja margen a la derecha */
+    margin-bottom: 0;
+  }
+
+  .buscarClientes {
+    width: calc(30% - 8px); /* botón al lado del input */
+    margin-left: 8px; /* separación del input */
+  }
+
+  /* Flex wrap para que input y botón estén en línea */
+  .col-md-6.d-flex.justify-content-md-end .search-input,
+  .col-md-6.d-flex.justify-content-md-end .buscarClientes {
+    flex: none;
+  }
+}
+
+/* Ajustes para tablets */
+@media (min-width: 768px) and (max-width: 991px) {}

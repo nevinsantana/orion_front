@@ -16,6 +16,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
 import Coins from "../components/coins";
+import Payments from "../components/payments";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -235,6 +236,7 @@ const Dashboard = () => {
         {activeView === "AdminUsers" && <AdminUsers />}
         {activeView === "Clients" && <Clients />}
         {activeView === "Coins" && <Coins />}
+        {activeView === "Payments" && <Payments />}
       </div>
     </div>
   );
