@@ -10,6 +10,8 @@ import {
   FaBars,
 } from "react-icons/fa";
 import { FaUserGroup, FaDollarSign } from "react-icons/fa6";
+import { MdPayments } from "react-icons/md";
+import { LiaFileInvoiceSolid } from "react-icons/lia";
 import "./sidebar.css";
 
 const Sidebar = ({ setActiveView }) => {
@@ -86,6 +88,18 @@ const Sidebar = ({ setActiveView }) => {
               onClick={() => handleClick("Coins")}
             >
               <FaDollarSign className="icon" /> <span>Monedas</span>
+            </li>
+            <li
+              className={active === "Payments" ? "active" : ""}
+              onClick={() => handleClick("Payments")}
+            >
+              <MdPayments className="icon" /> <span>Historial de pagos</span>
+            </li>
+            <li
+              className={active === "Invoices" ? "active" : ""}
+              onClick={() => handleClick("Invoices")}
+            >
+              <LiaFileInvoiceSolid className="icon" /> <span>Facturas</span>
             </li>
           </ul>
         </nav>

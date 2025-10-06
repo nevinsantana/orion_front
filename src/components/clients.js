@@ -106,7 +106,7 @@ function Clients() {
           <div className="table-responsive clients-table-wrapper">
             <table className="table table-dark table-striped clients-table">
               <thead>
-                <tr>
+                <tr className="text-center">
                   <th>Nombre</th>
                   <th>Apellido</th>
                   <th>Fecha</th>
@@ -116,7 +116,7 @@ function Clients() {
               <tbody>
                 {displayedClients.length > 0 ? (
                   displayedClients.map((c) => (
-                    <tr key={c.id}>
+                    <tr key={c.id} className="text-center">
                       <td>{c.nombre}</td>
                       <td>{c.apellido}</td>
                       <td>{c.fecha}</td>

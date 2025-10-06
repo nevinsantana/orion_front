@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import Swal from "sweetalert2";   // 👈 Importar SweetAlert2
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
@@ -10,19 +11,29 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+
+    // ⚡ Mostrar alerta antes de redirigir
+    Swal.fire({
+      title: "¡Bienvenido a RAK Orion!",
+      text: "Has iniciado sesión correctamente",
+      icon: "success",
+      confirmButtonText: "Continuar",
+      confirmButtonColor: "#8b5cf6"
+    }).then(() => {
+      navigate("/dashboard"); // redirige después de aceptar
+    });
   };
 
   return (
     <div className="container-fluid vh-100 p-0">
       <div className="row h-100 g-0">
-        {/* Columna izquierda: imagen ORION BILLING */}
+        {/* Columna izquierda */}
         <div className="col-12 col-md-6 d-none d-md-flex d-dm-block login-left"></div>
 
-        {/* Columna derecha: formulario */}
+        {/* Columna derecha */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            {/* Imagen mediana arriba del formulario */}
+            {/* Imagen arriba */}
             <div className="text-center mb-4 mt-4 mt-md-0">
               <img
                 src="https://placehold.co/400x100/888888/ffffff?text=Imagen"
@@ -57,7 +68,6 @@ const Login = () => {
                 />
               </div>
 
-              {/* Texto de Olvidaste tu contraseña */}
               <div className="text-end mb-4">
                 <Link to="/request-password" className="forgot-link">
                   ¿Olvidaste tu contraseña?

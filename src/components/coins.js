@@ -106,7 +106,7 @@ function Coins() {
           <div className="table-responsive clients-table-wrapper">
             <table className="table table-dark table-striped clients-table">
               <thead>
-                <tr>
+                <tr className="text-center">
                   <th>Código</th>
                   <th>Nombre</th>
                   <th>Tipo de cambio</th>
@@ -116,7 +116,7 @@ function Coins() {
               <tbody>
                 {displayedCoins.length > 0 ? (
                   displayedCoins.map((m) => (
-                    <tr key={m.id}>
+                    <tr key={m.id} className="text-center">
                       <td>{m.code}</td>
                       <td>{m.nombre}</td>
                       <td>{m.tipoCambio}</td>

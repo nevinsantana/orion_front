@@ -16,6 +16,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
 import Coins from "../components/coins";
+import Payments from "../components/payments";
+import Invoices from "./invoices";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -47,8 +49,10 @@ const Dashboard = () => {
           <div className="container-fluid">
             {/* ========== HEADER USUARIO ========== */}
             <div className="row align-items-center mb-4">
-              <div className="col-12 d-flex header-usuario">
+              <div className="col-12">
+              <div className="header-usuario">
                 <span className="text-white fw-bold">{userName}</span>
+              </div>
               </div>
             </div>
 
@@ -233,6 +237,8 @@ const Dashboard = () => {
         {activeView === "AdminUsers" && <AdminUsers />}
         {activeView === "Clients" && <Clients />}
         {activeView === "Coins" && <Coins />}
+        {activeView === "Payments" && <Payments />}
+        {activeView === "Invoices" && <Invoices />}
       </div>
     </div>
   );
