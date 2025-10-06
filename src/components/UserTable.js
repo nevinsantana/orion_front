@@ -10,7 +10,8 @@ const UserTable = ({ users, onEdit, onDelete}) => {
       <Table className="user-table">
         <thead>
             <tr>
-                <th>Usuario</th>
+                <th>ID</th>
+                <th>Nombre Completo</th>
                 <th>Email</th>
                 <th>Acciones</th>
             </tr>
@@ -18,7 +19,8 @@ const UserTable = ({ users, onEdit, onDelete}) => {
         <tbody>
             {users.map(user => (
                 <tr key={user.id}>
-                    <td>Usuario {user.id}</td>
+                    <td>{user.id}</td>
+                    <td>{`${user.nombre} ${user.apellido}`}</td> {/* Mostramos el nombre mapeado */}
                     <td>{user.email}</td>
                     <td>
                         <Button className="edit-button" onClick={()=> onEdit(user.id)}>
