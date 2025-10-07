@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, InputGroup, Button, Form, Modal, Table, Pagination } from 'react-bootstrap'; // Importamos Pagination
+import { Container, Row, Col, Card, InputGroup, Button, Form, Modal, Table, Pagination } from 'react-bootstrap';
 import UserForm from "../UserForm/UserForm";
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
@@ -28,11 +28,8 @@ const AdminUsers = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // ********************************************************************
-    // LÓGICA DE PAGINACIÓN AÑADIDA
-    // ********************************************************************
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12 
+    const itemsPerPage = 12; 
 
     const handleEdit = (userId) => {
         const userToEdit = users.find(user => user.id === userId);
@@ -40,9 +37,6 @@ const AdminUsers = () => {
         setShowModal(true);
     };
     
-    // ********************************************************************
-    // FUNCIÓN DE LECTURA (READ)
-    // ********************************************************************
     const getUsers = async () => {
         try {
             const res = await axios.get(API_ENDPOINT_USERS, {
@@ -72,9 +66,6 @@ const AdminUsers = () => {
     };
 
 
-    // ********************************************************************
-    // FUNCIÓN DE ELIMINACIÓN (DELETE)
-    // ********************************************************************
     const deleteUser = async (userId) => {
         try {
             const res = await axios.delete(`${API_ENDPOINT_USERS}/${userId}`, {
@@ -89,7 +80,7 @@ const AdminUsers = () => {
                     background: '#121212',
                     color: '#e0e0e0'
                 });
-                getUsers(); // Refresca la lista después de eliminar
+                getUsers();
             } else {
                  Swal.fire({
                     title: 'Error',
@@ -139,12 +130,10 @@ const AdminUsers = () => {
 
     const filteredUsers = users.filter(user =>
      (user.nombre && user.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+     (user.apellido && user.apellido.toLowerCase().includes(searchTerm.toLowerCase())) ||
      (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    // ********************************************************************
-    // CÁLCULOS DE PAGINACIÓN
-    // ********************************************************************
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
     const displayedUsers = filteredUsers.slice(
@@ -152,14 +141,11 @@ const AdminUsers = () => {
         currentPage * itemsPerPage
     );
 
-    // ********************************************************************
-    // MANEJO DE CAMBIOS DE PÁGINA
-    // ********************************************************************
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    useEffect(()=> {getUsers()}, []) // Carga inicial de usuarios
+    useEffect(()=> {getUsers()}, [])
     useEffect(() => {
-        setCurrentPage(1); // Resetear a la primera página al buscar
+        setCurrentPage(1);
     }, [searchTerm]); 
 
     // Función que reemplaza el componente UserTable
@@ -167,9 +153,9 @@ const AdminUsers = () => {
         <div className="table-responsive clients-table-wrapper">
           <Table className="table table-dark table-striped user-table">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre Completo</th>
+                <tr className="text-center">
+                    <th>Nombre</th> {/* Cambiado de 'Nombre Completo' a 'Nombre' */}
+                    <th>Apellido</th> {/* Añadida nueva columna */}
                     <th>Email</th>
                     <th>Acciones</th>
                 </tr>
@@ -177,9 +163,9 @@ const AdminUsers = () => {
             <tbody>
                 {displayedUsers.length > 0 ? (
                     displayedUsers.map(user => (
-                        <tr key={user.id}>
-                            <td>{user.id}</td>
-                            <td>{`${user.nombre} ${user.apellido}`}</td> 
+                        <tr key={user.id} className="text-center">
+                            <td>{user.nombre}</td> {/* Muestra solo el nombre */}
+                            <td>{user.apellido}</td> {/* Muestra solo el apellido */}
                             <td>{user.email}</td>
                             <td>
                                 <Button className="edit-button" onClick={()=> handleEdit(user.id)}>
@@ -193,7 +179,7 @@ const AdminUsers = () => {
                     ))
                 ) : (
                     <tr className="text-center">
-                        <td colSpan="4">No se encontraron usuarios</td>
+                        <td colSpan="4">No se encontraron usuarios</td> {/* Ajustamos colSpan de 3 a 4 */}
                     </tr>
                 )}
             </tbody>
@@ -243,51 +229,31 @@ const AdminUsers = () => {
                     </Row>
                 </main>
                 
-                {/* ******************************************************************** */}
-                {/* PAGINACIÓN AÑADIDA */}
-                {/* ******************************************************************** */}
-                {/* Paginación */}
-      {totalPages > 1 && (
-        <nav>
-          <ul className="pagination justify-content-center mt-3">
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                Anterior
-              </button>
-            </li>
-            {[...Array(totalPages)].map((_, idx) => (
-              <li
-                key={idx}
-                className={`page-item ${
-                  currentPage === idx + 1 ? "active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(idx + 1)}
-                >
-                  {idx + 1}
-                </button>
-              </li>
-            ))}
-            <li
-              className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
-              }`}
-            >
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                Siguiente
-              </button>
-            </li>
-          </ul>
-        </nav>
-      )}
+                {totalPages > 1 && (
+                    <nav>
+                        <Pagination className="justify-content-center mt-3">
+                            <Pagination.Prev 
+                                onClick={() => paginate(currentPage - 1)} 
+                                disabled={currentPage === 1} 
+                            />
+
+                            {[...Array(totalPages)].map((_, idx) => (
+                                <Pagination.Item 
+                                    key={idx + 1} 
+                                    active={idx + 1 === currentPage} 
+                                    onClick={() => paginate(idx + 1)}
+                                >
+                                    {idx + 1}
+                                </Pagination.Item>
+                            ))}
+
+                            <Pagination.Next 
+                                onClick={() => paginate(currentPage + 1)} 
+                                disabled={currentPage === totalPages} 
+                            />
+                        </Pagination>
+                    </nav>
+                )}
                 
             </Container>
 
