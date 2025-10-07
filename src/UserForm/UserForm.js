@@ -3,8 +3,8 @@ import { FaUser } from "react-icons/fa";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./UserForm.css"; // Mantenemos el archivo CSS para estilos personalizados
-import axios from "axios"; // Importar axios
+import "./UserForm.css"; 
+import axios from "axios"; 
 
 // Definimos el endpoint de la API
 const BASE_API_URL = "http://localhost:7777/api";

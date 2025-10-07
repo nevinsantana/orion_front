@@ -14,7 +14,7 @@
   flex: 1;
   padding: 20px;
   margin-left: 270px; /* espacio para sidebar */
-  background-color: #0A0A0A;
+  background-color: #0A0A0A !important;
   color: #fff;
   display: flex;
   flex-direction: column;

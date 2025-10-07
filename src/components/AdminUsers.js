@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, InputGroup, Button, Form, Modal } from 'react-bootstrap';
-import UserTable from "./UserTable";
+import { Container, Row, Col, Card, InputGroup, Button, Form, Modal, Table, Pagination } from 'react-bootstrap'; // Importamos Pagination
 import UserForm from "../UserForm/UserForm";
+import { FaPen } from "react-icons/fa";
+import { AiFillDelete } from "react-icons/ai";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminUsers.css';
 import Swal from 'sweetalert2'; 
@@ -17,7 +18,7 @@ const getAuthHeaders = () => {
     if (token) {
         return { Authorization: `Bearer ${token}` };
     }
-    return {}; // Devuelve un objeto vacío si no hay token
+    return {};
 };
 
 
@@ -27,18 +28,16 @@ const AdminUsers = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const [showRestoreModal, setShowRestoreModal] = useState(false);
-    const [userToRestore, setUserToRestore] = useState(null);
-    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
-    const [emailForPasswordReset, setEmailForPasswordReset] = useState('');
+    // ********************************************************************
+    // LÓGICA DE PAGINACIÓN AÑADIDA
+    // ********************************************************************
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 12 
 
     const handleEdit = (userId) => {
-        // Busca el usuario por ID
         const userToEdit = users.find(user => user.id === userId);
         setCurrentUser(userToEdit);
         setShowModal(true);
-
-        
     };
     
     // ********************************************************************
@@ -47,11 +46,10 @@ const AdminUsers = () => {
     const getUsers = async () => {
         try {
             const res = await axios.get(API_ENDPOINT_USERS, {
-                headers: getAuthHeaders(), // Incluye el token si existe
+                headers: getAuthHeaders(),
             });
             
             if (res.data.code === 1 && Array.isArray(res.data.users)) {
-                // Mapeamos los campos del backend (first_name, last_name)
                 const formattedUsers = res.data.users.map(u => ({
                     ...u,
                     nombre: u.first_name,
@@ -73,37 +71,6 @@ const AdminUsers = () => {
         }
     };
 
-    // ********************************************************************
-// FUNCIÓN PARA OBTENER UN USUARIO INDIVIDUAL (GET USER BY ID)
-// ********************************************************************
-const getUserById = async (userId) => {
-    try {
-        const res = await axios.get(`${API_ENDPOINT_USERS}/${userId}`, {
-            headers: getAuthHeaders(),
-        });
-        
-        if (res.data.code === 1) {
-            const formattedUser = {
-                ...res.data.user,
-                nombre: res.data.user.first_name,
-                apellido: res.data.user.last_name,
-            };
-            return formattedUser;
-        } else {
-            throw new Error(res.data.message || 'Error al obtener el usuario');
-        }
-    } catch (error) {
-        console.error("Error al obtener usuario:", error);
-        Swal.fire({
-            title: 'Error',
-            text: 'No se pudo cargar la información del usuario.',
-            icon: 'error',
-            background: '#121212',
-            color: '#e0e0e0'
-        });
-        throw error;
-    }
-};
 
     // ********************************************************************
     // FUNCIÓN DE ELIMINACIÓN (DELETE)
@@ -111,7 +78,7 @@ const getUserById = async (userId) => {
     const deleteUser = async (userId) => {
         try {
             const res = await axios.delete(`${API_ENDPOINT_USERS}/${userId}`, {
-                headers: getAuthHeaders(), // Incluye el token si existe
+                headers: getAuthHeaders(),
             });
 
             if (res.data.code === 1 || res.status === 200) {
@@ -151,8 +118,8 @@ const getUserById = async (userId) => {
             text: "No podrás revertir esta acción.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#e61610', // Rojo para confirmar la eliminación
-            cancelButtonColor: '#8a2cf1', // Morado para cancelar
+            confirmButtonColor: '#e61610',
+            cancelButtonColor: '#8a2cf1',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
             background: '#121212',
@@ -170,44 +137,158 @@ const getUserById = async (userId) => {
         setCurrentUser(null);
     };
 
-     const filteredUsers = users.filter(user =>
+    const filteredUsers = users.filter(user =>
      (user.nombre && user.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
      (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
+    // ********************************************************************
+    // CÁLCULOS DE PAGINACIÓN
+    // ********************************************************************
+    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+    const displayedUsers = filteredUsers.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // ********************************************************************
+    // MANEJO DE CAMBIOS DE PÁGINA
+    // ********************************************************************
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     useEffect(()=> {getUsers()}, []) // Carga inicial de usuarios
+    useEffect(() => {
+        setCurrentPage(1); // Resetear a la primera página al buscar
+    }, [searchTerm]); 
+
+    // Función que reemplaza el componente UserTable
+    const RenderUserTable = () => (
+        <div className="table-responsive clients-table-wrapper">
+          <Table className="table table-dark table-striped user-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {displayedUsers.length > 0 ? (
+                    displayedUsers.map(user => (
+                        <tr key={user.id}>
+                            <td>{user.id}</td>
+                            <td>{`${user.nombre} ${user.apellido}`}</td> 
+                            <td>{user.email}</td>
+                            <td>
+                                <Button className="edit-button" onClick={()=> handleEdit(user.id)}>
+                                    <FaPen />
+                                </Button>
+                                <Button className="delete-button" onClick={()=> handleDelete(user.id)}>
+                                    <AiFillDelete />
+                                </Button>
+                            </td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr className="text-center">
+                        <td colSpan="4">No se encontraron usuarios</td>
+                    </tr>
+                )}
+            </tbody>
+          </Table>
+        </div>
+    );
+    // FIN de la función que reemplaza el componente UserTable
 
     return(
         <div className="admin-container">
-            <Container fluid>
-                <header className="admin-header">
-                    <h2 className="titulo-dashboard mb-5">Administrador de Usuarios</h2>
-                    <Row className="header-actions">
-                        <Col xs={12} md={7} lg={8} className="d-flex mb-3 mb-md-0">
-                            <InputGroup className="search-bar flex-grow-1">
-                                <Form.Control
-                                    type="search"
-                                    placeholder="Buscar usuario..."
-                                    aria-label="Buscar"
-                                    className="search-input"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                            </InputGroup>
-                            <Button variant="secondary" className="search-button">Buscar</Button>
-                        </Col>
-                        <Col xs={12} md={5} lg={4}>
-                            <Button className="add-button w-10 " onClick={() => {setCurrentUser(null); setShowModal(true);}}>Añadir Usuario</Button>
+            <Container fluid className="clients-container">
+                <h1 className="mb-4">Administrador de Usuarios</h1>
+                <Row className="mb-3 align-items-center header-actions">
+                    
+                    {/* Columna de Búsqueda */}
+                    <Col lg={6} md={6} className="d-flex justify-content-start mb-2">
+                        <InputGroup className="search-bar flex-grow-1">
+                            <Form.Control
+                                type="search"
+                                placeholder="Buscar usuario..."
+                                aria-label="Buscar"
+                                className="form-control search-input"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </InputGroup>
+                        <Button variant="secondary" className="btn ms-2 search-button">Buscar</Button>
+                    </Col>
+                    
+                    {/* Columna de Añadir Usuario */}
+                    <Col lg={6} md={6} className="d-flex justify-content-md-end justify-content-start">
+                        <Button className="btn d-flex align-items-center add-button" onClick={() => {setCurrentUser(null); setShowModal(true);}}>
+                            Añadir Usuario
+                        </Button>
+                    </Col>
+                    
+                </Row>
+                <main className="admin-content">
+                    <Row>
+                        <Col md={12}>
+                            <Card className="user-table-card">
+                                <Card.Body className="p-0">
+                                    <RenderUserTable /> 
+                                </Card.Body>
+                            </Card>
                         </Col>
                     </Row>
-                </header>
-                <main className="admin-content">
-                    <Card className="user-table-card">
-                        <Card.Body>
-                            <UserTable users={filteredUsers} onEdit={handleEdit} onDelete={handleDelete}/>
-                        </Card.Body>
-                    </Card>
                 </main>
+                
+                {/* ******************************************************************** */}
+                {/* PAGINACIÓN AÑADIDA */}
+                {/* ******************************************************************** */}
+                {/* Paginación */}
+      {totalPages > 1 && (
+        <nav>
+          <ul className="pagination justify-content-center mt-3">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Anterior
+              </button>
+            </li>
+            {[...Array(totalPages)].map((_, idx) => (
+              <li
+                key={idx}
+                className={`page-item ${
+                  currentPage === idx + 1 ? "active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              </li>
+            ))}
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
+                
             </Container>
 
             {/* Modal para el formulario de usuario */}
@@ -219,7 +300,7 @@ const getUserById = async (userId) => {
                     <UserForm  
                         user={currentUser} 
                         onClose={handleCloseModal} 
-                        onUserSaved={getUsers} // Pasamos la función para refrescar la lista
+                        onUserSaved={getUsers}
                     />
                 </Modal.Body>
             </Modal>

@@ -1,96 +1,204 @@
-.admin-container {
-  background-color: #121212;
-  color: #e0e0e0;
-  min-height: 100vh;
-  width: 100%; 
-  font-family: Arial, sans-serif;
-  padding: 2%;
+/* === Copia de clients.css y ajustes para fondo negro y paginación === */
+
+
+
+.clients-container {
+  padding: 20px;
 }
 
-.admin-header {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 50px;
-  margin-top: 50px;
+.titulo-dashboard {
+    color: #fff;
+    font-weight: bold;
+    padding-top: 20px;
+    padding-left: 20px;
 }
 
-.admin-header h2 {
-  color: #fff;
-  font-weight: bold;
-}
-
-.header-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-right: 10px;
-  width: 100%;
-}
-
-
-
+/* Input búsqueda */
 .search-input {
-  background-color: #2c2c2c;
-  border: 1px solid #262626;
-  padding: 15px;
-  box-sizing: border-box;
-  border-radius: 15px;
-  font-size: 15px;
+  background-color: #1a1a1a;
   color: #fff;
-}
-
-.search-input::placeholder {
-  color: #a0a0a0;
+  border: 1px solid #444;
+  flex: 1;
+  min-width: 150px;
 }
 
 .search-input:focus {
-  outline: none;
-  border-color: #8a2cf1;
+  background-color: #1a1a1a;
+  color: #fff;
+  border-color: #444; 
+  outline: none; 
 }
 
 
-.search-button,
-.add-button {
-  border: none;
-  padding: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 15px;
-  box-sizing: border-box;
-  width: 200px;
-  height: 50px;
-  margin-top: 6px;
+.search-input::placeholder {
+  color: #ccc;
 }
 
+/* Botones */
 .search-button {
-  background-color: #8a2cf1;
-  color: white;
-  width: 80px;
-  margin-left: 20px;
+  background-color: #6e23c1;
+  color: #fff;
+  margin-left: 8px;
+  border: none;
+  font-weight: bold;
+  /* Estilos de clients.css */
+  padding: 0.375rem 0.75rem; 
+  height: auto;
 }
 
 .search-button:hover {
-  background-color: #6e23c1;
+  background-color: #5a1e9e;
+  color: #fff;
 }
 
 .add-button {
-  background-color: #8a2cf1;
-  color: white;
+  background-color: #6e23c1;
+  color: #fff;
+  margin-left: 0;
+  border: none;
+  font-weight: bold;
+  /* Estilos de clients.css */
+  padding: 0.375rem 0.75rem;
+  height: auto;
 }
 
 .add-button:hover {
-  background-color: #6e23c1;
+  background-color: #5a1e9e;
+  color: #fff;
 }
 
+/* Contenedor responsivo horizontal */
+.table-responsive.clients-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
 
-.user-table-card {
-  background-color: #1a1a1a;
+/* Asegurar que la tabla no se comprima demasiado */
+.user-table {
+  min-width: 600px;
+  background-color: #1a1a1a !important;
+  color: #fff;
   border-color: #262626;
 }
 
-.custom-modal-dialog {
-  max-width: 1032px !important;
-  width: 1032px !important;
+/* Estilo para los bordes de la tabla de usuarios */
+.user-table th,
+.user-table td {
+  border-bottom: 1px solid #444 !important;
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+  white-space: nowrap;
+  /* === CAMBIO CLAVE: Reducimos el padding para hacer la tabla más pequeña === */
+  padding: 8px 12px; 
+}
+
+.user-table th {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.user-table tr:hover {
+  background-color: #2a2a2a !important;
+}
+
+
+/* === Paginación (Copia de clients.css) === */
+.pagination .page-link {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #6e23c1;
+  border-color: #6e23c1;
+  color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* ======================================= */
+
+
+/* Estilos de la tabla de AdminUsers para mantener el diseño oscuro */
+.user-table-card {
+    background-color: #1a1a1a; 
+    border: none;
+}
+
+/* === Botones de Acción (Edit/Delete) de AdminUsers === */
+/* NOTA: Estos botones deben ser compactos para caber en la celda pequeña */
+.edit-button,
+.delete-button {
+    border: none;
+    border-radius: 5px; 
+    color: #fff !important;
+    cursor: pointer;
+    width: 32px; /* Reducido de 38px */
+    height: 32px; /* Reducido de 38px */
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-button {
+    background-color: #8a2cf1 !important;
+    margin-right: 5px;
+}
+
+.edit-button:hover {
+    background-color: #6e23c1 !important;
+}
+
+.delete-button {
+    background-color: #e61610 !important;
+    margin-left: 5px;
+}
+
+.delete-button:hover {
+    background-color: #b40e08 !important;
+}
+
+/* === Ajustes responsivos para móviles === */
+@media (max-width: 767px) {
+  /* Contenedor de las columnas */
+  .header-actions {
+    flex-wrap: wrap; 
+  }
+
+  /* Columna izquierda (Buscar) */
+  .header-actions > .col-lg-6.d-flex.justify-content-start {
+    width: 100%;
+    margin-bottom: 8px;
+    order: 2; 
+  }
+
+  /* Columna derecha (Añadir) */
+  .header-actions > .col-lg-6.d-flex.justify-content-md-end {
+    width: 100%;
+    order: 1; 
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .add-button {
+    width: auto;
+  }
+
+  /* Input y botón Buscar */
+  .search-bar {
+      width: calc(100% - 88px); 
+  }
+  
+  .search-button {
+      margin-left: 8px; 
+      width: 80px;
+  }
 }
 
 
