@@ -193,6 +193,58 @@
   }
 }
 
+@media (max-width: 990px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 330px;
+    /* width: 270px; */
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    transition: left 0.4s ease;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 60px;
+    
+}
+  .sidebar.open {
+    left: 0;
+  }
+  
+  /* Fondo overlay */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1500;
+  }
+
+  .sidebar-menu li,
+  .sidebar-footer div {
+    width: 65%;
+    margin: 5px auto;
+    /* justify-content: center; */
+  }
+
+  .topbar {
+    display: flex;
+  }
+  .sidebar-footer {
+    align-items: center;
+  }
+
+  /* Ocultar logo en responsive */
+  .sidebar-logo {
+    display: none;
+  }
+}
+
 
 @media (max-width: 375px) {
   .sidebar {

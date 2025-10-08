@@ -78,6 +78,22 @@
 
 /* ===== RESPONSIVE TABLET/MÓVIL ===== */
 @media (max-width: 1024px) {
+  .topbar {
+    position: relative;
+  }
+
+  .header-usuario {
+    position: absolute;
+    left: 55%;
+    transform: translateX(-50%);
+    top: 4%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: #fff;
+    justify-content: flex-end;
+    font-size: 24px;
+  }
+
   .contenedor-padre { 
     flex-direction: column; 
   }
@@ -153,29 +169,11 @@
   }
 }
 
-/* Centrar el HEADER USUARIO en tablets */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .topbar {
-    position: relative;
-  }
-
-  .header-usuario {
-    position: absolute;
-    left: 55%;
-    transform: translateX(-50%);
-    top: 4%;
-    transform: translate(-50%, -50%);
-    font-weight: bold;
-    color: #fff;
-    justify-content: flex-end !important;
-    font-size: 24px;
-  }
-}
-
-/* ===== RESPONSIVE CELULAR ===== */
-@media (max-width: 767px) {
+@media( max-width: 990px ) {
+  
   .header-usuario {
     display: flex;
+    left: 55%;
     justify-content: center;
     width: 100%;
     font-weight: bold;
@@ -183,5 +181,29 @@
     text-align: center;
     margin-right: 0;
     font-size: 24px;
+  }
+}
+
+/* ===== RESPONSIVE CELULAR ===== */
+@media( max-width: 485px ) {
+  /* Contenedor de header */
+  .cont-header-usuario {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0 !important;
+  }
+
+  .header-usuario {
+    display: flex !important; /* asegúrate que no esté en absolute */
+    position: relative; /* elimina position absolute */
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    font-size: 26px;
+  }
+
+  .titulo-dashboard {
+    text-align: center;
   }
 }
