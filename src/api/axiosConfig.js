@@ -2,7 +2,8 @@ import axios from "axios";
 
 // 🔗 Define la URL base del backend.
 // Usa la variable de entorno o localhost por defecto
-const baseURL = process.env.REACT_APP_API_URL || "http://localhost:8081/api";
+const defaultPort = 8081;
+const baseURL = process.env.REACT_APP_API_URL || `http://localhost:${defaultPort}/api`;
 
 // 🧩 Crea la instancia de Axios
 const axiosInstance = axios.create({

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../pages/sidebar";
 import {
   ResponsiveContainer,
@@ -18,10 +18,37 @@ import Clients from "../components/clients";
 import Coins from "../components/coins";
 import Payments from "../components/payments";
 import Invoices from "./invoices";
+import axios from "../api/axiosConfig";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
-  const userName = "Nevin Santana";
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const response = await axios.get("/users/2", {
+          // 👈 reemplaza 2 por el ID dinámico si lo tienes
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.code === 1) {
+          setUser(response.data.user);
+        } else {
+          console.error("Usuario no encontrado");
+        }
+      } catch (error) {
+        console.error("Error al obtener usuario:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   // Datos de ejemplo
   const lineData = [
@@ -50,9 +77,15 @@ const Dashboard = () => {
             {/* ========== HEADER USUARIO ========== */}
             <div className="row align-items-center mb-4 cont-header-usuario">
               <div className="col-12">
-              <div className="header-usuario">
-                <span className="text-white fw-bold">{userName}</span>
-              </div>
+                <div className="header-usuario">
+                  {user ? (
+                    <span className="text-white fw-bold">
+                      {user.first_name} {user.last_name}
+                    </span>
+                  ) : (
+                    <span className="text-white fw-bold">Cargando...</span>
+                  )}
+                </div>
               </div>
             </div>
 
