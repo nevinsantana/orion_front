@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Swal from "sweetalert2";   // 👈 Importar SweetAlert2
+import Swal from "sweetalert2";
+import axios from "../api/axiosConfig"; // 👈 Importa tu configuración de Axios
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
@@ -9,19 +10,56 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // ⚡ Mostrar alerta antes de redirigir
-    Swal.fire({
-      title: "¡Bienvenido a RAK Orion!",
-      text: "Has iniciado sesión correctamente",
-      icon: "success",
-      confirmButtonText: "Continuar",
-      confirmButtonColor: "#8b5cf6"
-    }).then(() => {
-      navigate("/dashboard"); // redirige después de aceptar
-    });
+    try {
+      // 👇 Petición al backend con los datos del formulario
+      const response = await axios.post("/users/login", {
+        email,
+        password,
+      });
+
+      // ✅ Si la respuesta contiene un token (ajusta el nombre si tu backend devuelve algo distinto)
+      if (response.data && response.data.token) {
+        const token = response.data.token;
+
+        // Guarda el token en localStorage
+        localStorage.setItem("token", token);
+
+        // Muestra alerta y redirige al dashboard
+        Swal.fire({
+          title: "¡Bienvenido a RAK Orion!",
+          text: "Has iniciado sesión correctamente",
+          icon: "success",
+          confirmButtonText: "Continuar",
+          confirmButtonColor: "#8b5cf6",
+        }).then(() => {
+          navigate("/dashboard");
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "No se recibió un token válido del servidor.",
+          icon: "error",
+          confirmButtonText: "Intentar de nuevo",
+        });
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+
+      let message = "Ocurrió un error al conectar con el servidor.";
+      if (error.response?.data?.message) {
+        message = error.response.data.message;
+      }
+
+      Swal.fire({
+        title: "Error al iniciar sesión",
+        text: message,
+        icon: "error",
+        confirmButtonText: "Intentar de nuevo",
+      });
+    }
   };
 
   return (
@@ -33,7 +71,6 @@ const Login = () => {
         {/* Columna derecha */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            {/* Imagen arriba */}
             <div className="text-center mb-4 mt-4 mt-md-0">
               <img
                 src="https://placehold.co/400x100/888888/ffffff?text=Imagen"
