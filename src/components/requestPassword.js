@@ -1,16 +1,53 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom"; // 👈 importa Link
+import Swal from "sweetalert2";
+import axios from "../api/axiosConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
 const RequestPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simula enviar correo y redirige a cambiar contraseña
-    navigate("/forgot-password");
+    setLoading(true);
+
+    try {
+      const response = await axios.post("/users/forgot-password", { email });
+
+      if (response.data.code === 1) {
+        Swal.fire({
+          title: "Correo enviado",
+          text: "Revisa tu bandeja de entrada para cambiar tu contraseña.",
+          icon: "success",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#8b5cf6",
+        }).then(() => {
+          navigate("/request-password"); // redirige a la vista de cambio de contraseña
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: response.data.message || "No se pudo enviar el correo.",
+          icon: "error",
+          confirmButtonText: "Intentar de nuevo",
+        });
+      }
+    } catch (error) {
+      console.error("Error al solicitar cambio de contraseña:", error);
+      Swal.fire({
+        title: "Error",
+        text:
+          error.response?.data?.message ||
+          "Ocurrió un error al conectar con el servidor.",
+        icon: "error",
+        confirmButtonText: "Intentar de nuevo",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,7 +68,7 @@ const RequestPassword = () => {
 
             {/* Título */}
             <div className="mb-4 text-center">
-              <h4 className="mb-0">Recuperar Contraseña</h4>
+              <h4 className="mb-0">Ingresa Correo</h4>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -48,8 +85,8 @@ const RequestPassword = () => {
               </div>
 
               <div className="d-flex justify-content-center">
-                <button type="submit" className="btn btn-sesion">
-                  Enviar
+                <button type="submit" className="btn btn-sesion" disabled={loading}>
+                  {loading ? "Enviando..." : "Enviar"}
                 </button>
               </div>
             </form>

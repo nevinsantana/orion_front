@@ -1,28 +1,112 @@
 // src/pages/ForgotPassword.js
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
+import axios from "../api/axiosConfig";
+import Swal from "sweetalert2";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const code = searchParams.get("token");
+
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     setNewPassword("");
     setConfirmPassword("");
   }, []);
 
-  const handleReset = (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      alert("Las contraseñas no coinciden");
-      return;
+  const handleReset = async (e) => {
+  e.preventDefault();
+
+  if (!code) {
+    Swal.fire({
+      title: "Error",
+      text: "Token inválido o faltante",
+      icon: "error",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    Swal.fire({
+      title: "Error",
+      text: "Las contraseñas no coinciden",
+      icon: "warning",
+      confirmButtonText: "Aceptar",
+    });
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // 🔹 Petición POST al backend sin enviar el token de login
+    const response = await axios.post(
+      "/reset-password",
+      {
+        code: code,
+        password: newPassword,
+        password_confirm: confirmPassword,
+      },
+      {
+        headers: { Authorization: "" } // ⚡ importante: evita enviar token
+      }
+    );
+
+    if (response.data.code === 1) {
+      Swal.fire({
+        title: "Éxito",
+        text: "Contraseña actualizada correctamente",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#8b5cf6",
+      }).then(() => {
+        navigate("/"); // redirige al login
+      });
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: response.data.message || "No se pudo actualizar la contraseña",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
     }
-    alert("Contraseña actualizada con éxito");
-    navigate("/");
-  };
+  } catch (error) {
+    console.error("Error al actualizar la contraseña:", error);
+
+    // 🔹 Captura mensajes del backend o muestra genérico
+    let message =
+      error.response?.data?.message ||
+      "Ocurrió un error al conectar con el servidor";
+
+    Swal.fire({
+      title: "Error",
+      text: message,
+      icon: "error",
+      confirmButtonText: "Aceptar",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  // const handleReset = (e) => {
+  //   e.preventDefault();
+  //   if (newPassword !== confirmPassword) {
+  //     alert("Las contraseñas no coinciden");
+  //     return;
+  //   }
+  //   alert("Contraseña actualizada con éxito");
+  //   navigate("/");
+  // };
 
   return (
     <div className="container-fluid vh-100 p-0">
@@ -80,8 +164,8 @@ const ForgotPassword = () => {
 
               {/* 🔹 Botón guardar centrado */}
               <div className="d-flex justify-content-center">
-                <button type="submit" className="btn btn-sesion">
-                  Guardar
+                <button type="submit" className="btn btn-sesion" disabled={loading}>
+                  {loading ? "Actualizando..." : "Guardar"}
                 </button>
               </div>
             </form>
