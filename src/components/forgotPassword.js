@@ -49,7 +49,7 @@ const ForgotPassword = () => {
   try {
     // 🔹 Petición POST al backend sin enviar el token de login
     const response = await axios.post(
-      "/reset-password",
+      "/users/reset-password",
       {
         code: code,
         password: newPassword,
