@@ -19,6 +19,7 @@ import Coins from "../components/coins";
 import Payments from "../components/payments";
 import Invoices from "./invoices";
 import axios from "../api/axiosConfig";
+import { jwtDecode } from "jwt-decode";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -30,7 +31,15 @@ const Dashboard = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await axios.get("/users/2", {
+        const decoded = jwtDecode(token);
+        const userId = decoded.id || decoded.user_id;
+
+        if (!userId) {
+          console.log("No se encontro el ID en el token");
+          return;
+        }
+
+        const response = await axios.get(`/users/${userId}`, {
           // 👈 reemplaza 2 por el ID dinámico si lo tienes
           headers: {
             Authorization: `Bearer ${token}`,
