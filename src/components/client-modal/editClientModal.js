@@ -3,17 +3,20 @@ import "./addClientModal.css";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 
-function  EditClientModal({ client, onClose, onSave }) {
-  const [nombre, setNombre] = useState(client.nombre);
-  const [apellido, setApellido] = useState(client.apellido);
-  const [fecha, setFecha] = useState(client.fecha);
+function EditClientModal({ client, onClose, onSave }) {
+  const [name, setName] = useState(client.name);
+  const [taxAdress, setTaxAdress] = useState(client.taxAdress);
+  const [taxRegime, setTaxRegime] = useState(client.taxRegime);
+  const [contactName, setContactName] = useState(client.contactName);
+  const [contactEmail, setContactEmail] = useState(client.contactEmail);
+  const [contactPhone, setContactPhone] = useState(client.contactPhone);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!nombre || !apellido || !fecha) return;
+    if (!name || !taxAdress || !taxRegime || !contactName || !contactEmail || contactPhone) return;
 
     // Guardar los datos
-    onSave({ nombre, apellido, fecha });
+    onSave({ name, taxAdress, taxRegime, contactName, contactEmail, contactPhone });
 
     // Cerrar el modal automáticamente
     onClose();
@@ -53,30 +56,71 @@ function  EditClientModal({ client, onClose, onSave }) {
                   <input
                     type="text"
                     className="form-control"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
               </div>
               <div className="col-md-6 col-12">
                 <div className="mb-3">
-                  <label className="form-label">Apellido</label>
+                  <label className="form-label">Domicilio</label>
                   <input
                     type="text"
                     className="form-control"
-                    value={apellido}
-                    onChange={(e) => setApellido(e.target.value)}
+                    value={taxAdress}
+                    onChange={(e) => setTaxAdress(e.target.value)}
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="row g-2">
               <div className="col-12 col-md-6">
                 <div className="mb-3">
-                  <label className="form-label">Fecha</label>
+                  <label className="form-label">Régimen Fiscal</label>
                   <input
-                    type="date"
+                    type="text"
                     className="form-control"
-                    value={fecha}
-                    onChange={(e) => setFecha(e.target.value)}
+                    value={taxRegime}
+                    onChange={(e) => setTaxRegime(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="col-12 col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">Nombre Contacto</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="row g-2">
+              <div className="col-12 col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">Correo Contacto</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="col-12 col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">Teléfono Contacto</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
                   />
                 </div>
               </div>

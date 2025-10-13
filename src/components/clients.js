@@ -11,30 +11,30 @@ function Clients() {
   const [clientToEdit, setClientToEdit] = useState(null);
 
   const [clients, setClients] = useState([
-    { id: 1, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 2, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 3, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 4, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 5, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 6, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 7, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 8, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 9, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 10, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 11, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 12, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 13, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 14, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 15, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 16, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 17, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 18, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 19, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 20, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 21, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 22, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 23, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 24, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
+    { id: 1, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 2, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 3, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 4, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 5, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 6, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 7, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 8, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 9, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 10, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 11, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 12, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 13, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 14, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 15, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 16, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 17, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 18, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 19, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 20, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 21, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 22, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 23, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
+    { id: 24, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
     // ... más clientes
   ]);
 
@@ -44,8 +44,8 @@ function Clients() {
 
   const filteredClients = clients.filter(
     (c) =>
-      c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.apellido.toLowerCase().includes(searchTerm.toLowerCase())
+      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.tax_addres.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
@@ -108,8 +108,11 @@ function Clients() {
               <thead>
                 <tr className="text-center">
                   <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>Fecha</th>
+                  <th>Domicilio</th>
+                  <th>Régimen Fiscal</th>
+                  <th>Nombre Contacto</th>
+                  <th>Correo electrónico</th>
+                  <th>Teléfono</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -117,9 +120,12 @@ function Clients() {
                 {displayedClients.length > 0 ? (
                   displayedClients.map((c) => (
                     <tr key={c.id} className="text-center">
-                      <td>{c.nombre}</td>
-                      <td>{c.apellido}</td>
-                      <td>{c.fecha}</td>
+                      <td>{c.name}</td>
+                      <td>{c.tax_addres}</td>
+                      <td>{c.tax_regime}</td>
+                      <td>{c.contact_name}</td>
+                      <td>{c.contact_email}</td>
+                      <td>{c.contact_phone}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"
