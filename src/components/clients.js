@@ -1,42 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
 import "./clients.css";
 import AddClientModal from "../components/client-modal/addClientModal";
 import EditClientModal from "../components/client-modal/editClientModal";
+import axios from "axios";
 
 function Clients() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [clientToEdit, setClientToEdit] = useState(null);
+  const [clients, setClients] = useState([]);
 
-  const [clients, setClients] = useState([
-    { id: 1, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 2, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 3, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 4, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 5, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 6, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 7, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 8, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 9, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 10, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 11, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 12, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 13, name: "Juan", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 14, name: "María", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 15, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 16, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 17, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 18, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 19, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 20, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 21, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 22, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 23, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    { id: 24, name: "Carlos", tax_addres: "", tax_regime: "", contact_name:"", contact_email:"", contact_phone:"" },
-    // ... más clientes
-  ]);
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token no encontrado en localStorage");
+          return;
+        }
+
+        const response = await axios.get("/api/clients", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data && Array.isArray(response.data)) {
+          setClients(response.data);
+        } else if (response.data.clients) {
+          setClients(response.data.clients);
+        } else {
+          console.error("Formato de respuesta inesperado:", response.data);
+        }
+      } catch (error) {
+        console.error("Error al obtener los clientes:", error);
+      }
+    };
+
+    fetchClients();
+  }, []);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,12 +117,18 @@ function Clients() {
                   <th>Nombre Contacto</th>
                   <th>Correo electrónico</th>
                   <th>Teléfono</th>
+                  <th>CFDI</th>
+                  <th>Reg. Fiscal Receptor</th>
+                  <th>Dom. Fiscal Receptor</th>
+                  <th>Método Pago</th>
+                  <th>Forma Pago</th>
+                  <th>Email Recepción Facturas</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {displayedClients.length > 0 ? (
-                  displayedClients.map((c) => (
+                  clients.map((c) => (
                     <tr key={c.id} className="text-center">
                       <td>{c.name}</td>
                       <td>{c.tax_addres}</td>
@@ -126,6 +136,12 @@ function Clients() {
                       <td>{c.contact_name}</td>
                       <td>{c.contact_email}</td>
                       <td>{c.contact_phone}</td>
+                      <td>{c.uso_cfdi}</td>
+                      <td>{c.regimen_fiscal_receptor}</td>
+                      <td>{c.domicilio_fiscal_receptor}</td>
+                      <td>{c.metodo_pago}</td>
+                      <td>{c.forma_pago}</td>
+                      <td>{c.email_recepcion_facturas}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"
@@ -149,7 +165,7 @@ function Clients() {
                   ))
                 ) : (
                   <tr className="text-center">
-                    <td colSpan="4">No se encontraron clientes</td>
+                    <td colSpan="13">No se encontraron clientes</td>
                   </tr>
                 )}
               </tbody>
