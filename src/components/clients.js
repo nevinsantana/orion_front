@@ -22,9 +22,7 @@ function Clients() {
         }
 
         const response = await axios.get("/api/clients", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.data && Array.isArray(response.data)) {
@@ -46,10 +44,11 @@ function Clients() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
+  // Filtrado seguro con optional chaining
   const filteredClients = clients.filter(
     (c) =>
-      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.tax_addres.toLowerCase().includes(searchTerm.toLowerCase())
+      c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.tax_address?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
@@ -59,15 +58,19 @@ function Clients() {
     currentPage * itemsPerPage
   );
 
+  // Eliminar cliente localmente
   const handleDelete = (id) => {
     setClients(clients.filter((c) => c.id !== id));
   };
 
+  // Agregar nuevo cliente
+  // Agregar nuevo cliente usando la respuesta del backend
   const handleAddClient = (newClient) => {
-    setClients([...clients, { ...newClient, id: Date.now() }]);
+    setClients((prev) => [...prev, newClient]); // usar el objeto completo recibido del backend
     setShowAddModal(false);
   };
 
+  // Editar cliente existente
   const handleEditClient = (updatedClient) => {
     setClients(
       clients.map((c) => (c.id === updatedClient.id ? updatedClient : c))
@@ -88,7 +91,7 @@ function Clients() {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); // reset page al buscar
+              setCurrentPage(1); // Reset page al buscar
             }}
           />
           <button className="btn ms-2 buscarClientes">Buscar</button>
@@ -128,20 +131,20 @@ function Clients() {
               </thead>
               <tbody>
                 {displayedClients.length > 0 ? (
-                  clients.map((c) => (
+                  displayedClients.map((c) => (
                     <tr key={c.id} className="text-center">
-                      <td>{c.name}</td>
-                      <td>{c.tax_addres}</td>
-                      <td>{c.tax_regime}</td>
-                      <td>{c.contact_name}</td>
-                      <td>{c.contact_email}</td>
-                      <td>{c.contact_phone}</td>
-                      <td>{c.uso_cfdi}</td>
-                      <td>{c.regimen_fiscal_receptor}</td>
-                      <td>{c.domicilio_fiscal_receptor}</td>
-                      <td>{c.metodo_pago}</td>
-                      <td>{c.forma_pago}</td>
-                      <td>{c.email_recepcion_facturas}</td>
+                      <td>{c.name || "-"}</td>
+                      <td>{c.tax_address || "-"}</td>
+                      <td>{c.tax_regime || "-"}</td>
+                      <td>{c.contact_name || "-"}</td>
+                      <td>{c.contact_email || "-"}</td>
+                      <td>{c.contact_phone || "-"}</td>
+                      <td>{c.uso_cfdi || "-"}</td>
+                      <td>{c.regimen_fiscal_receptor || "-"}</td>
+                      <td>{c.domicilio_fiscal_receptor || "-"}</td>
+                      <td>{c.metodo_pago || "-"}</td>
+                      <td>{c.forma_pago || "-"}</td>
+                      <td>{c.email_recepcion_facturas || "-"}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"
