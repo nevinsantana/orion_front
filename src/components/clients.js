@@ -66,18 +66,19 @@ function Clients() {
   // Agregar nuevo cliente usando la respuesta del backend
   const handleAddClient = (newClient) => {
     setClients((prev) => [...prev, newClient]); // usar el objeto completo recibido del backend
+    setCurrentPage(1);
+    setSearchTerm("");
     setShowAddModal(false);
-    fetchClients();
+    // fetchClients();
   };
 
   // Editar cliente existente
   const handleEditClient = (updatedClient) => {
     setClients(prev =>
       prev.map(c => (c.id === updatedClient.id ? updatedClient : c))
-      // clients.map((c) => (c.id === updatedClient.id ? updatedClient : c))
     );
     setShowEditModal(false);
-    fetchClients();
+    // fetchClients();
   };
 
   return (

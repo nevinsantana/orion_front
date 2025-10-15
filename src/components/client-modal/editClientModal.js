@@ -64,7 +64,7 @@ function EditClientModal({ client, onClose, onSave }) {
 
       // Actualizamos el estado del cliente en la tabla
       if (response.data) {
-       onSave(response.data); 
+       onSave(response.data.client); 
       }
       onClose();
     } catch (error) {
