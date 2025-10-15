@@ -59,11 +59,6 @@ function Clients() {
     currentPage * itemsPerPage
   );
 
-  // Eliminar cliente localmente
-  // const handleDelete = (id) => {
-  //   setClients(clients.filter((c) => c.id !== id));
-  // };
-
   // Función para eliminar cliente desde el backend
   const handleDelete = async (id) => {
     const token = localStorage.getItem("token");

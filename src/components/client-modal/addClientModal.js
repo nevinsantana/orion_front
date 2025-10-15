@@ -38,11 +38,11 @@ function AddClientModal({ onClose, onSave }) {
       !emailRecepcionFacturas
     ) {
       Swal.fire({
-      icon: "warning",
-      title: "Campos incompletos",
-      text: "Por favor completa todos los campos requeridos.",
-      confirmButtonColor: "#8b5cf6",
-    });
+        icon: "warning",
+        title: "Campos incompletos",
+        text: "Por favor completa todos los campos requeridos.",
+        confirmButtonColor: "#8b5cf6",
+      });
       return;
     }
 
@@ -50,11 +50,11 @@ function AddClientModal({ onClose, onSave }) {
       const token = localStorage.getItem("token");
       if (!token) {
         Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Token no encontrado. Debes iniciar sesión.",
-        confirmButtonColor: "#8b5cf6",
-      });
+          icon: "error",
+          title: "Error",
+          text: "Token no encontrado. Debes iniciar sesión.",
+          confirmButtonColor: "#8b5cf6",
+        });
         return;
       }
 
@@ -83,13 +83,31 @@ function AddClientModal({ onClose, onSave }) {
 
       // Usar respuesta real del backend
       if (response.data && response.data.client) {
+        await Swal.fire({
+          icon: "success",
+          theme: 'dark',
+          title: "¡Cliente agregado!",
+          text: "El cliente se agregó correctamente.",
+          confirmButtonColor: "#8b5cf6",
+        });
         onSave(response.data.client); // agrega el cliente con el ID real
+        onClose();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo agregar el cliente.",
+          confirmButtonColor: "#8b5cf6",
+        });
       }
-
-      onClose(); // cerrar modal
     } catch (error) {
       console.error("Error al agregar cliente:", error);
-      alert("Error al agregar cliente. Revisa la consola.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ocurrió un error al agregar el cliente. Revisa la consola.",
+        confirmButtonColor: "#8b5cf6",
+      });
     }
   };
 
@@ -151,7 +169,6 @@ function AddClientModal({ onClose, onSave }) {
             </div>
 
             <div className="row g-2 mb-3">
-              
               <div className="col-md-4 col-12">
                 <label className="form-label">Nombre Contacto</label>
                 <input
@@ -183,9 +200,7 @@ function AddClientModal({ onClose, onSave }) {
               </div>
             </div>
 
-            <div className="row g-2">
-              
-            </div>
+            <div className="row g-2"></div>
 
             <div className="row g-2 mb-3">
               <div className="col-md-6 col-12">
@@ -203,9 +218,7 @@ function AddClientModal({ onClose, onSave }) {
                   type="text"
                   className="form-control"
                   value={regimenFiscalReceptor}
-                  onChange={(e) =>
-                    setRegimenFiscalReceptor(e.target.value)
-                  }
+                  onChange={(e) => setRegimenFiscalReceptor(e.target.value)}
                 />
               </div>
             </div>
@@ -217,9 +230,7 @@ function AddClientModal({ onClose, onSave }) {
                   type="text"
                   className="form-control"
                   value={domicilioFiscalReceptor}
-                  onChange={(e) =>
-                    setDomicilioFiscalReceptor(e.target.value)
-                  }
+                  onChange={(e) => setDomicilioFiscalReceptor(e.target.value)}
                 />
               </div>
               <div className="col-md-6 col-12">
@@ -249,9 +260,7 @@ function AddClientModal({ onClose, onSave }) {
                   type="email"
                   className="form-control"
                   value={emailRecepcionFacturas}
-                  onChange={(e) =>
-                    setEmailRecepcionFacturas(e.target.value)
-                  }
+                  onChange={(e) => setEmailRecepcionFacturas(e.target.value)}
                 />
               </div>
             </div>
