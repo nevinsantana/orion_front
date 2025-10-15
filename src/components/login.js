@@ -27,6 +27,8 @@ const Login = () => {
         // Guarda el token en localStorage
         localStorage.setItem("token", token);
 
+        localStorage.setItem("isLoggedIn", "true");
+
         // Muestra alerta y redirige al dashboard
         Swal.fire({
           title: "¡Bienvenido a RAK Orion!",
