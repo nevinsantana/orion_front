@@ -3,6 +3,7 @@ import "./addClientModal.css";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function AddClientModal({ onClose, onSave }) {
   const [name, setName] = useState("");
@@ -36,14 +37,24 @@ function AddClientModal({ onClose, onSave }) {
       !formaPago ||
       !emailRecepcionFacturas
     ) {
-      alert("Por favor completa los campos requeridos");
+      Swal.fire({
+      icon: "warning",
+      title: "Campos incompletos",
+      text: "Por favor completa todos los campos requeridos.",
+      confirmButtonColor: "#8b5cf6",
+    });
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Token no encontrado. Debes iniciar sesión.");
+        Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Token no encontrado. Debes iniciar sesión.",
+        confirmButtonColor: "#8b5cf6",
+      });
         return;
       }
 

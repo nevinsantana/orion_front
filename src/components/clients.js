@@ -4,6 +4,7 @@ import "./clients.css";
 import AddClientModal from "../components/client-modal/addClientModal";
 import EditClientModal from "../components/client-modal/editClientModal";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function Clients() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,28 +14,28 @@ function Clients() {
   const [clients, setClients] = useState([]);
 
   const fetchClients = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("Token no encontrado en localStorage");
-          return;
-        }
-
-        const response = await axios.get("http://localhost:9000/api/clients", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        console.log("Datos recibidos:", response.data);
-
-        if (Array.isArray(response.data.Clients)) {
-          setClients(response.data.Clients);
-        } else {
-          console.error("Formato de respuesta inesperado:", response.data);
-        }
-      } catch (error) {
-        console.error("Error al obtener los clientes:", error);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token no encontrado en localStorage");
+        return;
       }
-    };
+
+      const response = await axios.get("http://localhost:9000/api/clients", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("Datos recibidos:", response.data);
+
+      if (Array.isArray(response.data.Clients)) {
+        setClients(response.data.Clients);
+      } else {
+        console.error("Formato de respuesta inesperado:", response.data);
+      }
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    }
+  };
 
   useEffect(() => {
     fetchClients();
@@ -59,10 +60,69 @@ function Clients() {
   );
 
   // Eliminar cliente localmente
-  const handleDelete = (id) => {
-    setClients(clients.filter((c) => c.id !== id));
+  // const handleDelete = (id) => {
+  //   setClients(clients.filter((c) => c.id !== id));
+  // };
+
+  // Función para eliminar cliente desde el backend
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token no encontrado en localStorage");
+      return;
+    }
+
+    // Confirmación antes de eliminar
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará al cliente.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#8b5cf6",
+      cancelButtonColor: "#e61610",
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:9000/api/clients/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (response.data.code === 1) {
+          // Actualizamos la tabla localmente
+          setClients((prev) => prev.filter((c) => c.id !== id));
+
+          Swal.fire({
+            title: "¡Eliminado!",
+            text: response.data.message,
+            icon: "success",
+            confirmButtonColor: "#8b5cf6",
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: response.data.message || "No se pudo eliminar el cliente",
+            icon: "error",
+            confirmButtonColor: "#8b5cf6",
+          });
+        }
+      } catch (error) {
+        console.error("Error al eliminar el cliente:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Ocurrió un error al eliminar el cliente",
+          icon: "error",
+          confirmButtonColor: "#8b5cf6",
+        });
+      }
+    }
   };
-  
+
   // Agregar nuevo cliente usando la respuesta del backend
   const handleAddClient = (newClient) => {
     setClients((prev) => [...prev, newClient]); // usar el objeto completo recibido del backend
@@ -74,8 +134,8 @@ function Clients() {
 
   // Editar cliente existente
   const handleEditClient = (updatedClient) => {
-    setClients(prev =>
-      prev.map(c => (c.id === updatedClient.id ? updatedClient : c))
+    setClients((prev) =>
+      prev.map((c) => (c.id === updatedClient.id ? updatedClient : c))
     );
     setShowEditModal(false);
     // fetchClients();
