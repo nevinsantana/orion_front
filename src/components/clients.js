@@ -1,51 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
 import "./clients.css";
 import AddClientModal from "../components/client-modal/addClientModal";
 import EditClientModal from "../components/client-modal/editClientModal";
+import axios from "axios";
 
 function Clients() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [clientToEdit, setClientToEdit] = useState(null);
+  const [clients, setClients] = useState([]);
 
-  const [clients, setClients] = useState([
-    { id: 1, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 2, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 3, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 4, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 5, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 6, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 7, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 8, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 9, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 10, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 11, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 12, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 13, nombre: "Juan", apellido: "Pérez", fecha: "2025-09-01" },
-    { id: 14, nombre: "María", apellido: "López", fecha: "2025-09-02" },
-    { id: 15, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 16, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 17, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 18, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 19, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 20, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 21, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 22, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 23, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    { id: 24, nombre: "Carlos", apellido: "Ramírez", fecha: "2025-09-03" },
-    // ... más clientes
-  ]);
+  const fetchClients = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token no encontrado en localStorage");
+          return;
+        }
+
+        const response = await axios.get("http://localhost:9000/api/clients", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("Datos recibidos:", response.data);
+
+        if (Array.isArray(response.data.Clients)) {
+          setClients(response.data.Clients);
+        } else {
+          console.error("Formato de respuesta inesperado:", response.data);
+        }
+      } catch (error) {
+        console.error("Error al obtener los clientes:", error);
+      }
+    };
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
+  // Filtrado seguro con optional chaining
   const filteredClients = clients.filter(
     (c) =>
-      c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.apellido.toLowerCase().includes(searchTerm.toLowerCase())
+      c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.tax_address?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
@@ -55,20 +58,27 @@ function Clients() {
     currentPage * itemsPerPage
   );
 
+  // Eliminar cliente localmente
   const handleDelete = (id) => {
     setClients(clients.filter((c) => c.id !== id));
   };
-
+  
+  // Agregar nuevo cliente usando la respuesta del backend
   const handleAddClient = (newClient) => {
-    setClients([...clients, { ...newClient, id: Date.now() }]);
+    setClients((prev) => [...prev, newClient]); // usar el objeto completo recibido del backend
+    setCurrentPage(1);
+    setSearchTerm("");
     setShowAddModal(false);
+    // fetchClients();
   };
 
+  // Editar cliente existente
   const handleEditClient = (updatedClient) => {
-    setClients(
-      clients.map((c) => (c.id === updatedClient.id ? updatedClient : c))
+    setClients(prev =>
+      prev.map(c => (c.id === updatedClient.id ? updatedClient : c))
     );
     setShowEditModal(false);
+    // fetchClients();
   };
 
   return (
@@ -84,7 +94,7 @@ function Clients() {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); // reset page al buscar
+              setCurrentPage(1); // Reset page al buscar
             }}
           />
           <button className="btn ms-2 buscarClientes">Buscar</button>
@@ -108,8 +118,17 @@ function Clients() {
               <thead>
                 <tr className="text-center">
                   <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>Fecha</th>
+                  <th>Domicilio</th>
+                  <th>Régimen Fiscal</th>
+                  <th>Nombre Contacto</th>
+                  <th>Correo electrónico</th>
+                  <th>Teléfono</th>
+                  <th>CFDI</th>
+                  <th>Reg. Fiscal Receptor</th>
+                  <th>Dom. Fiscal Receptor</th>
+                  <th>Método Pago</th>
+                  <th>Forma Pago</th>
+                  <th>Email Recepción Facturas</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -117,9 +136,18 @@ function Clients() {
                 {displayedClients.length > 0 ? (
                   displayedClients.map((c) => (
                     <tr key={c.id} className="text-center">
-                      <td>{c.nombre}</td>
-                      <td>{c.apellido}</td>
-                      <td>{c.fecha}</td>
+                      <td>{c.name || "-"}</td>
+                      <td>{c.tax_address || "-"}</td>
+                      <td>{c.tax_regime || "-"}</td>
+                      <td>{c.contact_name || "-"}</td>
+                      <td>{c.contact_email || "-"}</td>
+                      <td>{c.contact_phone || "-"}</td>
+                      <td>{c.uso_cfdi || "-"}</td>
+                      <td>{c.regimen_fiscal_receptor || "-"}</td>
+                      <td>{c.domicilio_fiscal_receptor || "-"}</td>
+                      <td>{c.metodo_pago || "-"}</td>
+                      <td>{c.forma_pago || "-"}</td>
+                      <td>{c.email_recepcion_facturas || "-"}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"
@@ -143,7 +171,7 @@ function Clients() {
                   ))
                 ) : (
                   <tr className="text-center">
-                    <td colSpan="4">No se encontraron clientes</td>
+                    <td colSpan="13">No se encontraron clientes</td>
                   </tr>
                 )}
               </tbody>

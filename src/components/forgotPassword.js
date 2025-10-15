@@ -15,88 +15,86 @@ const ForgotPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
     setNewPassword("");
     setConfirmPassword("");
   }, []);
 
   const handleReset = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!code) {
-    Swal.fire({
-      title: "Error",
-      text: "Token inválido o faltante",
-      icon: "error",
-      confirmButtonText: "Aceptar",
-    });
-    return;
-  }
-
-  if (newPassword !== confirmPassword) {
-    Swal.fire({
-      title: "Error",
-      text: "Las contraseñas no coinciden",
-      icon: "warning",
-      confirmButtonText: "Aceptar",
-    });
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    // 🔹 Petición POST al backend sin enviar el token de login
-    const response = await axios.post(
-      "/reset-password",
-      {
-        code: code,
-        password: newPassword,
-        password_confirm: confirmPassword,
-      },
-      {
-        headers: { Authorization: "" } // ⚡ importante: evita enviar token
-      }
-    );
-
-    if (response.data.code === 1) {
-      Swal.fire({
-        title: "Éxito",
-        text: "Contraseña actualizada correctamente",
-        icon: "success",
-        confirmButtonText: "Aceptar",
-        confirmButtonColor: "#8b5cf6",
-      }).then(() => {
-        navigate("/"); // redirige al login
-      });
-    } else {
+    if (!code) {
       Swal.fire({
         title: "Error",
-        text: response.data.message || "No se pudo actualizar la contraseña",
+        text: "Token inválido o faltante",
         icon: "error",
         confirmButtonText: "Aceptar",
       });
+      return;
     }
-  } catch (error) {
-    console.error("Error al actualizar la contraseña:", error);
 
-    // 🔹 Captura mensajes del backend o muestra genérico
-    let message =
-      error.response?.data?.message ||
-      "Ocurrió un error al conectar con el servidor";
+    if (newPassword !== confirmPassword) {
+      Swal.fire({
+        title: "Error",
+        text: "Las contraseñas no coinciden",
+        icon: "warning",
+        confirmButtonText: "Aceptar",
+      });
+      return;
+    }
 
-    Swal.fire({
-      title: "Error",
-      text: message,
-      icon: "error",
-      confirmButtonText: "Aceptar",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
 
+    try {
+      // 🔹 Petición POST al backend sin enviar el token de login
+      const response = await axios.post(
+        "/users/reset-password",
+        {
+          code: code,
+          password: newPassword,
+          password_confirm: confirmPassword,
+        },
+        {
+          headers: { Authorization: "" }, // ⚡ importante: evita enviar token
+        }
+      );
+
+      if (response.data.code === 1) {
+        Swal.fire({
+          title: "Éxito",
+          text: "Contraseña actualizada correctamente",
+          icon: "success",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#8b5cf6",
+        }).then(() => {
+          navigate("/"); // redirige al login
+        });
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: response.data.message || "No se pudo actualizar la contraseña",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+      }
+    } catch (error) {
+      console.error("Error al actualizar la contraseña:", error);
+
+      // 🔹 Captura mensajes del backend o muestra genérico
+      let message =
+        error.response?.data?.message ||
+        "Ocurrió un error al conectar con el servidor";
+
+      Swal.fire({
+        title: "Error",
+        text: message,
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // const handleReset = (e) => {
   //   e.preventDefault();
@@ -164,7 +162,11 @@ const ForgotPassword = () => {
 
               {/* 🔹 Botón guardar centrado */}
               <div className="d-flex justify-content-center">
-                <button type="submit" className="btn btn-sesion" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-sesion"
+                  disabled={loading}
+                >
                   {loading ? "Actualizando..." : "Guardar"}
                 </button>
               </div>
