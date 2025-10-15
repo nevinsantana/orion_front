@@ -19,6 +19,7 @@
   width: 100%;
   max-width: 650px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-height: calc(115vh - 110px);
 }
 
 .modal-header-clients h4 {
@@ -69,5 +70,6 @@
 @media (max-width: 768px) {
   .modal-content-clients {
     max-width: 95%;
+    max-height: calc(115vh - 130px);
   }
 }
