@@ -58,11 +58,14 @@ function EditClientModal({ client, onClose, onSave }) {
         },
         {
           headers: { Authorization: `Bearer ${token}` },
+          "Content-Type": "application/json",
         }
       );
 
       // Actualizamos el estado del cliente en la tabla
-      onSave(response.data);
+      if (response.data) {
+       onSave(response.data); 
+      }
       onClose();
     } catch (error) {
       console.error("Error al actualizar cliente:", error);

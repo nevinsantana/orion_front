@@ -12,8 +12,7 @@ function Clients() {
   const [clientToEdit, setClientToEdit] = useState(null);
   const [clients, setClients] = useState([]);
 
-  useEffect(() => {
-    const fetchClients = async () => {
+  const fetchClients = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -21,14 +20,14 @@ function Clients() {
           return;
         }
 
-        const response = await axios.get("/api/clients", {
+        const response = await axios.get("http://localhost:9000/api/clients", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.data && Array.isArray(response.data)) {
-          setClients(response.data);
-        } else if (response.data.clients) {
-          setClients(response.data.clients);
+        console.log("Datos recibidos:", response.data);
+
+        if (Array.isArray(response.data.Clients)) {
+          setClients(response.data.Clients);
         } else {
           console.error("Formato de respuesta inesperado:", response.data);
         }
@@ -37,6 +36,7 @@ function Clients() {
       }
     };
 
+  useEffect(() => {
     fetchClients();
   }, []);
 
@@ -62,20 +62,22 @@ function Clients() {
   const handleDelete = (id) => {
     setClients(clients.filter((c) => c.id !== id));
   };
-
-  // Agregar nuevo cliente
+  
   // Agregar nuevo cliente usando la respuesta del backend
   const handleAddClient = (newClient) => {
     setClients((prev) => [...prev, newClient]); // usar el objeto completo recibido del backend
     setShowAddModal(false);
+    fetchClients();
   };
 
   // Editar cliente existente
   const handleEditClient = (updatedClient) => {
-    setClients(
-      clients.map((c) => (c.id === updatedClient.id ? updatedClient : c))
+    setClients(prev =>
+      prev.map(c => (c.id === updatedClient.id ? updatedClient : c))
+      // clients.map((c) => (c.id === updatedClient.id ? updatedClient : c))
     );
     setShowEditModal(false);
+    fetchClients();
   };
 
   return (

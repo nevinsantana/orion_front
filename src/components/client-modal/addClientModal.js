@@ -30,9 +30,9 @@ function AddClientModal({ onClose, onSave }) {
       !contactEmail ||
       !contactPhone ||
       !usoCfdi ||
+      !regimenFiscalReceptor ||
       !domicilioFiscalReceptor ||
       !metodoPago ||
-      !regimenFiscalReceptor ||
       !formaPago ||
       !emailRecepcionFacturas
     ) {
@@ -55,9 +55,9 @@ function AddClientModal({ onClose, onSave }) {
         contact_email: contactEmail,
         contact_phone: contactPhone,
         uso_cfdi: usoCfdi,
+        regimen_fiscal_receptor: regimenFiscalReceptor,
         domicilio_fiscal_receptor: domicilioFiscalReceptor,
         metodo_pago: metodoPago,
-        regimen_fiscal_receptor: regimenFiscalReceptor,
         forma_pago: formaPago,
         email_recepcion_facturas: emailRecepcionFacturas,
       };
@@ -71,8 +71,8 @@ function AddClientModal({ onClose, onSave }) {
       });
 
       // Usar respuesta real del backend
-      if (response.data) {
-        onSave(response.data); // agrega el cliente con el ID real
+      if (response.data && response.data.client) {
+        onSave(response.data.client); // agrega el cliente con el ID real
       }
 
       onClose(); // cerrar modal
