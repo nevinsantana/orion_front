@@ -11,30 +11,30 @@ function Coins() {
   const [coinsToEdit, setCoinsToEdit] = useState(null);
 
   const [coins, setCoins] = useState([
-    { id: 1, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 2, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 3, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
-    { id: 4, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 5, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 6, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
-    { id: 7, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 8, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 9, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
-    { id: 10, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 11, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 12, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
-    { id: 13, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 14, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 15, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
-    { id: 16, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 17, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 18, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
-    { id: 19, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 20, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 21, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
-    { id: 22, code: "USD",  nombre: "Dólar estadounidense", tipoCambio: "$18.39" },
-    { id: 23, code: "EUR",  nombre: "Euro", tipoCambio: "$21.58" },
-    { id: 24, code: "MXN",  nombre: "Peso mexicano", tipoCambio: "$1.00" },
+    { id: 1, code: "USD",  nombre: "Dólar estadounidense" },
+    { id: 2, code: "EUR",  nombre: "Euro"},
+    { id: 3, code: "MXN",  nombre: "Peso mexicano"},
+    { id: 4, code: "USD",  nombre: "Dólar estadounidense"},
+    { id: 5, code: "EUR",  nombre: "Euro"},
+    { id: 6, code: "MXN",  nombre: "Peso mexicano"},
+    { id: 7, code: "USD",  nombre: "Dólar estadounidense"},
+    { id: 8, code: "EUR",  nombre: "Euro"},
+    { id: 9, code: "MXN",  nombre: "Peso mexicano"},
+    { id: 10, code: "USD",  nombre: "Dólar estadounidense"},
+    { id: 11, code: "EUR",  nombre: "Euro"},
+    { id: 12, code: "MXN",  nombre: "Peso mexicano"},
+    { id: 13, code: "USD",  nombre: "Dólar estadounidense"},
+    { id: 14, code: "EUR",  nombre: "Euro"},
+    { id: 15, code: "MXN",  nombre: "Peso mexicano"},
+    { id: 16, code: "USD",  nombre: "Dólar estadounidense"},
+    { id: 17, code: "EUR",  nombre: "Euro" },
+    { id: 18, code: "MXN",  nombre: "Peso mexicano"},
+    { id: 19, code: "USD",  nombre: "Dólar estadounidense"},
+    { id: 20, code: "EUR",  nombre: "Euro"},
+    { id: 21, code: "MXN",  nombre: "Peso mexicano"},
+    { id: 22, code: "USD",  nombre: "Dólar estadounidense"},
+    { id: 23, code: "EUR",  nombre: "Euro"},
+    { id: 24, code: "MXN",  nombre: "Peso mexicano"},
     // ... más monedas
   ]);
 
@@ -109,7 +109,6 @@ function Coins() {
                 <tr className="text-center">
                   <th>Código</th>
                   <th>Nombre</th>
-                  <th>Tipo de cambio</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -119,7 +118,6 @@ function Coins() {
                     <tr key={m.id} className="text-center">
                       <td>{m.code}</td>
                       <td>{m.nombre}</td>
-                      <td>{m.tipoCambio}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"

@@ -151,7 +151,7 @@ const AdminUsers = () => {
     // Función que reemplaza el componente UserTable
     const RenderUserTable = () => (
         <div className="table-responsive clients-table-wrapper">
-          <Table className="table table-dark table-striped user-table">
+          <table className="table table-dark table-striped users-table">
             <thead>
                 <tr className="text-center">
                     <th>Nombre</th> {/* Cambiado de 'Nombre Completo' a 'Nombre' */}
@@ -183,7 +183,7 @@ const AdminUsers = () => {
                     </tr>
                 )}
             </tbody>
-          </Table>
+          </table>
         </div>
     );
     // FIN de la función que reemplaza el componente UserTable
@@ -229,31 +229,48 @@ const AdminUsers = () => {
                     </Row>
                 </main>
                 
-                {totalPages > 1 && (
-                    <nav>
-                        <Pagination className="justify-content-center mt-3">
-                            <Pagination.Prev 
-                                onClick={() => paginate(currentPage - 1)} 
-                                disabled={currentPage === 1} 
-                            />
-
-                            {[...Array(totalPages)].map((_, idx) => (
-                                <Pagination.Item 
-                                    key={idx + 1} 
-                                    active={idx + 1 === currentPage} 
-                                    onClick={() => paginate(idx + 1)}
-                                >
-                                    {idx + 1}
-                                </Pagination.Item>
-                            ))}
-
-                            <Pagination.Next 
-                                onClick={() => paginate(currentPage + 1)} 
-                                disabled={currentPage === totalPages} 
-                            />
-                        </Pagination>
-                    </nav>
-                )}
+               {/* Paginación */}
+      {totalPages > 1 && (
+        <nav>
+          <ul className="pagination justify-content-center mt-3">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Anterior
+              </button>
+            </li>
+            {[...Array(totalPages)].map((_, idx) => (
+              <li
+                key={idx}
+                className={`page-item ${
+                  currentPage === idx + 1 ? "active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              </li>
+            ))}
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
                 
             </Container>
 
