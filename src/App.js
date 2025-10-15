@@ -4,8 +4,8 @@ import Login from "./components/login";
 import Dashboard from "./components/dashboard";
 import ForgotPassword from "./components/forgotPassword";
 import RequestPassword from "./components/requestPassword";
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+import ProtectedRoute from "./components/ProtectedRoute";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
@@ -14,7 +14,14 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/request-password" element={<RequestPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -26,7 +26,8 @@ const Sidebar = ({ setActiveView }) => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("isLoggedIn");
     navigate("/");
     setIsOpen(false);
   };
