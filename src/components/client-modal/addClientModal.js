@@ -107,8 +107,8 @@ function AddClientModal({ onClose, onSave }) {
           </div>
 
           <form onSubmit={handleSubmit} className="form-clientes">
-            <div className="row g-2">
-              <div className="col-md-6 col-12">
+            <div className="row g-2 mb-3">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Nombre</label>
                 <input
                   type="text"
@@ -117,7 +117,8 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+
+              <div className="col-md-4 col-12">
                 <label className="form-label">Domicilio</label>
                 <input
                   type="text"
@@ -126,10 +127,8 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setTaxAddress(e.target.value)}
                 />
               </div>
-            </div>
 
-            <div className="row g-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Régimen Fiscal</label>
                 <input
                   type="text"
@@ -138,7 +137,11 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setTaxRegime(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+            </div>
+
+            <div className="row g-2 mb-3">
+              
+              <div className="col-md-4 col-12">
                 <label className="form-label">Nombre Contacto</label>
                 <input
                   type="text"
@@ -147,10 +150,8 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setContactName(e.target.value)}
                 />
               </div>
-            </div>
 
-            <div className="row g-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Correo Contacto</label>
                 <input
                   type="email"
@@ -159,7 +160,8 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setContactEmail(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+
+              <div className="col-md-4 col-12">
                 <label className="form-label">Teléfono Contacto</label>
                 <input
                   type="text"
@@ -171,6 +173,10 @@ function AddClientModal({ onClose, onSave }) {
             </div>
 
             <div className="row g-2">
+              
+            </div>
+
+            <div className="row g-2 mb-3">
               <div className="col-md-6 col-12">
                 <label className="form-label">CFDI</label>
                 <input
