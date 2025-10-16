@@ -39,6 +39,7 @@ const Login = () => {
         Swal.fire({
           title: "¡Bienvenido a RAK Orion!",
           text: "Has iniciado sesión correctamente",
+          theme: 'dark',
           icon: "success",
           confirmButtonText: "Continuar",
           confirmButtonColor: "#8b5cf6",
@@ -48,6 +49,7 @@ const Login = () => {
       } else {
         Swal.fire({
           title: "Error",
+          theme: 'dark',
           text: "No se recibió un token válido del servidor.",
           icon: "error",
           confirmButtonText: "Intentar de nuevo",
@@ -63,6 +65,7 @@ const Login = () => {
 
       Swal.fire({
         title: "Error al iniciar sesión",
+        theme: 'dark',
         text: message,
         icon: "error",
         confirmButtonText: "Intentar de nuevo",

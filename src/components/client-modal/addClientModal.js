@@ -96,6 +96,7 @@ function AddClientModal({ onClose, onSave }) {
         Swal.fire({
           icon: "error",
           title: "Error",
+          theme: 'dark',
           text: "No se pudo agregar el cliente.",
           confirmButtonColor: "#8b5cf6",
         });
@@ -105,6 +106,7 @@ function AddClientModal({ onClose, onSave }) {
       Swal.fire({
         icon: "error",
         title: "Error",
+        theme: 'dark',
         text: "Ocurrió un error al agregar el cliente. Revisa la consola.",
         confirmButtonColor: "#8b5cf6",
       });

@@ -44,6 +44,7 @@ function EditClientModal({ client, onClose, onSave }) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
+        theme: 'dark',
         text: "Por favor completa todos los campos antes de guardar.",
         confirmButtonColor: "#8b5cf6",
       });
@@ -56,6 +57,7 @@ function EditClientModal({ client, onClose, onSave }) {
         Swal.fire({
           icon: "error",
           title: "Error",
+          theme: 'dark',
           text: "Token no encontrado. Debes iniciar sesión.",
           confirmButtonColor: "#8b5cf6",
         });
