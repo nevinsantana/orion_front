@@ -3,7 +3,7 @@ import { FaPen, FaTrash } from "react-icons/fa";
 import "./clients.css";
 import AddClientModal from "../components/client-modal/addClientModal";
 import EditClientModal from "../components/client-modal/editClientModal";
-import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 import Swal from "sweetalert2";
 
 function Clients() {
@@ -21,8 +21,8 @@ function Clients() {
         return;
       }
 
-      const response = await axios.get("http://localhost:9000/api/clients", {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axiosInstance.get("/clients", {
+        // headers: { Authorization: `Bearer ${token}` },
       });
 
       console.log("Datos recibidos:", response.data);
@@ -81,11 +81,11 @@ function Clients() {
 
     if (result.isConfirmed) {
       try {
-        const response = await axios.delete(
-          `http://localhost:9000/api/clients/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+        const response = await axiosInstance.delete(
+          `/clients/${id}`,
+          // {
+          //   headers: { Authorization: `Bearer ${token}` },
+          // }
         );
 
         if (response.data.code === 1) {
@@ -173,17 +173,8 @@ function Clients() {
               <thead>
                 <tr className="text-center">
                   <th>Nombre</th>
-                  <th>Domicilio</th>
-                  <th>Régimen Fiscal</th>
                   <th>Nombre Contacto</th>
                   <th>Correo electrónico</th>
-                  <th>Teléfono</th>
-                  <th>CFDI</th>
-                  <th>Reg. Fiscal Receptor</th>
-                  <th>Dom. Fiscal Receptor</th>
-                  <th>Método Pago</th>
-                  <th>Forma Pago</th>
-                  <th>Email Recepción Facturas</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -192,17 +183,8 @@ function Clients() {
                   displayedClients.map((c) => (
                     <tr key={c.id} className="text-center">
                       <td>{c.name || "-"}</td>
-                      <td>{c.tax_address || "-"}</td>
-                      <td>{c.tax_regime || "-"}</td>
                       <td>{c.contact_name || "-"}</td>
                       <td>{c.contact_email || "-"}</td>
-                      <td>{c.contact_phone || "-"}</td>
-                      <td>{c.uso_cfdi || "-"}</td>
-                      <td>{c.regimen_fiscal_receptor || "-"}</td>
-                      <td>{c.domicilio_fiscal_receptor || "-"}</td>
-                      <td>{c.metodo_pago || "-"}</td>
-                      <td>{c.forma_pago || "-"}</td>
-                      <td>{c.email_recepcion_facturas || "-"}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"

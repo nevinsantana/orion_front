@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./addClientModal.css";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import Swal from "sweetalert2";
 
 function EditClientModal({ client, onClose, onSave }) {
@@ -62,8 +62,8 @@ function EditClientModal({ client, onClose, onSave }) {
         return;
       }
 
-      const response = await axios.put(
-        `/api/clients/${client.id}`,
+      const response = await axiosInstance.put(
+        `/clients/${client.id}`,
         {
           name,
           tax_address: taxAddress,
@@ -77,17 +77,18 @@ function EditClientModal({ client, onClose, onSave }) {
           metodo_pago: metodoPago,
           forma_pago: formaPago,
           email_recepcion_facturas: emailRecepcionFacturas,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          "Content-Type": "application/json",
         }
+        // {
+        //   headers: { Authorization: `Bearer ${token}` },
+        //   "Content-Type": "application/json",
+        // }
       );
 
       // Actualizamos el estado del cliente en la tabla
       if (response.data) {
         await Swal.fire({
           icon: "success",
+          theme: "dark",
           title: "¡Cliente actualizado!",
           text: `El cliente "${response.data.client.name}" se actualizó correctamente.`,
           confirmButtonColor: "#8b5cf6",
@@ -99,6 +100,7 @@ function EditClientModal({ client, onClose, onSave }) {
         Swal.fire({
           icon: "error",
           title: "Error",
+          theme: "dark",
           text: "No se pudo actualizar el cliente.",
           confirmButtonColor: "#8b5cf6",
         });
@@ -108,6 +110,7 @@ function EditClientModal({ client, onClose, onSave }) {
       Swal.fire({
         icon: "error",
         title: "Error",
+        theme: "dark",
         text: "Ocurrió un error al actualizar el cliente. Revisa la consola.",
         confirmButtonColor: "#8b5cf6",
       });
@@ -140,7 +143,7 @@ function EditClientModal({ client, onClose, onSave }) {
 
           <form onSubmit={handleSubmit} className="form-clientes">
             <div className="row g-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Nombre</label>
                 <input
                   type="text"
@@ -149,7 +152,7 @@ function EditClientModal({ client, onClose, onSave }) {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Domicilio</label>
                 <input
                   type="text"
@@ -158,10 +161,7 @@ function EditClientModal({ client, onClose, onSave }) {
                   onChange={(e) => setTaxAddress(e.target.value)}
                 />
               </div>
-            </div>
-
-            <div className="row g-2 mt-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Régimen Fiscal</label>
                 <input
                   type="text"
@@ -170,7 +170,10 @@ function EditClientModal({ client, onClose, onSave }) {
                   onChange={(e) => setTaxRegime(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+            </div>
+
+            <div className="row g-2 mt-2">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Nombre Contacto</label>
                 <input
                   type="text"
@@ -179,10 +182,7 @@ function EditClientModal({ client, onClose, onSave }) {
                   onChange={(e) => setContactName(e.target.value)}
                 />
               </div>
-            </div>
-
-            <div className="row g-2 mt-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Correo Contacto</label>
                 <input
                   type="text"
@@ -191,7 +191,7 @@ function EditClientModal({ client, onClose, onSave }) {
                   onChange={(e) => setContactEmail(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Teléfono Contacto</label>
                 <input
                   type="text"
@@ -204,7 +204,7 @@ function EditClientModal({ client, onClose, onSave }) {
 
             <div className="row g-2 mt-2">
               <div className="col-md-6 col-12">
-                <label className="form-label">Uso CFDI</label>
+                <label className="form-label">CFDI</label>
                 <input
                   type="text"
                   className="form-control"

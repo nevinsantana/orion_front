@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./addClientModal.css";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
-import axios from "axios";
+import axiosInstance from "../../api/axiosConfig";
 import Swal from "sweetalert2";
 
 function AddClientModal({ onClose, onSave }) {
@@ -74,11 +74,11 @@ function AddClientModal({ onClose, onSave }) {
       };
 
       // Guardar en backend
-      const response = await axios.post("/api/clients", body, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      const response = await axiosInstance.post("/clients", body, {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        //   "Content-Type": "application/json",
+        // },
       });
 
       // Usar respuesta real del backend
