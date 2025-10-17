@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "../api/axiosConfig"; // 👈 Importa tu configuración de Axios
@@ -9,6 +9,12 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setReady(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,6 +39,7 @@ const Login = () => {
         Swal.fire({
           title: "¡Bienvenido a RAK Orion!",
           text: "Has iniciado sesión correctamente",
+          theme: 'dark',
           icon: "success",
           confirmButtonText: "Continuar",
           confirmButtonColor: "#8b5cf6",
@@ -42,6 +49,7 @@ const Login = () => {
       } else {
         Swal.fire({
           title: "Error",
+          theme: 'dark',
           text: "No se recibió un token válido del servidor.",
           icon: "error",
           confirmButtonText: "Intentar de nuevo",
@@ -57,12 +65,15 @@ const Login = () => {
 
       Swal.fire({
         title: "Error al iniciar sesión",
+        theme: 'dark',
         text: message,
         icon: "error",
         confirmButtonText: "Intentar de nuevo",
       });
     }
   };
+
+  if (!ready) return null;
 
   return (
     <div className="container-fluid vh-100 p-0">

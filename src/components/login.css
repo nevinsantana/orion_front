@@ -13,6 +13,8 @@
   background: linear-gradient(180deg, #3a2451, #5c3676);
   color: white;
   overflow: hidden;
+  min-height: 100vh;
+  max-height: 100vh;
 }
 
 .login-form {
@@ -73,6 +75,7 @@
   border: none;
   background-color: #262626 !important; /* fondo siempre oscuro */
   color: #ffffff !important; /* texto siempre visible */
+  box-sizing: border-box;
 }
 
 /* Evitar que cambie el color al dar clic */
@@ -97,6 +100,9 @@ input:-webkit-autofill:active {
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  flex: 1;
 }
 
 .input-correo::placeholder,
