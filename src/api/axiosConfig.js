@@ -6,11 +6,11 @@ const baseURL = process.env.REACT_APP_API_URL || "http://localhost:8081/api";
 
 // 🧩 Crea la instancia de Axios
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, // 👈 usar la variable de entorno
+  baseURL: "/api", // 👈 El proxy enviará al backend en localhost:9000
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
+  withCredentials: true
 });
 
 axiosInstance.interceptors.request.use((config) => {

@@ -5,15 +5,15 @@ import { FaTimes } from "react-icons/fa";
 
 function AddCoinsModal({ onClose, onSave }) {
   const [code, setCode] = useState("");
-  const [nombre, setNombre] = useState("");
+  const [name, setName] = useState("");
 //   const [fecha, setFecha] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!code || !nombre ) return;
+    if (!code || !name ) return;
 
     // Guardar los datos
-    onSave({ code, nombre });
+    onSave({ code, name });
 
     // Cerrar el modal automáticamente
     onClose();
@@ -64,8 +64,8 @@ function AddCoinsModal({ onClose, onSave }) {
                   <input
                     type="text"
                     className="form-control"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
               </div>

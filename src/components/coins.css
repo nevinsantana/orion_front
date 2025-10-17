@@ -42,7 +42,7 @@
 }
 
 .addCliente:hover {
-  background-color: #6e23c1;
+  background-color: #6e23c1 ;
   color: #fff;
 }
 
@@ -127,3 +127,36 @@
 
 /* Ajustes para tablets */
 @media (min-width: 768px) and (max-width: 991px) {}
+@media (max-width: 768px) {
+  table.table {
+    border: 0;
+  }
+
+  table.table thead {
+    display: none;
+  }
+
+  table.table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #1f1f1f;
+  }
+
+  table.table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    text-align: left;
+    border: none;
+  }
+
+  table.table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #bbb;
+  }
+}

@@ -1,98 +1,237 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaPen, FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
 import "./coins.css";
 import AddCoinsModal from "../components/coins-modal/addCoinsModal";
 import EditCoinsModal from "../components/coins-modal/editCoinsModal";
 
+// 🔹 Base API
+const BASE_API_URL = "http://localhost:7777/api";
+const API_ENDPOINT_COINS = `${BASE_API_URL}/coins`;
+
+// 🔐 Obtener encabezados de autorización
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token ? { authorization: `Bearer ${token}` } : {};
+};
+
 function Coins() {
+  const [coins, setCoins] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [coinsToEdit, setCoinsToEdit] = useState(null);
-
-  const [coins, setCoins] = useState([
-    { id: 1, code: "USD",  nombre: "Dólar estadounidense" },
-    { id: 2, code: "EUR",  nombre: "Euro"},
-    { id: 3, code: "MXN",  nombre: "Peso mexicano"},
-    { id: 4, code: "USD",  nombre: "Dólar estadounidense"},
-    { id: 5, code: "EUR",  nombre: "Euro"},
-    { id: 6, code: "MXN",  nombre: "Peso mexicano"},
-    { id: 7, code: "USD",  nombre: "Dólar estadounidense"},
-    { id: 8, code: "EUR",  nombre: "Euro"},
-    { id: 9, code: "MXN",  nombre: "Peso mexicano"},
-    { id: 10, code: "USD",  nombre: "Dólar estadounidense"},
-    { id: 11, code: "EUR",  nombre: "Euro"},
-    { id: 12, code: "MXN",  nombre: "Peso mexicano"},
-    { id: 13, code: "USD",  nombre: "Dólar estadounidense"},
-    { id: 14, code: "EUR",  nombre: "Euro"},
-    { id: 15, code: "MXN",  nombre: "Peso mexicano"},
-    { id: 16, code: "USD",  nombre: "Dólar estadounidense"},
-    { id: 17, code: "EUR",  nombre: "Euro" },
-    { id: 18, code: "MXN",  nombre: "Peso mexicano"},
-    { id: 19, code: "USD",  nombre: "Dólar estadounidense"},
-    { id: 20, code: "EUR",  nombre: "Euro"},
-    { id: 21, code: "MXN",  nombre: "Peso mexicano"},
-    { id: 22, code: "USD",  nombre: "Dólar estadounidense"},
-    { id: 23, code: "EUR",  nombre: "Euro"},
-    { id: 24, code: "MXN",  nombre: "Peso mexicano"},
-    // ... más monedas
-  ]);
-
-  // Paginación
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 10;
 
+  // 🔹 Obtener monedas
+  const getCoins = async () => {
+    try {
+      const res = await axios.get(API_ENDPOINT_COINS, {
+        headers: getAuthHeaders(),
+      });
+
+      if (res.data.code === 1 && Array.isArray(res.data.Coins)) {
+        setCoins(res.data.Coins);
+      } else if (Array.isArray(res.data)) {
+        setCoins(res.data);
+      } else {
+        setCoins([]);
+      }
+    } catch (error) {
+      console.error("Error al obtener monedas:", error);
+      Swal.fire({
+        title: "Error de Carga",
+        text: "No se pudieron cargar las monedas. Revisa la conexión con el backend.",
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+      });
+    }
+  };
+
+  // 🔹 Crear moneda
+  const addCoin = async (newCoin) => {
+    try {
+      const res = await axios.post(API_ENDPOINT_COINS, newCoin, {
+        headers: getAuthHeaders(),
+      });
+
+      if (res.data.code === 1 || res.status === 201) {
+        Swal.fire({
+          title: "¡Moneda Creada!",
+          text: "La moneda se ha agregado correctamente.",
+          icon: "success",
+          background: "#121212",
+          color: "#e0e0e0",
+        });
+        getCoins();
+        setShowAddModal(false);
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: res.data.message || "No se pudo crear la moneda.",
+          icon: "error",
+          background: "#121212",
+          color: "#e0e0e0",
+        });
+      }
+    } catch (error) {
+      console.error("Error al crear moneda:", error);
+      Swal.fire({
+        title: "Error de Conexión",
+        text: "No se pudo conectar al servidor para crear la moneda.",
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+      });
+    }
+  };
+
+  // 🔹 Actualizar moneda
+  const updateCoin = async (id, updatedCoin) => {
+    try {
+      const res = await axios.put(`${API_ENDPOINT_COINS}/${id}`, updatedCoin, {
+        headers: getAuthHeaders(),
+      });
+
+      if (res.data.code === 1 || res.status === 200) {
+        Swal.fire({
+          title: "¡Actualizada!",
+          text: "La moneda se actualizó correctamente.",
+          icon: "success",
+          background: "#121212",
+          color: "#e0e0e0",
+        });
+        getCoins();
+        setShowEditModal(false);
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: res.data.message || "No se pudo actualizar la moneda.",
+          icon: "error",
+          background: "#121212",
+          color: "#e0e0e0",
+        });
+      }
+    } catch (error) {
+      console.error("Error al actualizar moneda:", error);
+      Swal.fire({
+        title: "Error de Conexión",
+        text: "No se pudo conectar al servidor para actualizar la moneda.",
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+      });
+    }
+  };
+
+  // 🔹 Eliminar moneda
+  const deleteCoin = async (id) => {
+    try {
+      const res = await axios.delete(`${API_ENDPOINT_COINS}/${id}`, {
+        headers: getAuthHeaders(),
+      });
+
+      if (res.data.code === 1 || res.status === 200) {
+        Swal.fire({
+          title: "¡Eliminada!",
+          text: "La moneda se ha eliminado correctamente.",
+          icon: "success",
+          background: "#121212",
+          color: "#e0e0e0",
+        });
+        getCoins();
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: res.data.message || "No se pudo eliminar la moneda.",
+          icon: "error",
+          background: "#121212",
+          color: "#e0e0e0",
+        });
+      }
+    } catch (error) {
+      console.error("Error al eliminar moneda:", error);
+      Swal.fire({
+        title: "Error de Conexión",
+        text: "No se pudo conectar al servidor para eliminar la moneda.",
+        icon: "error",
+        background: "#121212",
+        color: "#e0e0e0",
+      });
+    }
+  };
+
+  // 🔹 Confirmar eliminación
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "No podrás revertir esta acción.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#e61610",
+      cancelButtonColor: "#8a2cf1",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      background: "#121212",
+      color: "#e0e0e0",
+    }).then((result) => {
+      if (result.isConfirmed) deleteCoin(id);
+    });
+  };
+
+  // 🔹 Mostrar modal de edición
+  const handleEdit = (id) => {
+    const coin = coins.find((c) => c.id === id);
+    setCoinsToEdit(coin);
+    setShowEditModal(true);
+  };
+
+  useEffect(() => {
+    getCoins();
+  }, []);
+
+  // 🔹 Filtrado
   const filteredCoins = coins.filter(
-    (m) =>
-      m.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    (coin) =>
+      coin.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coin.code?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // 🔹 Paginación
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const displayedCoins = filteredCoins.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredCoins.length / itemsPerPage);
 
-  const displayedCoins = filteredCoins.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const handleDelete = (id) => {
-    setCoins(coins.filter((c) => c.id !== id));
-  };
-
-  const handleAddCoins = (newCoins) => {
-    setCoins([...coins, { ...newCoins, id: Date.now() }]);
-    setShowAddModal(false);
-  };
-
-  const handleEditCoins = (updatedCoins) => {
-    setCoins(
-      coins.map((m) => (m.id === updatedCoins.id ? updatedCoins : m))
-    );
-    setShowEditModal(false);
-  };
+  // 🔹 Guardar desde modales
+  const handleAddCoins = (newCoin) => addCoin(newCoin);
+  const handleEditCoins = (updatedCoin) =>
+    updateCoin(coinsToEdit.id, updatedCoin);
 
   return (
     <div className="container-fluid clients-container">
       <h1 className="mb-4">Monedas</h1>
 
       <div className="row mb-3 align-items-center">
-        <div className="col-lg-6 col-md-6 d-flex justify-content-start mb-2">
+        <div className="col-lg-6 d-flex">
           <input
             type="text"
             placeholder="Buscar moneda..."
-            className="form-control search-input"
+            className="form-control"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); // reset page al buscar
+              setCurrentPage(1);
             }}
           />
-          <button className="btn ms-2 buscarClientes">Buscar</button>
         </div>
 
-        <div className="col-lg-6 col-md-6 d-flex justify-content-md-end justify-content-start">
+        <div className="col-lg-6 d-flex justify-content-end">
           <button
-            className="btn d-flex align-items-center addCliente"
+            className="btn btn-primary"
             onClick={() => setShowAddModal(true)}
           >
             Añadir Moneda
@@ -100,100 +239,66 @@ function Coins() {
         </div>
       </div>
 
-      {/* Tabla responsiva */}
-      <div className="row">
-        <div className="col-md-12">
-          <div className="table-responsive clients-table-wrapper">
-            <table className="table table-dark table-striped clients-table">
-              <thead>
-                <tr className="text-center">
-                  <th>Código</th>
-                  <th>Nombre</th>
-                  <th>Acciones</th>
+      <div className="table-responsive">
+        <table className="table table-dark table-striped text-center">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {displayedCoins.length > 0 ? (
+              displayedCoins.map((m) => (
+                <tr key={m.id}>
+                  <td>{m.code}</td>
+                  <td>{m.name}</td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-warning me-2"
+                      onClick={() => handleEdit(m.id)}
+                    >
+                      <FaPen />
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDelete(m.id)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {displayedCoins.length > 0 ? (
-                  displayedCoins.map((m) => (
-                    <tr key={m.id} className="text-center">
-                      <td>{m.code}</td>
-                      <td>{m.nombre}</td>
-                      <td>
-                        <button
-                          className="btn btn-sm me-2"
-                          style={{ backgroundColor: "#8A2CF1", color: "#fff" }}
-                          onClick={() => {
-                            setCoinsToEdit(m);
-                            setShowEditModal(true);
-                          }}
-                        >
-                          <FaPen />
-                        </button>
-                        <button
-                          className="btn btn-sm"
-                          style={{ backgroundColor: "#e61610", color: "#fff" }}
-                          onClick={() => handleDelete(m.id)}
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr className="text-center">
-                    <td colSpan="4">No se encontraron monedas</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3">No se encontraron monedas</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
-      {/* Paginación */}
       {totalPages > 1 && (
-        <nav>
-          <ul className="pagination justify-content-center mt-3">
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                Anterior
-              </button>
-            </li>
-            {[...Array(totalPages)].map((_, idx) => (
-              <li
-                key={idx}
-                className={`page-item ${
-                  currentPage === idx + 1 ? "active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(idx + 1)}
-                >
-                  {idx + 1}
-                </button>
-              </li>
-            ))}
+        <ul className="pagination justify-content-center mt-3">
+          {[...Array(totalPages)].map((_, idx) => (
             <li
+              key={idx}
               className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
+                currentPage === idx + 1 ? "active" : ""
               }`}
             >
               <button
                 className="page-link"
-                onClick={() => setCurrentPage(currentPage + 1)}
+                onClick={() => setCurrentPage(idx + 1)}
               >
-                Siguiente
+                {idx + 1}
               </button>
             </li>
-          </ul>
-        </nav>
+          ))}
+        </ul>
       )}
 
-      {/* Modales */}
       {showAddModal && (
         <AddCoinsModal
           onClose={() => setShowAddModal(false)}
