@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import "./coins.css";
 import AddCoinsModal from "../components/coins-modal/addCoinsModal";
 import EditCoinsModal from "../components/coins-modal/editCoinsModal";
+import { Container, Row, Col, Card, InputGroup, Button, Form, Modal, Table, Pagination } from 'react-bootstrap';
+
 
 // 🔹 Base API
 const BASE_API_URL = "http://localhost:7777/api";
@@ -227,11 +229,12 @@ function Coins() {
               setCurrentPage(1);
             }}
           />
+          <Button variant="secondary" className="btn ms-2 search-button">Buscar</Button>
         </div>
 
         <div className="col-lg-6 d-flex justify-content-end">
           <button
-            className="btn btn-primary"
+            className="btn btn-primary addCoin"
             onClick={() => setShowAddModal(true)}
           >
             Añadir Moneda
@@ -255,14 +258,15 @@ function Coins() {
                   <td>{m.code}</td>
                   <td>{m.name}</td>
                   <td>
+    
                     <button
-                      className="btn btn-sm btn-warning me-2"
+                      className="btn btn-sm btn-warning me-2 edit-button"
                       onClick={() => handleEdit(m.id)}
                     >
                       <FaPen />
                     </button>
                     <button
-                      className="btn btn-sm btn-danger"
+                      className="btn btn-sm btn-danger delete-button"
                       onClick={() => handleDelete(m.id)}
                     >
                       <FaTrash />
