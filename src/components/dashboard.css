@@ -215,6 +215,31 @@
 
 /* ===== RESPONSIVE CELULAR ===== */
 @media( max-width: 485px ) {
+  .dashboard-content .table-responsive {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: auto;
+    scrollbar-width: thin;
+  }
+
+  .dashboard-content .table-responsive::-webkit-scrollbar {
+    display: block;
+    height: 10px;
+  }
+
+  .dashboard-content .table-responsive::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  .dashboard-content .table-responsive::-webkit-scrollbar-thumb {
+    background-color: #8B5CF6;
+    border-radius: 4px;
+  }
+
+  .dashboard-content .table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #8B5CF6 #1a1a1a;
+  }
+
   /* Contenedor de header */
   .cont-header-usuario {
     display: flex;
