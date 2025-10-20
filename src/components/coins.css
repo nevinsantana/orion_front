@@ -99,7 +99,7 @@
   /* Reducir padding y tamaño de fuente para que quepa en pantalla */
   .clients-table td,
   .clients-table th {
-    padding: 4px 6px;
+    padding: 10px 10px;
     font-size: 14px;
     white-space: nowrap; /* evita que las filas se vean como cards */
     text-align: center;
@@ -122,14 +122,13 @@
     width: 28%;
     margin-left: 2%;
   }
-
-  /* Columna de acciones: ajustar para no romper la tabla */
-  .clients-table td:last-child {
+ 
+  /* .clients-table td:last-child {
     display: flex;
     justify-content: center;
     gap: 4px;
-    flex-wrap: wrap; /* si hay muchos botones */
-  }
+    flex-wrap: wrap;
+  } */
 }
 
 
