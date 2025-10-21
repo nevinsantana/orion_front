@@ -222,19 +222,19 @@ function Coins() {
           <input
             type="text"
             placeholder="Buscar moneda..."
-            className="form-control"
+            className="form-control search-input"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
           />
-          <Button variant="secondary" className="btn ms-2 search-button">Buscar</Button>
+          <Button variant="btn" className="btn ms-2 buscarClientes">Buscar</Button>
         </div>
 
         <div className="col-lg-6 d-flex justify-content-end">
           <button
-            className="btn btn-primary addCoin"
+            className="btn addCoin addCliente"
             onClick={() => setShowAddModal(true)}
           >
             Añadir Moneda

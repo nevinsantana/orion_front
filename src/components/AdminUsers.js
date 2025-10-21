@@ -206,25 +206,23 @@ const AdminUsers = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </InputGroup>
-                        <Button variant="secondary" className="btn ms-2 search-button">Buscar</Button>
+                        <Button variant="btn" className="btn ms-2 buscarClientes">Buscar</Button>
                     </Col>
                     
                     {/* Columna de Añadir Usuario */}
                     <Col lg={6} md={6} className="d-flex justify-content-md-end justify-content-start">
-                        <Button className="btn d-flex align-items-center add-button" onClick={() => {setCurrentUser(null); setShowModal(true);}}>
+                        <a href={"#"} className="btn d-flex align-items-center addCliente" onClick={() => {setCurrentUser(null); setShowModal(true);}}>
                             Añadir Usuario
-                        </Button>
+                        </a>
                     </Col>
                     
                 </Row>
                 <main className="admin-content">
                     <Row>
                         <Col md={12}>
-                            <Card className="user-table-card">
                                 <Card.Body className="p-0">
                                     <RenderUserTable /> 
                                 </Card.Body>
-                            </Card>
                         </Col>
                     </Row>
                 </main>
