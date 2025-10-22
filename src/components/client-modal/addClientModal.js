@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 
 function AddClientModal({ onClose, onSave }) {
   const [name, setName] = useState("");
+  const [rfc, setRfc] = useState("");
   const [taxAddress, setTaxAddress] = useState(""); // corregido typo
   const [taxRegime, setTaxRegime] = useState("");
   const [contactName, setContactName] = useState("");
@@ -25,6 +26,7 @@ function AddClientModal({ onClose, onSave }) {
     // Validación de campos
     if (
       !name ||
+      !rfc ||
       !taxAddress ||
       !taxRegime ||
       !contactName ||
@@ -60,6 +62,7 @@ function AddClientModal({ onClose, onSave }) {
 
       const body = {
         name,
+        rfc,
         tax_address: taxAddress,
         tax_regime: taxRegime,
         contact_name: contactName,
@@ -85,7 +88,7 @@ function AddClientModal({ onClose, onSave }) {
       if (response.data && response.data.client) {
         await Swal.fire({
           icon: "success",
-          theme: 'dark',
+          theme: "dark",
           title: "¡Cliente agregado!",
           text: "El cliente se agregó correctamente.",
           confirmButtonColor: "#8b5cf6",
@@ -96,7 +99,7 @@ function AddClientModal({ onClose, onSave }) {
         Swal.fire({
           icon: "error",
           title: "Error",
-          theme: 'dark',
+          theme: "dark",
           text: "No se pudo agregar el cliente.",
           confirmButtonColor: "#8b5cf6",
         });
@@ -106,7 +109,7 @@ function AddClientModal({ onClose, onSave }) {
       Swal.fire({
         icon: "error",
         title: "Error",
-        theme: 'dark',
+        theme: "dark",
         text: "Ocurrió un error al agregar el cliente. Revisa la consola.",
         confirmButtonColor: "#8b5cf6",
       });
@@ -150,6 +153,16 @@ function AddClientModal({ onClose, onSave }) {
               </div>
 
               <div className="col-md-4 col-12">
+                <label className="form-label">RFC</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={rfc}
+                  onChange={(e) => setRfc(e.target.value)}
+                />
+              </div>
+
+              <div className="col-md-4 col-12">
                 <label className="form-label">Domicilio</label>
                 <input
                   type="text"
@@ -158,7 +171,9 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setTaxAddress(e.target.value)}
                 />
               </div>
+            </div>
 
+            <div className="row g-2 mb-3">
               <div className="col-md-4 col-12">
                 <label className="form-label">Régimen Fiscal</label>
                 <input
@@ -168,9 +183,7 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setTaxRegime(e.target.value)}
                 />
               </div>
-            </div>
 
-            <div className="row g-2 mb-3">
               <div className="col-md-4 col-12">
                 <label className="form-label">Nombre Contacto</label>
                 <input
@@ -190,7 +203,9 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setContactEmail(e.target.value)}
                 />
               </div>
+            </div>
 
+            <div className="row g-2 mb-3">
               <div className="col-md-4 col-12">
                 <label className="form-label">Teléfono Contacto</label>
                 <input
@@ -200,12 +215,7 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setContactPhone(e.target.value)}
                 />
               </div>
-            </div>
-
-            <div className="row g-2"></div>
-
-            <div className="row g-2 mb-3">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">CFDI</label>
                 <input
                   type="text"
@@ -214,7 +224,7 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setUsoCfdi(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Régimen Fiscal Receptor</label>
                 <input
                   type="text"
@@ -225,8 +235,8 @@ function AddClientModal({ onClose, onSave }) {
               </div>
             </div>
 
-            <div className="row g-2">
-              <div className="col-md-6 col-12">
+            <div className="row g-2 mb-3">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Domicilio Fiscal Receptor</label>
                 <input
                   type="text"
@@ -235,7 +245,7 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setDomicilioFiscalReceptor(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Método Pago</label>
                 <input
                   type="text"
@@ -244,10 +254,7 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setMetodoPago(e.target.value)}
                 />
               </div>
-            </div>
-
-            <div className="row g-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Forma Pago</label>
                 <input
                   type="text"
@@ -256,7 +263,10 @@ function AddClientModal({ onClose, onSave }) {
                   onChange={(e) => setFormaPago(e.target.value)}
                 />
               </div>
-              <div className="col-md-6 col-12">
+            </div>
+
+            <div className="row g-2">
+              <div className="col-md-12 col-12">
                 <label className="form-label">Email Recepción Facturas</label>
                 <input
                   type="email"
