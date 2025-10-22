@@ -208,100 +208,91 @@ const AdminUsers = () => {
   );
   // FIN de la función que reemplaza el componente UserTable
 
-  return (
-    <div className="admin-container">
-      <Container fluid className="clients-container">
-        <h1 className="mb-4">Administrador de Usuarios</h1>
-        <Row className="mb-3 align-items-center header-actions">
-          {/* Columna de Búsqueda */}
-          <Col lg={6} md={6} className="d-flex justify-content-start mb-2">
-            <InputGroup className="search-bar flex-grow-1">
-              <Form.Control
-                type="search"
-                placeholder="Buscar usuario..."
-                aria-label="Buscar"
-                className="form-control search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </InputGroup>
-            <Button variant="secondary" className="btn ms-2 search-button">
-              Buscar
-            </Button>
-          </Col>
-
-          {/* Columna de Añadir Usuario */}
-          <Col
-            lg={6}
-            md={6}
-            className="d-flex justify-content-md-end justify-content-start"
-          >
-            <Button
-              className="btn d-flex align-items-center add-button"
-              onClick={() => {
-                setCurrentUser(null);
-                setShowModal(true);
-              }}
-            >
-              Añadir Usuario
-            </Button>
-          </Col>
-        </Row>
-        <main className="admin-content">
-          <Row>
-            <Col md={12}>
-              <div className="table-responsive clients-table-wrapper">
-                <RenderUserTable />
-              </div>
-            </Col>
-          </Row>
-        </main>
-
-        {/* Paginación */}
-        {totalPages > 1 && (
-          <nav>
-            <ul className="pagination justify-content-center mt-3">
-              <li
-                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+    return(
+        <div className="admin-container">
+            <Container fluid className="clients-container">
+                <h1 className="mb-4">Administrador de Usuarios</h1>
+                <Row className="mb-3 align-items-center header-actions">
+                    
+                    {/* Columna de Búsqueda */}
+                    <Col lg={6} md={6} className="d-flex justify-content-start mb-2">
+                        <InputGroup className="search-bar flex-grow-1">
+                            <Form.Control
+                                type="search"
+                                placeholder="Buscar usuario..."
+                                aria-label="Buscar"
+                                className="form-control search-input"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </InputGroup>
+                        <Button variant="secondary" className="btn ms-2 search-button">Buscar</Button>
+                    </Col>
+                    
+                    {/* Columna de Añadir Usuario */}
+                    <Col lg={6} md={6} className="d-flex justify-content-md-end justify-content-start">
+                        <Button className="btn d-flex align-items-center add-button" onClick={() => {setCurrentUser(null); setShowModal(true);}}>
+                            Añadir Usuario
+                        </Button>
+                    </Col>
+                    
+                </Row>
+                <main className="admin-content">
+                    <Row>
+                        <Col md={12}>
+                            <Card className="user-table-card">
+                                <Card.Body className="p-0">
+                                    <RenderUserTable /> 
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </main>
+                
+               {/* Paginación */}
+      {totalPages > 1 && (
+        <nav>
+          <ul className="pagination justify-content-center mt-3">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
               >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                  Anterior
-                </button>
-              </li>
-              {[...Array(totalPages)].map((_, idx) => (
-                <li
-                  key={idx}
-                  className={`page-item ${
-                    currentPage === idx + 1 ? "active" : ""
-                  }`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(idx + 1)}
-                  >
-                    {idx + 1}
-                  </button>
-                </li>
-              ))}
+                Anterior
+              </button>
+            </li>
+            {[...Array(totalPages)].map((_, idx) => (
               <li
+                key={idx}
                 className={`page-item ${
-                  currentPage === totalPages ? "disabled" : ""
+                  currentPage === idx + 1 ? "active" : ""
                 }`}
               >
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage(currentPage + 1)}
+                  onClick={() => setCurrentPage(idx + 1)}
                 >
-                  Siguiente
+                  {idx + 1}
                 </button>
               </li>
-            </ul>
-          </nav>
-        )}
-      </Container>
+            ))}
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Siguiente
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
+                
+            </Container>
 
       {/* Modal para el formulario de usuario */}
       <Modal

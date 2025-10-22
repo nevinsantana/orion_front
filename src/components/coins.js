@@ -239,14 +239,12 @@ function Coins() {
               setCurrentPage(1);
             }}
           />
-          <Button variant="secondary" className="btn ms-2 search-button">
-            Buscar
-          </Button>
+          <Button variant="secondary" className="btn ms-2 search-button">Buscar</Button>
         </div>
 
         <div className="col-lg-6 d-flex justify-content-md-end justify-content-start">
           <button
-            className="btn addCoin d-flex align-items-center"
+            className="btn btn-primary addCoin"
             onClick={() => setShowAddModal(true)}
           >
             Añadir Moneda
