@@ -5,8 +5,18 @@ import Swal from "sweetalert2";
 import "./coins.css";
 import AddCoinsModal from "../components/coins-modal/addCoinsModal";
 import EditCoinsModal from "../components/coins-modal/editCoinsModal";
-import { Container, Row, Col, Card, InputGroup, Button, Form, Modal, Table, Pagination } from 'react-bootstrap';
-
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  InputGroup,
+  Button,
+  Form,
+  Modal,
+  Table,
+  Pagination,
+} from "react-bootstrap";
 
 // 🔹 Base API
 const BASE_API_URL = "http://localhost:7777/api";
@@ -222,19 +232,21 @@ function Coins() {
           <input
             type="text"
             placeholder="Buscar moneda..."
-            className="form-control"
+            className="form-control search-input"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
           />
-          <Button variant="secondary" className="btn ms-2 search-button">Buscar</Button>
+          <Button variant="secondary" className="btn ms-2 search-button">
+            Buscar
+          </Button>
         </div>
 
-        <div className="col-lg-6 d-flex justify-content-end">
+        <div className="col-lg-6 d-flex justify-content-md-end justify-content-start">
           <button
-            className="btn btn-primary addCoin"
+            className="btn addCoin d-flex align-items-center"
             onClick={() => setShowAddModal(true)}
           >
             Añadir Moneda
@@ -258,7 +270,6 @@ function Coins() {
                   <td>{m.code}</td>
                   <td>{m.name}</td>
                   <td>
-    
                     <button
                       className="btn btn-sm btn-warning me-2 edit-button"
                       onClick={() => handleEdit(m.id)}
@@ -284,23 +295,45 @@ function Coins() {
       </div>
 
       {totalPages > 1 && (
-        <ul className="pagination justify-content-center mt-3">
-          {[...Array(totalPages)].map((_, idx) => (
+        <nav>
+          <ul className="pagination justify-content-center mt-3">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Anterior
+              </button>
+            </li>
+            {[...Array(totalPages)].map((_, idx) => (
+              <li
+                key={idx}
+                className={`page-item ${
+                  currentPage === idx + 1 ? "active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              </li>
+            ))}
             <li
-              key={idx}
               className={`page-item ${
-                currentPage === idx + 1 ? "active" : ""
+                currentPage === totalPages ? "disabled" : ""
               }`}
             >
               <button
                 className="page-link"
-                onClick={() => setCurrentPage(idx + 1)}
+                onClick={() => setCurrentPage(currentPage + 1)}
               >
-                {idx + 1}
+                Siguiente
               </button>
             </li>
-          ))}
-        </ul>
+          </ul>
+        </nav>
       )}
 
       {showAddModal && (
