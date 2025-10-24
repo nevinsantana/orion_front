@@ -1,245 +1,197 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaPen, FaTrash, FaRobot } from "react-icons/fa";
-import "./invoicesReport.css";
-import AddInvoiceModal from "./invoices-modal/AddInvoiceModal";
-import EditInvoiceModal from "./invoices-modal/EditInvoiceModal";
+import "./InvoicesReport.css";
+import AddInvoiceModal from "../components/report-invoices-modal/AddInvoiceModal";
+import EditInvoiceModal from "../components/report-invoices-modal/EditInvoiceModal";
+import AiAssistantModal from "../components/report-invoices-modal/AiAssistantModal";
+import Swal from "sweetalert2";
 
 function InvoicesReport() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
   const [invoiceToEdit, setInvoiceToEdit] = useState(null);
-  const [aiQuery, setAiQuery] = useState("");
-  const [aiResponse, setAiResponse] = useState("");
 
-  // Simulación de facturas (esto vendría de tu BD)
   const [invoices, setInvoices] = useState([
-    { id: 1, customer: "Cliente 1", amount: "$120.00", date: "2025-10-01", dueDate: "2025-10-15", state: "Pagada" },
-    { id: 2, customer: "Cliente 2", amount: "$250.00", date: "2025-09-20", dueDate: "2025-09-30", state: "Vencida" },
-    { id: 3, customer: "Cliente 3", amount: "$89.50", date: "2025-10-10", dueDate: "2025-10-25", state: "Pendiente" },
-    { id: 4, customer: "Cliente 4", amount: "$350.00", date: "2025-09-01", dueDate: "2025-09-10", state: "Vencida" },
-    { id: 5, customer: "Cliente 5", amount: "$150.00", date: "2025-10-12", dueDate: "2025-10-30", state: "Pendiente" },
+    {
+      cliente: "Juan Pérez",
+      monto: "$250.00",
+      fecha_emision: "2025-10-01",
+      estado: "Pagada",
+    },
+    {
+      cliente: "María López",
+      monto: "$450.00",
+      fecha_emision: "2025-09-28",
+      estado: "Pendiente",
+    },
+    {
+      cliente: "Carlos García",
+      monto: "$320.00",
+      fecha_emision: "2025-09-15",
+      estado: "Vencida",
+    },
   ]);
-
-  // Paginación
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
 
   const filteredInvoices = invoices.filter(
     (i) =>
-      i.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      i.state.toLowerCase().includes(searchTerm.toLowerCase())
+      i.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      i.estado.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage);
-
-  const displayedInvoices = filteredInvoices.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // === Funciones CRUD ===
-  const handleDelete = (id) => {
-    setInvoices(invoices.filter((f) => f.id !== id));
-  };
-
+  // === Añadir ===
   const handleAddInvoice = (newInvoice) => {
-    setInvoices([...invoices, { ...newInvoice, id: Date.now() }]);
+    setInvoices([...invoices, newInvoice]);
     setShowAddModal(false);
+
+    Swal.fire({
+      icon: "success",
+      title: "Factura añadida",
+      text: "La nueva factura se ha registrado correctamente.",
+      background: "#1e1e1e",
+      color: "#fff",
+      confirmButtonColor: "#6e23c1",
+    });
   };
 
+  // === Editar ===
   const handleEditInvoice = (updatedInvoice) => {
     setInvoices(
-      invoices.map((f) => (f.id === updatedInvoice.id ? updatedInvoice : f))
+      invoices.map((inv, index) =>
+        index === updatedInvoice.index ? updatedInvoice : inv
+      )
     );
     setShowEditModal(false);
+
+    Swal.fire({
+      icon: "success",
+      title: "Factura actualizada",
+      text: "Los cambios se guardaron correctamente.",
+      background: "#1e1e1e",
+      color: "#fff",
+      confirmButtonColor: "#6e23c1",
+    });
   };
 
-  // === Agente IA (simulación) ===
-  const handleAiQuery = () => {
-    const query = aiQuery.toLowerCase();
-    let response = "";
+  // === Eliminar ===
+  const handleDelete = (index) => {
+    const invoice = invoices[index];
 
-    if (query.includes("pagadas")) {
-      const count = invoices.filter((f) => f.state === "Pagada").length;
-      response = `Actualmente hay ${count} facturas pagadas.`;
-    } else if (query.includes("pendientes")) {
-      const count = invoices.filter((f) => f.state === "Pendiente").length;
-      response = `Hay ${count} facturas pendientes de pago.`;
-    } else if (query.includes("vencidas")) {
-      const count = invoices.filter((f) => f.state === "Vencida").length;
-      response = `Se detectaron ${count} facturas vencidas.`;
-    } else {
-      response = "No entendí tu consulta. Prueba con 'pagadas', 'pendientes' o 'vencidas'.";
-    }
-
-    setAiResponse(response);
+    Swal.fire({
+      title: "¿Eliminar factura?",
+      text: `Se eliminará la factura de ${invoice.cliente}.`,
+      icon: "warning",
+      background: "#1e1e1e",
+      color: "#fff",
+      showCancelButton: true,
+      confirmButtonColor: "#e61610",
+      cancelButtonColor: "#6e23c1",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setInvoices(invoices.filter((_, i) => i !== index));
+        Swal.fire({
+          icon: "success",
+          title: "Factura eliminada",
+          text: "La factura ha sido eliminada correctamente.",
+          background: "#1e1e1e",
+          color: "#fff",
+          confirmButtonColor: "#6e23c1",
+        });
+      }
+    });
   };
 
   return (
     <div className="container-fluid invoices-container">
       <h1 className="mb-4">Reporte del Estado de Facturas</h1>
 
-      {/* === Filtros y acciones === */}
+      {/* === Buscador y Botones === */}
       <div className="row mb-3 align-items-center">
-        <div className="col-lg-6 col-md-6 d-flex justify-content-start mb-2">
+        <div className="col-lg-6 d-flex justify-content-start mb-2">
           <input
             type="text"
-            placeholder="Buscar factura o cliente..."
+            placeholder="Buscar factura..."
             className="form-control search-input"
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button className="btn ms-2 buscarClientes">Buscar</button>
+          <button className="btn ms-2 searchBtn">Buscar</button>
         </div>
-
-        <div className="col-lg-6 col-md-6 d-flex justify-content-md-end justify-content-start">
+        <div className="col-lg-6 d-flex justify-content-end">
           <button
-            className="btn d-flex align-items-center addCliente"
+            className="btn addBtn me-2"
             onClick={() => setShowAddModal(true)}
           >
             Añadir Factura
+          </button>
+          <button
+            className="btn aiBtn d-flex align-items-center"
+            onClick={() => setShowAiModal(true)}
+          >
+            <FaRobot className="me-2" /> Asistente IA
           </button>
         </div>
       </div>
 
       {/* === Tabla de facturas === */}
-      <div className="row">
-        <div className="col-md-12">
-          <div className="table-responsive clients-table-wrapper">
-            <table className="table table-dark table-striped clients-table">
-              <thead>
-                <tr className="text-center">
-                  <th>ID</th>
-                  <th>Cliente</th>
-                  <th>Monto</th>
-                  <th>Fecha Emisión</th>
-                  <th>Fecha Vencimiento</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
+      <div className="table-responsive invoices-table-wrapper">
+        <table className="table table-dark table-striped text-center">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Monto</th>
+              <th>Fecha Emisión</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredInvoices.length > 0 ? (
+              filteredInvoices.map((i, index) => (
+                <tr key={index}>
+                  <td>{i.cliente}</td>
+                  <td>{i.monto}</td>
+                  <td>{i.fecha_emision}</td>
+                  <td
+                    className={
+                      i.estado === "Pagada"
+                        ? "estado pagada"
+                        : i.estado === "Pendiente"
+                        ? "estado pendiente"
+                        : "estado vencida"
+                    }
+                  >
+                    {i.estado}
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-sm me-2 editBtn"
+                      onClick={() => {
+                        setInvoiceToEdit({ ...i, index });
+                        setShowEditModal(true);
+                      }}
+                    >
+                      <FaPen />
+                    </button>
+                    <button
+                      className="btn btn-sm deleteBtn"
+                      onClick={() => handleDelete(index)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {displayedInvoices.length > 0 ? (
-                  displayedInvoices.map((f) => (
-                    <tr key={f.id} className="text-center">
-                      <td>{f.id}</td>
-                      <td>{f.customer}</td>
-                      <td>{f.amount}</td>
-                      <td>{f.date}</td>
-                      <td>{f.dueDate}</td>
-                      <td
-                        className={
-                          f.state === "Pagada"
-                            ? "text-success"
-                            : f.state === "Pendiente"
-                            ? "text-warning"
-                            : "text-danger"
-                        }
-                      >
-                        {f.state}
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-sm me-2"
-                          style={{ backgroundColor: "#8A2CF1", color: "#fff" }}
-                          onClick={() => {
-                            setInvoiceToEdit(f);
-                            setShowEditModal(true);
-                          }}
-                        >
-                          <FaPen />
-                        </button>
-                        <button
-                          className="btn btn-sm"
-                          style={{ backgroundColor: "#e61610", color: "#fff" }}
-                          onClick={() => handleDelete(f.id)}
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr className="text-center">
-                    <td colSpan="7">No se encontraron facturas</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* === Paginación === */}
-      {totalPages > 1 && (
-        <nav>
-          <ul className="pagination justify-content-center mt-3">
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                Anterior
-              </button>
-            </li>
-            {[...Array(totalPages)].map((_, idx) => (
-              <li
-                key={idx}
-                className={`page-item ${
-                  currentPage === idx + 1 ? "active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(idx + 1)}
-                >
-                  {idx + 1}
-                </button>
-              </li>
-            ))}
-            <li
-              className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
-              }`}
-            >
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                Siguiente
-              </button>
-            </li>
-          </ul>
-        </nav>
-      )}
-
-      {/* === Agente IA === */}
-      <div className="ai-section mt-4 p-3">
-        <h4>
-          <FaRobot className="me-2" />
-          Agente IA de Consultas
-        </h4>
-        <div className="d-flex mt-2">
-          <input
-            type="text"
-            placeholder="Ejemplo: ¿Cuántas facturas vencidas hay?"
-            className="form-control search-input"
-            value={aiQuery}
-            onChange={(e) => setAiQuery(e.target.value)}
-          />
-          <button className="btn ms-2 buscarClientes" onClick={handleAiQuery}>
-            Consultar
-          </button>
-        </div>
-        {aiResponse && (
-          <div className="ai-response mt-3 p-2">
-            <strong>Respuesta:</strong> {aiResponse}
-          </div>
-        )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5">No se encontraron facturas</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       {/* === Modales === */}
@@ -254,6 +206,12 @@ function InvoicesReport() {
           invoice={invoiceToEdit}
           onClose={() => setShowEditModal(false)}
           onSave={handleEditInvoice}
+        />
+      )}
+      {showAiModal && (
+        <AiAssistantModal
+          onClose={() => setShowAiModal(false)}
+          invoices={invoices}
         />
       )}
     </div>

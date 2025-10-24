@@ -1,0 +1,107 @@
+.invoices-container {
+  padding: 20px;
+  color: #fff;
+  background-color: #0f0f0f;
+  min-height: 100vh;
+}
+
+/* Input búsqueda */
+.search-input {
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+}
+
+.search-input::placeholder {
+  color: #aaa;
+}
+
+/* === BOTONES PERSONALIZADOS === */
+.btn.searchBtn,
+.btn.addBtn,
+.btn.aiBtn {
+  background-color: #6e23c1 !important; 
+  color: #fff !important;
+  border: none !important;
+}
+
+.btn.searchBtn:hover,
+.btn.addBtn:hover,
+.btn.aiBtn:hover {
+  background-color: #8a2cf1 !important;
+  
+}
+
+/* === BOTONES DE ACCIÓN === */
+.btn.editBtn {
+  background-color: #8a2cf1 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.btn.editBtn:hover {
+  background-color: #5a1e9e!important;
+}
+
+.btn.deleteBtn {
+  background-color: #e61610 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn.deleteBtn:hover {
+  background-color: #ff3b30 !important;
+}
+
+/* === TABLA === */
+.table-dark {
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+}
+
+.table-dark th {
+  background-color: #242424 !important;
+  color: #cfcfcf !important;
+}
+
+.table-dark td {
+  vertical-align: middle;
+  background-color: #191919 !important;
+}
+
+/* === ESTADOS === */
+.estado.pagada {
+  color: #4caf50 !important;
+  font-weight: bold;
+}
+
+.estado.pendiente {
+  color: #ffc107 !important;
+  font-weight: bold;
+}
+
+.estado.vencida {
+  color: #f44336 !important;
+  font-weight: bold;
+}
+
+/* === MODAL === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-content {
+  background: #222;
+  padding: 25px;
+  border-radius: 12px;
+  width: 420px;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(138, 44, 241, 0.4);
+  border: 1px solid #333;
+}

@@ -20,6 +20,7 @@ import Payments from "../components/payments";
 import Invoices from "./invoices";
 import axios from "../api/axiosConfig";
 import { jwtDecode } from "jwt-decode";
+import InvoicesReport from "./InvoicesReport";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -281,6 +282,7 @@ const Dashboard = () => {
         {activeView === "Coins" && <Coins />}
         {activeView === "Payments" && <Payments />}
         {activeView === "Invoices" && <Invoices />}
+        {activeView === "InvoicesReport" && <InvoicesReport />}
       </div>
     </div>
   );

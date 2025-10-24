@@ -1,0 +1,164 @@
+/* === OVERLAY GENERAL === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  padding: 1rem;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* === CONTENEDOR PRINCIPAL DEL MODAL === */
+.modal-content-clients {
+  background-color: #8a2cf1;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+/* === HEADER DEL MODAL === */
+.modal-header-clients {
+  background-color: #8a2cf1;
+  border-bottom: 1px solid #6e24c8;
+}
+
+.modal-header-clients h4 {
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.icon-close {
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.icon-close:hover {
+  transform: scale(1.1);
+  color: #ffb3ff;
+}
+
+/* === CUERPO DEL MODAL === */
+.modal-body-clients {
+  background-color: #121212;
+  color: #d4d4d4;
+  border-radius: 0 0 12px 12px;
+}
+
+.tituloIconoClients {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tituloIconoClients .icon {
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+/* === CAMPOS DEL FORMULARIO === */
+.form-clientes .form-control {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px 10px;
+  transition: border-color 0.2s ease;
+}
+
+.form-clientes .form-control:focus {
+  background-color: #1a1a1a;
+  border-color: #8a2cf1;
+  box-shadow: 0 0 5px rgba(138, 44, 241, 0.3);
+}
+
+.form-clientes .form-control.is-invalid {
+  border-color: #ff3b30;
+}
+
+/* === BOTONES === */
+.btn-cancelar {
+  background-color: red;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-cancelar:hover {
+  background-color: darkred;
+  transform: scale(1.05);
+}
+
+.btn-guardar {
+  background-color: #8a2cf1;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-guardar:hover {
+  background-color: #6e24c8;
+  transform: scale(1.05);
+}
+
+/* === ASISTENTE IA === */
+.ai-response {
+  margin-top: 1rem;
+  background-color: #1e1e1e;
+  color: #b3b3b3;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #8a2cf1;
+  font-size: 0.95rem;
+}
+
+/* === ANIMACIONES === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .modal-content-clients {
+    max-width: 95%;
+  }
+
+  .modal-body-clients {
+    padding: 1rem;
+  }
+}
