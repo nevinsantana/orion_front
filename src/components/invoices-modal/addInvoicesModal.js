@@ -3,6 +3,7 @@ import "./addInvoicesModal.css";
 import { FaTimes, FaFileUpload } from "react-icons/fa";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import axiosInstance from "../../api/axiosConfig";
+import { axiosAI } from "../../api/axiosAI";
 import Swal from "sweetalert2";
 
 function AddInvoicesModal({ onClose, onSave }) {
@@ -19,17 +20,125 @@ function AddInvoicesModal({ onClose, onSave }) {
   const [metodoPago, setMetodoPago] = useState("");
   const [formaPago, setFormaPago] = useState("");
   const [emailRecepcionFacturas, setEmailRecepcionFacturas] = useState("");
+  const [totalAmount, setTotalAmount] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [pdfFile, setPdfFile] = useState(null);
+  const [loadingPdf, setLoadingPdf] = useState(false);
 
   // Selección del PDF
   const handlePdfSelect = (e) => {
     const file = e.target.files[0];
-    if (file) setPdfFile(file);
+    if (file) {
+      setPdfFile(file);
+    }
+  };
+
+  // Enviar PDF manualmente
+  const handleAnalyzePdf = async () => {
+    if (!pdfFile) {
+      Swal.fire({
+        icon: "warning",
+        title: "Selecciona un PDF",
+        text: "Debes elegir un archivo antes de analizarlo.",
+        confirmButtonColor: "#8b5cf6",
+      });
+      return;
+    }
+
+    setLoadingPdf(true);
+
+    Swal.fire({
+      title: "Analizando PDF...",
+      text: "Por favor espera...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    try {
+      const formData = new FormData();
+      formData.append("pdfFile", pdfFile);
+      formData.append(
+        "question",
+        `Analiza el documento PDF proporcionado. Extrae únicamente los siguientes dos datos: el nombre completo del cliente y el monto total de la factura.
+Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
+      );
+
+      // Log para debug
+    for (let pair of formData.entries()) {
+      console.log("FormData:", pair[0], pair[1]);
+    }
+
+      // Usar axiosAI con baseURL correcto
+      const pdfResponse = await axiosAI.post("/ai/analyze-pdf", formData);
+
+      Swal.close();
+      setLoadingPdf(false);
+
+      if (pdfResponse.data.code === 1 && pdfResponse.data.client) {
+        const client = pdfResponse.data.client;
+
+        // Parsear JSON de la respuesta del AI
+        let parsedResponse = {};
+        if (pdfResponse.data.response) {
+          const cleanedJson = pdfResponse.data.response
+            .replace(/```json/g, "")
+            .replace(/```/g, "")
+            .trim();
+          parsedResponse = JSON.parse(cleanedJson);
+        }
+
+        // Actualizar inputs con los datos extraídos
+        setName(parsedResponse.cliente || client.name || "");
+        setTotalAmount(parsedResponse.total_monto || client.total_amount || "");
+        setRfc(client.rfc || "");
+        setTaxAddress(client.tax_address || "");
+        setTaxRegime(client.tax_regime || "");
+        setContactName(client.contact_name || "");
+        setContactEmail(client.contact_email || "");
+        setContactPhone(client.contact_phone || "");
+        setUsoCfdi(client.uso_cfdi || "");
+        setRegimenFiscalReceptor(client.regimen_fiscal_receptor || "");
+        setDomicilioFiscalReceptor(client.domicilio_fiscal_receptor || "");
+        setMetodoPago(client.metodo_pago || "");
+        setFormaPago(client.forma_pago || "");
+        setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
+        setDueDate(client.due_date || "");
+
+        Swal.fire({
+          icon: "success",
+          title: "Datos cargados",
+          html: `<b>Cliente:</b> ${
+            parsedResponse.cliente || client.name
+          }<br/><b>Total:</b> ${
+            parsedResponse.total_monto || client.total_amount
+          }`,
+          confirmButtonColor: "#8b5cf6",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error al analizar PDF",
+          text: "No se pudieron obtener los datos del cliente.",
+          confirmButtonColor: "#8b5cf6",
+        });
+      }
+    } catch (err) {
+      console.error("Error al analizar PDF:", err);
+      setLoadingPdf(false);
+      Swal.close();
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ocurrió un error al analizar el PDF.",
+        confirmButtonColor: "#8b5cf6",
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validación de campos obligatorios
     if (
       !name ||
       !rfc ||
@@ -43,7 +152,9 @@ function AddInvoicesModal({ onClose, onSave }) {
       !domicilioFiscalReceptor ||
       !metodoPago ||
       !formaPago ||
-      !emailRecepcionFacturas
+      !emailRecepcionFacturas ||
+      !totalAmount ||
+      !dueDate
     ) {
       Swal.fire({
         icon: "warning",
@@ -79,6 +190,8 @@ function AddInvoicesModal({ onClose, onSave }) {
       metodo_pago: metodoPago,
       forma_pago: formaPago,
       email_recepcion_facturas: emailRecepcionFacturas,
+      total_amount: totalAmount,
+      due_date: dueDate,
     };
 
     try {
@@ -89,83 +202,24 @@ function AddInvoicesModal({ onClose, onSave }) {
       });
 
       // Guardar factura
-      const response = await axiosInstance.post("/invoices", body);
-      const savedInvoice = response.data.invoice;
+      const response = await axiosInstance.post("/invoices", body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (response.data?.code === 1 && savedInvoice) {
+      Swal.close();
 
-        // Subir PDF si existe
-        if (pdfFile) {
-          Swal.fire({
-            title: "Analizando PDF...",
-            text: "Por favor espera...",
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading(),
-          });
-
-          const formData = new FormData();
-          formData.append("file", pdfFile);
-          formData.append("invoice_id", savedInvoice.id);
-
-          try {
-            const pdfResponse = await axiosInstance.post(
-              "/api/ai/analyze-pdf",
-              formData,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "multipart/form-data",
-                },
-              }
-            );
-
-            Swal.close();
-
-            if (pdfResponse.data.code === 1) {
-              let raw = pdfResponse.data.response || "";
-              raw = raw.replace(/```json|```/g, "").trim();
-
-              try {
-                const result = JSON.parse(raw);
-                Swal.fire({
-                  icon: "success",
-                  title: "PDF analizado correctamente",
-                  html: `
-                    <b>Cliente:</b> ${result.cliente}<br/>
-                    <b>Monto:</b> ${result.total_monto}
-                  `,
-                  confirmButtonColor: "#8b5cf6",
-                });
-              } catch (err) {
-                console.error("Error parseando respuesta Gemini:", raw);
-              }
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: "Error al analizar PDF",
-                text: "No se pudo procesar el archivo.",
-                confirmButtonColor: "#8b5cf6",
-              });
-            }
-          } catch (err) {
-            console.error("Error al subir PDF:", err);
-            Swal.close();
-            Swal.fire({
-              icon: "error",
-              title: "Error al subir PDF",
-              text: "Revisa la consola.",
-              confirmButtonColor: "#8b5cf6",
-            });
-          }
-        }
-
+      if (response.data?.code === 1 && response.data.invoice) {
         Swal.fire({
           icon: "success",
           title: "Factura agregada",
           text: response.data.message,
           confirmButtonColor: "#8b5cf6",
         });
-        onSave(savedInvoice);
+
+        onSave(response.data.invoice);
         onClose();
       } else {
         Swal.fire({
@@ -186,104 +240,7 @@ function AddInvoicesModal({ onClose, onSave }) {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   // Validación de campos
-  //   if (
-  //     !name ||
-  //     !rfc ||
-  //     !taxAddress ||
-  //     !taxRegime ||
-  //     !contactName ||
-  //     !contactEmail ||
-  //     !contactPhone ||
-  //     !usoCfdi ||
-  //     !regimenFiscalReceptor ||
-  //     !domicilioFiscalReceptor ||
-  //     !metodoPago ||
-  //     !formaPago ||
-  //     !emailRecepcionFacturas
-  //   ) {
-  //     Swal.fire({
-  //       icon: "warning",
-  //       title: "Campos incompletos",
-  //       text: "Por favor completa todos los campos requeridos.",
-  //       confirmButtonColor: "#8b5cf6",
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) {
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Error",
-  //         text: "Token no encontrado. Debes iniciar sesión.",
-  //         confirmButtonColor: "#8b5cf6",
-  //       });
-  //       return;
-  //     }
-
-  //     const body = {
-  //       name,
-  //       rfc,
-  //       tax_address: taxAddress,
-  //       tax_regime: taxRegime,
-  //       contact_name: contactName,
-  //       contact_email: contactEmail,
-  //       contact_phone: contactPhone,
-  //       uso_cfdi: usoCfdi,
-  //       regimen_fiscal_receptor: regimenFiscalReceptor,
-  //       domicilio_fiscal_receptor: domicilioFiscalReceptor,
-  //       metodo_pago: metodoPago,
-  //       forma_pago: formaPago,
-  //       email_recepcion_facturas: emailRecepcionFacturas,
-  //     };
-
-  //     // Guardar en backend
-  //     const response = await axiosInstance.post("/invoices", body, {
-  //       // headers: {
-  //       //   Authorization: `Bearer ${token}`,
-  //       //   "Content-Type": "application/json",
-  //       // },
-  //     });
-
-  //     // Usar respuesta real del backend
-  //     if (response.data && response.data.code === 1 && response.data.invoice) {
-  //       await Swal.fire({
-  //         icon: "success",
-  //         theme: "dark",
-  //         title: "¡Factura agregada!",
-  //         text: response.data.message,
-  //         confirmButtonColor: "#8b5cf6",
-  //       });
-  //       onSave(response.data.invoice); // agrega el cliente con el ID real
-  //       onClose();
-  //     } else {
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Error",
-  //         theme: "dark",
-  //         text: "No se pudo agregar la factura.",
-  //         confirmButtonColor: "#8b5cf6",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al agregar factura:", error);
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Error",
-  //       theme: "dark",
-  //       text: "Ocurrió un error al agregar la factura. Revisa la consola.",
-  //       confirmButtonColor: "#8b5cf6",
-  //     });
-  //   }
-  // };
-
   // Función para cerrar al hacer clic fuera del modal
-
   const handleOverlayClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
       onClose();
@@ -466,6 +423,31 @@ function AddInvoicesModal({ onClose, onSave }) {
                 </div>
               </div>
               <div className="col-md-4 col-12">
+                <div className="mb-3">
+                  <label className="form-label">Cantidad total</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={totalAmount}
+                    onChange={(e) => setTotalAmount(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="row g-2">
+              <div className="col-md-6 col-12">
+                <div className="mb-3">
+                  <label className="form-label">Fecha Vencimiento</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="col-md-6 col-12">
                 <label className="form-label">Archivo PDF</label>
                 <div className="d-flex align-items-center gap-2">
                   <label
@@ -484,6 +466,15 @@ function AddInvoicesModal({ onClose, onSave }) {
                   />
                   {pdfFile && <span>{pdfFile.name}</span>}
                 </div>
+                {pdfFile && (
+                  <button
+                    type="button"
+                    className="btn btn-analizar"
+                    onClick={handleAnalyzePdf}
+                  >
+                    Analizar PDF
+                  </button>
+                )}
               </div>
             </div>
 

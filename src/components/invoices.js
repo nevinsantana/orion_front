@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
-import "./invoices.css";
+import './invoices.css'
 import AddInvoicesModal from "./invoices-modal/addInvoicesModal";
 import EditInvoicesModal from "./invoices-modal/editInvoicesModal";
 import Swal from "sweetalert2";
