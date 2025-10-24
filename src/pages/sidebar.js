@@ -13,6 +13,7 @@ import { FaUserGroup, FaDollarSign } from "react-icons/fa6";
 import { MdPayments } from "react-icons/md";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import "./sidebar.css";
+import { TbReportSearch } from "react-icons/tb";
 
 const Sidebar = ({ setActiveView }) => {
   const [active, setActive] = useState("dashboard");
@@ -101,6 +102,12 @@ const Sidebar = ({ setActiveView }) => {
               onClick={() => handleClick("Invoices")}
             >
               <LiaFileInvoiceSolid className="icon" /> <span>Facturas</span>
+            </li>
+             <li
+              className={active === "InvoicesReport" ? "active" : ""}
+              onClick={() => handleClick("InvoicesReport")}
+            >
+              <TbReportSearch className="icon" /> <span>Estado De Facturas</span>
             </li>
           </ul>
         </nav>
