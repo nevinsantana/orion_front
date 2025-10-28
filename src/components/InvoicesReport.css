@@ -5,7 +5,7 @@
   min-height: 100vh;
 }
 
-/* Input búsqueda */
+/* === Input búsqueda === */
 .search-input {
   background-color: #1a1a1a !important;
   color: #fff !important;
@@ -29,7 +29,6 @@
 .btn.addBtn:hover,
 .btn.aiBtn:hover {
   background-color: #8a2cf1 !important;
-  
 }
 
 /* === BOTONES DE ACCIÓN === */
@@ -37,20 +36,48 @@
   background-color: #8a2cf1 !important;
   color: #fff !important;
   border: none !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn.editBtn:hover {
-  background-color: #5a1e9e!important;
+  background-color: #5a1e9e !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(138, 44, 241, 0.5);
 }
 
 .btn.deleteBtn {
   background-color: #e61610 !important;
   color: white !important;
   border: none !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn.deleteBtn:hover {
   background-color: #ff3b30 !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+}
+
+/* === NUEVO: BOTÓN DESCARGA XLS === */
+.btn.downloadBtn {
+  background-color: #28a745 !important; /* Verde Excel */
+  color: #fff !important;
+  border: none !important;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 6px 10px !important;
+  box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
+}
+
+.btn.downloadBtn:hover {
+  background-color: #2ecc71 !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.6);
+}
+
+.btn.downloadBtn:active {
+  transform: scale(0.96);
+  background-color: #218838 !important;
 }
 
 /* === TABLA === */
@@ -104,4 +131,27 @@
   color: #fff;
   box-shadow: 0 0 15px rgba(138, 44, 241, 0.4);
   border: 1px solid #333;
+}
+
+/* === ACCIONES EN TABLA === */
+.table td:last-child {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+/* === RESPONSIVO === */
+@media (max-width: 768px) {
+  .table td:last-child {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .btn.editBtn,
+  .btn.deleteBtn,
+  .btn.downloadBtn {
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+  }
 }
