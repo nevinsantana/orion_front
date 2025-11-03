@@ -1,157 +1,145 @@
-.invoices-container {
-  padding: 20px;
-  color: #fff;
-  background-color: #0f0f0f;
+/* === Contenedor principal === */
+.report-container {
+  background-color: #0A0A0A;
   min-height: 100vh;
+  color: #fff;
+  padding: 20px;
 }
 
-/* === Input búsqueda === */
-.search-input {
-  background-color: #1a1a1a !important;
-  color: #fff !important;
-  border: 1px solid #444 !important;
+.report-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-.search-input::placeholder {
+/* === Filtros y controles === */
+.report-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.records-control,
+.filters-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.select-dark,
+.input-dark {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.btn-purple {
+  background-color: #6f42c1;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-red {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-pink {
+  background-color: #e83e8c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-green {
+  background-color: #20c997;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-purple:hover,
+.btn-red:hover,
+.btn-pink:hover,
+.btn-green:hover {
+  opacity: 0.85;
+}
+
+/* === Tabla === */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #111;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.report-table th {
+  background-color: #1e1e1e;
+  color: #fff;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.report-table td {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.report-table tr:hover {
+  background-color: #222;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
   color: #aaa;
 }
 
-/* === BOTONES PERSONALIZADOS === */
-.btn.searchBtn,
-.btn.addBtn,
-.btn.aiBtn {
-  background-color: #6e23c1 !important; 
-  color: #fff !important;
-  border: none !important;
-}
-
-.btn.searchBtn:hover,
-.btn.addBtn:hover,
-.btn.aiBtn:hover {
-  background-color: #8a2cf1 !important;
-}
-
-/* === BOTONES DE ACCIÓN === */
-.btn.editBtn {
-  background-color: #8a2cf1 !important;
-  color: #fff !important;
-  border: none !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn.editBtn:hover {
-  background-color: #5a1e9e !important;
-  transform: scale(1.08);
-  box-shadow: 0 0 10px rgba(138, 44, 241, 0.5);
-}
-
-.btn.deleteBtn {
-  background-color: #e61610 !important;
-  color: white !important;
-  border: none !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn.deleteBtn:hover {
-  background-color: #ff3b30 !important;
-  transform: scale(1.08);
-  box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
-}
-
-/* === NUEVO: BOTÓN DESCARGA XLS === */
-.btn.downloadBtn {
-  background-color: #28a745 !important; /* Verde Excel */
-  color: #fff !important;
-  border: none !important;
-  transition: all 0.2s ease;
-  border-radius: 6px;
-  padding: 6px 10px !important;
-  box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
-}
-
-.btn.downloadBtn:hover {
-  background-color: #2ecc71 !important;
-  transform: scale(1.08);
-  box-shadow: 0 0 12px rgba(46, 204, 113, 0.6);
-}
-
-.btn.downloadBtn:active {
-  transform: scale(0.96);
-  background-color: #218838 !important;
-}
-
-/* === TABLA === */
-.table-dark {
-  background-color: #1a1a1a !important;
-  color: #fff !important;
-}
-
-.table-dark th {
-  background-color: #242424 !important;
-  color: #cfcfcf !important;
-}
-
-.table-dark td {
-  vertical-align: middle;
-  background-color: #191919 !important;
-}
-
-/* === ESTADOS === */
-.estado.pagada {
-  color: #4caf50 !important;
-  font-weight: bold;
-}
-
-.estado.pendiente {
-  color: #ffc107 !important;
-  font-weight: bold;
-}
-
-.estado.vencida {
-  color: #f44336 !important;
-  font-weight: bold;
-}
-
-/* === MODAL === */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+/* === Paginación === */
+.pagination-controls {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
-}
-
-.modal-content {
-  background: #222;
-  padding: 25px;
-  border-radius: 12px;
-  width: 420px;
-  color: #fff;
-  box-shadow: 0 0 15px rgba(138, 44, 241, 0.4);
-  border: 1px solid #333;
-}
-
-/* === ACCIONES EN TABLA === */
-.table td:last-child {
-  display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   gap: 8px;
+  margin-top: 20px;
 }
 
-/* === RESPONSIVO === */
-@media (max-width: 768px) {
-  .table td:last-child {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+.pagination-btn {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-  .btn.editBtn,
-  .btn.deleteBtn,
-  .btn.downloadBtn {
-    padding: 6px 8px !important;
-    font-size: 12px !important;
-  }
+.pagination-btn.active,
+.pagination-btn:hover {
+  background-color: #6f42c1;
+  border-color: #6f42c1;
 }
