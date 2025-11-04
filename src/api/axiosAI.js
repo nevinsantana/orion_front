@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosAI = axios.create({
-  baseURL: "http://localhost:7777/api", // URL absoluta para AI
+  baseURL: "http://localhost:9000/api", // URL absoluta para AI
 });
 
 axiosAI.interceptors.request.use((config) => {
