@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
+
 
 import {
   FaHome,
@@ -108,6 +110,12 @@ const Sidebar = ({ setActiveView }) => {
               onClick={() => handleClick("InvoicesReport")}
             >
               <TbReportSearch className="icon" /> <span>Estado De Facturas</span>
+            </li>
+            <li
+              className={active === "AgingReport" ? "active" : ""}
+              onClick={() => handleClick("AgingReport")}
+            >
+              <LiaFileInvoiceDollarSolid className="icon" /> <span>Reporte De Cuentas</span>
             </li>
           </ul>
         </nav>
