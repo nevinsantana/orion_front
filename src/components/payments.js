@@ -1,51 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
 import "./payments.css";
 import AddPaymentsModal from "./payments-modal/addPaymentsModal";
 import EditPaymentsModal from "./payments-modal/editPaymentsModal";
+import Swal from "sweetalert2";
+import axiosInstance from "../api/axiosConfig";
 
 function Payments() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [paymentsToEdit, setPaymentsToEdit] = useState(null);
+  const [payments, setPayments] = useState([]);
 
-  const [payments, setPayments] = useState([
-    { id: 1, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 1", state: "Completo" },
-    { id: 2, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$100.00", date: "12-04-2025", customer: "Cliente 2", state: "Completo" },
-    { id: 3, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 3", state: "Completo" },
-    { id: 4, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 4", state: "Completo" },
-    { id: 5, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 5", state: "Completo" },
-    { id: 6, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 6", state: "Completo" },
-    { id: 7, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 7", state: "Completo" },
-    { id: 8, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 8", state: "Completo" },
-    { id: 9, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 9", state: "Completo" },
-    { id: 10, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 10", state: "Completo" },
-    { id: 11, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 11", state: "Completo" },
-    { id: 12, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 12", state: "Completo" },
-    { id: 13, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 13", state: "Completo" },
-    { id: 14, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 14", state: "Completo" },
-    { id: 15, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 15", state: "Completo" },
-    { id: 16, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 16", state: "Completo" },
-    { id: 17, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 17", state: "Completo" },
-    { id: 18, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 18", state: "Completo" },
-    { id: 19, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 19", state: "Completo" },
-    { id: 20, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 20", state: "Completo" },
-    { id: 21, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 21", state: "Completo" },
-    { id: 22, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 22", state: "Completo" },
-    { id: 23, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 23", state: "Completo" },
-    { id: 24, email: "micorreo@gmail.com",  details: "Ver los detalles del pedido", amount: "$18.39", date: "12-04-2025", customer: "Cliente 24", state: "Completo" },
-    // ... más monedas
-  ]);
+  const fetchPayments = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token no encontrado en localStorage");
+        return;
+      }
+
+      const response = await axiosInstance.get("/paymentHistory", {
+        // headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("Datos recibidos:", response.data);
+
+      if (response.data.code === 1 && Array.isArray(response.data.data)) {
+        setPayments(response.data.data);
+      } else {
+        console.error("Formato de respuesta inesperado:", response.data);
+      }
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
+  // Filtrado seguro con optional chaining
   const filteredPayments = payments.filter(
     (m) =>
-      m.date.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.customer.toLowerCase().includes(searchTerm.toLowerCase())
+      (m.paymentDate?.toLowerCase?.() || "").includes(
+        searchTerm.toLowerCase()
+      ) ||
+      (m.paymentMethod?.toLowerCase?.() || "").includes(
+        searchTerm.toLowerCase()
+      )
   );
 
   const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
@@ -55,15 +63,18 @@ function Payments() {
     currentPage * itemsPerPage
   );
 
+  // Función para eliminar pago desde el backend
   const handleDelete = (id) => {
     setPayments(payments.filter((c) => c.id !== id));
   };
 
+  // Agregar nuevo pago usando la respuesta del backend
   const handleAddPayments = (newPayments) => {
     setPayments([...payments, { ...newPayments, id: Date.now() }]);
     setShowAddModal(false);
   };
 
+  // Editar pago existente
   const handleEditPayments = (updatedPayments) => {
     setPayments(
       payments.map((m) => (m.id === updatedPayments.id ? updatedPayments : m))
@@ -108,12 +119,10 @@ function Payments() {
               <thead>
                 <tr className="text-center">
                   <th>ID</th>
-                  <th>Correo electrónico</th>
-                  <th>Detalles</th>
+                  <th>Fecha Pago</th>
                   <th>Importe</th>
-                  <th>Fecha</th>
-                  <th>Cliente</th>
-                  <th>Estado</th>
+                  <th>Método Pago</th>
+                  <th>Descripción</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -122,12 +131,10 @@ function Payments() {
                   displayedPayments.map((m) => (
                     <tr key={m.id} className="text-center">
                       <td>{m.id}</td>
-                      <td>{m.email}</td>
-                      <td>{m.details}</td>
+                      <td>{new Date(m.paymentDate).toLocaleDateString()}</td>
                       <td>{m.amount}</td>
-                      <td>{m.date}</td>
-                      <td>{m.customer}</td>
-                      <td>{m.state}</td>
+                      <td>{m.paymentMethod}</td>
+                      <td>{m.description}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"
