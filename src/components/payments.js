@@ -64,8 +64,63 @@ function Payments() {
   );
 
   // Función para eliminar pago desde el backend
-  const handleDelete = (id) => {
-    setPayments(payments.filter((c) => c.id !== id));
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token no encontrado en localStorage");
+      return;
+    }
+
+    // Confirmación antes de eliminar
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará el Historial de pago.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#8b5cf6",
+      cancelButtonColor: "#e61610",
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axiosInstance.delete(
+          `/paymentHistory/${id}`,
+          // {
+          //   headers: { Authorization: `Bearer ${token}` },
+          // }
+        );
+
+        if (response.data.code === 1) {
+          // Actualizamos la tabla localmente
+          // setPayments((prev) => prev.filter((m) => m.id !== id));
+          await fetchPayments();
+
+          Swal.fire({
+            title: "¡Eliminado!",
+            text: response.data.message,
+            icon: "success",
+            confirmButtonColor: "#8b5cf6",
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: response.data.message || "No se pudo eliminar el Histrorial de pago",
+            icon: "error",
+            confirmButtonColor: "#8b5cf6",
+          });
+        }
+      } catch (error) {
+        console.error("Error al eliminar el historial de pago:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Ocurrió un error al eliminar el historial de pago",
+          icon: "error",
+          confirmButtonColor: "#8b5cf6",
+        });
+      }
+    }
   };
 
   // Agregar nuevo pago usando la respuesta del backend
