@@ -125,17 +125,31 @@ function Payments() {
 
   // Agregar nuevo pago usando la respuesta del backend
   const handleAddPayments = (newPayments) => {
-    setPayments([...payments, { ...newPayments, id: Date.now() }]);
+    setPayments((prev) => [...prev, newPayments]);
+    // setPayments([...payments, { ...newPayments, id: Date.now() }]);
     setShowAddModal(false);
   };
 
   // Editar pago existente
   const handleEditPayments = (updatedPayments) => {
-    setPayments(
-      payments.map((m) => (m.id === updatedPayments.id ? updatedPayments : m))
-    );
-    setShowEditModal(false);
-  };
+  if (!updatedPayments || !updatedPayments.id) {
+    console.error("Error: el pago actualizado no tiene ID", updatedPayments);
+    return;
+  }
+
+  setPayments((prev) =>
+    prev.map((m) => (m.id === updatedPayments.id ? updatedPayments : m))
+  );
+
+  setShowEditModal(false);
+};
+
+  // const handleEditPayments = (updatedPayments) => {
+  //   setPayments(
+  //     payments.map((m) => (m.id === updatedPayments.id ? updatedPayments : m))
+  //   );
+  //   setShowEditModal(false);
+  // };
 
   return (
     <div className="container-fluid clients-container">
