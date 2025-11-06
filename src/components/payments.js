@@ -25,7 +25,7 @@ function Payments() {
         // headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("Datos recibidos:", response.data);
+      console.log("Pagos recibidos:", response.data);
 
       if (response.data.code === 1 && Array.isArray(response.data.data)) {
         setPayments(response.data.data);
@@ -33,7 +33,7 @@ function Payments() {
         console.error("Formato de respuesta inesperado:", response.data);
       }
     } catch (error) {
-      console.error("Error al obtener los clientes:", error);
+      console.error("Error al obtener los pagos:", error);
     }
   };
 
@@ -161,7 +161,7 @@ function Payments() {
             className="btn d-flex align-items-center addCliente"
             onClick={() => setShowAddModal(true)}
           >
-            Añadir Historial
+            Añadir Pago
           </button>
         </div>
       </div>
