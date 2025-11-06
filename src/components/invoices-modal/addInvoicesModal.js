@@ -159,6 +159,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
+        theme: "dark",
         text: "Por favor completa todos los campos requeridos.",
         confirmButtonColor: "#8b5cf6",
       });
@@ -170,6 +171,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
       Swal.fire({
         icon: "error",
         title: "Error",
+        theme: "dark",
         text: "Token no encontrado. Debes iniciar sesión.",
         confirmButtonColor: "#8b5cf6",
       });
@@ -197,6 +199,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
     try {
       Swal.fire({
         title: "Guardando factura...",
+        theme: "dark",
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
       });
@@ -215,6 +218,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
         Swal.fire({
           icon: "success",
           title: "Factura agregada",
+          theme: "dark",
           text: response.data.message,
           confirmButtonColor: "#8b5cf6",
         });
@@ -225,6 +229,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
         Swal.fire({
           icon: "error",
           title: "Error",
+          theme: "dark",
           text: "No se pudo agregar la factura.",
           confirmButtonColor: "#8b5cf6",
         });
@@ -234,6 +239,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
       Swal.fire({
         icon: "error",
         title: "Error",
+        theme: "dark",
         text: "Ocurrió un error al guardar la factura. Revisa la consola.",
         confirmButtonColor: "#8b5cf6",
       });

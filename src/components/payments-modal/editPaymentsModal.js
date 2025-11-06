@@ -16,6 +16,7 @@ function EditPaymentsModal({ payments, onClose, onSave }) {
     Swal.fire({
       icon: "error",
       title: "Error interno",
+      theme: "dark",
       text: "No se encontró el ID del pago a editar.",
     });
     return;
@@ -25,6 +26,7 @@ function EditPaymentsModal({ payments, onClose, onSave }) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
+        theme: "dark",
         text: "Por favor llena todos los campos requeridos.",
       });
       return;
@@ -43,6 +45,7 @@ function EditPaymentsModal({ payments, onClose, onSave }) {
         Swal.fire({
           icon: "success",
           title: "Pago actualizado",
+          theme: "dark",
           text: response.data.message,
           timer: 2000,
           showConfirmButton: false,
@@ -55,6 +58,7 @@ function EditPaymentsModal({ payments, onClose, onSave }) {
         Swal.fire({
           icon: "error",
           title: "Error",
+          theme: "dark",
           text: response.data.message || "No se pudo actualizar el pago.",
         });
       }
@@ -62,6 +66,7 @@ function EditPaymentsModal({ payments, onClose, onSave }) {
       console.error("Error al actualizar pago:", error);
       Swal.fire({
         icon: "error",
+        theme: "dark",
         title: "Error en la solicitud",
         text: "Hubo un problema al actualizar el registro.",
       });

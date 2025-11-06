@@ -52,6 +52,7 @@ function AddPaymentsModal({ onClose, onSave }) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
+        theme: "dark",
         text: "Por favor llena todos los campos.",
       });
       return;
@@ -70,6 +71,7 @@ function AddPaymentsModal({ onClose, onSave }) {
         Swal.fire({
           icon: "success",
           title: "¡Registro exitoso!",
+          theme: "dark",
           text: response.data.message,
           timer: 2000,
           showConfirmButton: false,
@@ -83,6 +85,7 @@ function AddPaymentsModal({ onClose, onSave }) {
         Swal.fire({
           icon: "error",
           title: "Error",
+          theme: "dark",
           text:
             response.data.message || "Ocurrió un error al registrar el pago.",
         });
@@ -92,6 +95,7 @@ function AddPaymentsModal({ onClose, onSave }) {
       Swal.fire({
         icon: "error",
         title: "Error del servidor",
+        theme: "dark",
         text: error.response?.data?.message || "No se pudo registrar el pago.",
       });
     }
