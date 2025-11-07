@@ -123,7 +123,7 @@ function AgingReport() {
           />
           <input
             type="text"
-            placeholder="Buscar por cliente o estado"
+            placeholder="Buscar..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input-dark"

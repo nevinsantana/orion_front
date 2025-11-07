@@ -112,7 +112,7 @@ const handleExport = async () => {
 
   return (
     <div className="report-container">
-      <h1 className="report-title">Reportes de Facturas</h1>
+      <h1 className="report-title">Reporte de Facturas</h1>
 
       <div className="report-header">
         <div className="records-control">
