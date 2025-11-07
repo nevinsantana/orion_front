@@ -25,7 +25,7 @@ function Payments() {
         // headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("Datos recibidos:", response.data);
+      console.log("Pagos recibidos:", response.data);
 
       if (response.data.code === 1 && Array.isArray(response.data.data)) {
         setPayments(response.data.data);
@@ -33,7 +33,7 @@ function Payments() {
         console.error("Formato de respuesta inesperado:", response.data);
       }
     } catch (error) {
-      console.error("Error al obtener los clientes:", error);
+      console.error("Error al obtener los pagos:", error);
     }
   };
 
@@ -64,23 +64,92 @@ function Payments() {
   );
 
   // Función para eliminar pago desde el backend
-  const handleDelete = (id) => {
-    setPayments(payments.filter((c) => c.id !== id));
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token no encontrado en localStorage");
+      return;
+    }
+
+    // Confirmación antes de eliminar
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará el Historial de pago.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#8b5cf6",
+      cancelButtonColor: "#e61610",
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axiosInstance.delete(
+          `/paymentHistory/${id}`,
+          // {
+          //   headers: { Authorization: `Bearer ${token}` },
+          // }
+        );
+
+        if (response.data.code === 1) {
+          // Actualizamos la tabla localmente
+          // setPayments((prev) => prev.filter((m) => m.id !== id));
+          await fetchPayments();
+
+          Swal.fire({
+            title: "¡Eliminado!",
+            text: response.data.message,
+            icon: "success",
+            confirmButtonColor: "#8b5cf6",
+          });
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: response.data.message || "No se pudo eliminar el Histrorial de pago",
+            icon: "error",
+            confirmButtonColor: "#8b5cf6",
+          });
+        }
+      } catch (error) {
+        console.error("Error al eliminar el historial de pago:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Ocurrió un error al eliminar el historial de pago",
+          icon: "error",
+          confirmButtonColor: "#8b5cf6",
+        });
+      }
+    }
   };
 
   // Agregar nuevo pago usando la respuesta del backend
   const handleAddPayments = (newPayments) => {
-    setPayments([...payments, { ...newPayments, id: Date.now() }]);
+    setPayments((prev) => [...prev, newPayments]);
+    // setPayments([...payments, { ...newPayments, id: Date.now() }]);
     setShowAddModal(false);
   };
 
   // Editar pago existente
   const handleEditPayments = (updatedPayments) => {
-    setPayments(
-      payments.map((m) => (m.id === updatedPayments.id ? updatedPayments : m))
-    );
-    setShowEditModal(false);
-  };
+  if (!updatedPayments || !updatedPayments.id) {
+    console.error("Error: el pago actualizado no tiene ID", updatedPayments);
+    return;
+  }
+
+  setPayments((prev) =>
+    prev.map((m) => (m.id === updatedPayments.id ? updatedPayments : m))
+  );
+
+  setShowEditModal(false);
+};
+
+  // const handleEditPayments = (updatedPayments) => {
+  //   setPayments(
+  //     payments.map((m) => (m.id === updatedPayments.id ? updatedPayments : m))
+  //   );
+  //   setShowEditModal(false);
+  // };
 
   return (
     <div className="container-fluid clients-container">
@@ -106,7 +175,7 @@ function Payments() {
             className="btn d-flex align-items-center addCliente"
             onClick={() => setShowAddModal(true)}
           >
-            Añadir Historial
+            Añadir Pago
           </button>
         </div>
       </div>

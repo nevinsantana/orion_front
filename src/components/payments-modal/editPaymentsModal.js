@@ -2,25 +2,75 @@ import React, { useState } from "react";
 import "./addPaymentsModal.css";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
+import Swal from "sweetalert2";
+import axiosInstance from "../../api/axiosConfig";
 
-function  EditPaymentsModal({ payments, onClose, onSave }) {
-  const [email, setEmail] = useState(payments.email);
-    const [details, setDetails] = useState(payments.details);
-    const [amount, setAmount] = useState(payments.amount);
-    const [date, setDate] = useState(payments.date);
-    const [customer, setCustomer] = useState(payments.customer);
-    const [state, setState] = useState(payments.state);
-  
+function EditPaymentsModal({ payments, onClose, onSave }) {
+  const [amount, setAmount] = useState(payments.amount || "");
+  const [description, setDescription] = useState(payments.description || "");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !details || !amount || !date || !customer || !state ) return;
 
-    // Guardar los datos
-    onSave({ email, details, amount, date, customer, state });
+    if (!payments || !payments.id) {
+    Swal.fire({
+      icon: "error",
+      title: "Error interno",
+      theme: "dark",
+      text: "No se encontró el ID del pago a editar.",
+    });
+    return;
+  }
 
-    // Cerrar el modal automáticamente
-    onClose();
+    if (!amount || !description) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos incompletos",
+        theme: "dark",
+        text: "Por favor llena todos los campos requeridos.",
+      });
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.put(
+        `/paymentHistory/${payments.id}`,
+        {
+          amount: parseFloat(amount),
+          description,
+        }
+      );
+
+      if (response.data.code === 1) {
+        Swal.fire({
+          icon: "success",
+          title: "Pago actualizado",
+          theme: "dark",
+          text: response.data.message,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // Refresca la tabla
+        onSave(response.data.data);
+        onClose();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          theme: "dark",
+          text: response.data.message || "No se pudo actualizar el pago.",
+        });
+      }
+    } catch (error) {
+      console.error("Error al actualizar pago:", error);
+      Swal.fire({
+        icon: "error",
+        theme: "dark",
+        title: "Error en la solicitud",
+        text: "Hubo un problema al actualizar el registro.",
+      });
+    }
   };
 
   // Función para cerrar al hacer clic fuera del modal
@@ -53,29 +103,15 @@ function  EditPaymentsModal({ payments, onClose, onSave }) {
             <div className="row g-2">
               <div className="col-md-6 col-12">
                 <div className="mb-3">
-                  <label className="form-label">Correo electrónico</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 col-12">
-                <div className="mb-3">
                   <label className="form-label">Detalles</label>
                   <input
                     type="text"
                     className="form-control"
-                    value={details}
-                    onChange={(e) => setDetails(e.target.value)}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                   />
                 </div>
               </div>
-            </div>
-
-            <div className="row g-2">
               <div className="col-md-6 col-12">
                 <div className="mb-3">
                   <label className="form-label">Importe</label>
@@ -84,42 +120,6 @@ function  EditPaymentsModal({ payments, onClose, onSave }) {
                     className="form-control"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 col-12">
-                <div className="mb-3">
-                  <label className="form-label">Fecha</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="row g-2">
-              <div className="col-md-6 col-12">
-                <div className="mb-3">
-                  <label className="form-label">Cliente</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={customer}
-                    onChange={(e) => setCustomer(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="col-md-6 col-12">
-                <div className="mb-3">
-                  <label className="form-label">Estado</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
                   />
                 </div>
               </div>
