@@ -97,12 +97,13 @@
 }
 
 .status-yellow {
-  background-color: #ffc107; /* Por vencer */
-  color: #000;
+  background-color: #fd7e14; /* Por vencer */
+  color: white;
 }
 
 .status-orange {
-  background-color: #fd7e14; /* Pendiente */
+  background-color: #ffc107; /* Por vencer */
+  color: #444;
 }
 
 .status-red {
