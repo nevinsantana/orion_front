@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./editPaymentTrackingModal.css";
-import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
+import { TbCalendarClock } from "react-icons/tb";
 import Swal from "sweetalert2";
 
 function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
@@ -62,7 +62,7 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
 
         <div className="modal-body-clients p-4">
           <div className="tituloIconoClients d-flex align-items-center gap-2 mb-3">
-            <FaUserGroup className="icon" />
+            <TbCalendarClock className="icon" />
             <h6 className="m-0">Datos de Seguimiento</h6>
           </div>
 
