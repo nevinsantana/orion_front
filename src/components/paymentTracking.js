@@ -40,6 +40,15 @@ function PaymentTracking() {
         status: "Rechazado",
         comments: "Fondos insuficientes",
       },
+      {
+        id: 4,
+        client: "Luis Martínez",
+        amount: 1200,
+        paymentDate: "2025-11-09",
+        paymentMethod: "Transferencia",
+        status: "Por vencer",
+        comments: "Pago próximo a vencer",
+      },
     ];
     setPayments(mockData);
   }, []);
@@ -80,6 +89,24 @@ function PaymentTracking() {
     });
 
     setShowEditModal(false);
+  };
+
+  // 🔹 Función para obtener clase CSS según el estado
+  const getStatusClass = (status) => {
+    switch (status.toLowerCase()) {
+      case "confirmado":
+      case "pagado":
+        return "status-green";
+      case "por vencer":
+        return "status-yellow";
+      case "pendiente":
+        return "status-orange";
+      case "rechazado":
+      case "vencido":
+        return "status-red";
+      default:
+        return "status-gray";
+    }
   };
 
   return (
@@ -129,7 +156,11 @@ function PaymentTracking() {
                       <td>{new Date(p.paymentDate).toLocaleDateString()}</td>
                       <td>${p.amount}</td>
                       <td>{p.paymentMethod}</td>
-                      <td>{p.status}</td>
+                      <td>
+                        <span className={`status-badge ${getStatusClass(p.status)}`}>
+                          {p.status}
+                        </span>
+                      </td>
                       <td>{p.comments}</td>
                       <td>
                         <button
