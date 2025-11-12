@@ -16,7 +16,7 @@ function getBaseURL() {
   }
 
   // ⚙️ Por defecto usa el puerto del backend (7777)
-  return `${protocol}//${hostname}:7777/api`;
+  return `${protocol}//${hostname}:9000/api`;
 }
 
 // 🧩 Crear instancia de Axios

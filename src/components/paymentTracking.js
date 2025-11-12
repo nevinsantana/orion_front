@@ -3,6 +3,7 @@ import { FaPen } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "./payments.css";
 import EditPaymentTrackingModal from "./paymentTracking-modal/editPatmentTrackingModal";
+import axiosInstance from "../api/axiosConfig";
 
 function PaymentTracking() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,48 +11,80 @@ function PaymentTracking() {
   const [trackingToEdit, setTrackingToEdit] = useState(null);
   const [payments, setPayments] = useState([]);
 
-  // Datos simulados (mock)
+  // ✅ Cargar datos reales desde el backend
   useEffect(() => {
-    const mockData = [
-      {
-        id: 1,
-        client: "Juan Pérez",
-        amount: 1500,
-        paymentDate: "2025-11-07",
-        paymentMethod: "Transferencia",
-        status: "Pendiente",
-        comments: "Esperando confirmación bancaria",
-      },
-      {
-        id: 2,
-        client: "María López",
-        amount: 2200,
-        paymentDate: "2025-11-05",
-        paymentMethod: "Tarjeta crédito",
-        status: "Confirmado",
-        comments: "Pago confirmado el mismo día",
-      },
-      {
-        id: 3,
-        client: "Carlos Hernández",
-        amount: 500,
-        paymentDate: "2025-11-03",
-        paymentMethod: "Efectivo",
-        status: "Rechazado",
-        comments: "Fondos insuficientes",
-      },
-      {
-        id: 4,
-        client: "Luis Martínez",
-        amount: 1200,
-        paymentDate: "2025-11-09",
-        paymentMethod: "Transferencia",
-        status: "Por vencer",
-        comments: "Pago próximo a vencer",
-      },
-    ];
-    setPayments(mockData);
+    const fetchPayments = async () => {
+      try {
+        const response = await axiosInstance.get("/paymentFollowUp/portfolio");
+        if (!response.data.error) {
+          // Ajustamos el formato a lo que espera la tabla
+          const formattedData = response.data.body.map((item) => ({
+            id: item.id,
+            client: item.client?.name || "Sin nombre",
+            amount: item.total_amount,
+            paymentDate: item.due_date,
+            paymentMethod: item.metodo_pago,
+            status: item.status,
+            comments: `Saldo pendiente: $${item.saldoPendiente}`,
+          }));
+          setPayments(formattedData);
+        }
+      } catch (error) {
+        console.error("Error al obtener los pagos:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error al cargar datos",
+          text: "No se pudieron obtener los registros de seguimiento de pago.",
+          confirmButtonColor: "#8b5cf6",
+        });
+      }
+    };
+
+    fetchPayments();
   }, []);
+
+  // Datos simulados (mock)
+  // useEffect(() => {
+  //   const mockData = [
+  //     {
+  //       id: 1,
+  //       client: "Juan Pérez",
+  //       amount: 1500,
+  //       paymentDate: "2025-11-07",
+  //       paymentMethod: "Transferencia",
+  //       status: "Pendiente",
+  //       comments: "Esperando confirmación bancaria",
+  //     },
+  //     {
+  //       id: 2,
+  //       client: "María López",
+  //       amount: 2200,
+  //       paymentDate: "2025-11-05",
+  //       paymentMethod: "Tarjeta crédito",
+  //       status: "Confirmado",
+  //       comments: "Pago confirmado el mismo día",
+  //     },
+  //     {
+  //       id: 3,
+  //       client: "Carlos Hernández",
+  //       amount: 500,
+  //       paymentDate: "2025-11-03",
+  //       paymentMethod: "Efectivo",
+  //       status: "Rechazado",
+  //       comments: "Fondos insuficientes",
+  //     },
+  //     {
+  //       id: 4,
+  //       client: "Luis Martínez",
+  //       amount: 1200,
+  //       paymentDate: "2025-11-09",
+  //       paymentMethod: "Transferencia",
+  //       status: "Por vencer",
+  //       comments: "Pago próximo a vencer",
+  //     },
+  //   ];
+  //   setPayments(mockData);
+  // }, []);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -93,21 +126,17 @@ function PaymentTracking() {
 
   // 🔹 Función para obtener clase CSS según el estado
   const getStatusClass = (status) => {
-    switch (status.toLowerCase()) {
-      case "confirmado":
-      case "pagado":
-        return "status-green";
-      case "por vencer":
-        return "status-yellow";
-      case "pendiente":
-        return "status-orange";
-      case "rechazado":
-      case "vencido":
-        return "status-red";
-      default:
-        return "status-gray";
-    }
-  };
+  if (!status) return "status-gray";
+  const s = status.toString().toLowerCase();
+
+  if (s.includes("pag")) return "status-green";
+  if (s.includes("vencida") || s.includes("vencido")) return "status-red";
+  if (s.includes("por vencer")) return "status-yellow";
+  if (s.includes("pend")) return "status-orange";
+
+  return "status-gray";
+};
+
 
   return (
     <div className="container-fluid clients-container">

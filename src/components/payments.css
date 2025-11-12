@@ -84,35 +84,49 @@
 
 .status-badge {
   display: inline-block;
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 12px;
-  font-weight: bold;
+  font-weight: 600;
   color: white;
   text-transform: capitalize;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
 }
 
-/* Colores tipo semáforo */
+/* 🟢 Pagado / Confirmado */
 .status-green {
-  background-color: #28a745; /* Pagado / Confirmado */
+  background: linear-gradient(135deg, #00e676, #00c853); /* Pagado / Confirmado */
+  color: #fff;
 }
 
+/* 🟡 Pendiente */
 .status-yellow {
-  background-color: #fd7e14; /* Por vencer */
-  color: white;
+  background: linear-gradient(135deg, #ffd600, #ffb300);
+  color: #222;
 }
 
+/* 🟠 Por vencer */
 .status-orange {
-  background-color: #ffc107; /* Por vencer */
-  color: #444;
+  background: linear-gradient(135deg, #ff9100, #ff6d00);
+  color: #fff;
 }
 
+/* 🔴 Vencido / Rechazado */
 .status-red {
-  background-color: #dc3545; /* Rechazado / Vencido */
+  background: linear-gradient(135deg, #ff1744, #d50000);
+  color: #fff;
 }
 
-
+/* ⚪ Default / Sin estatus */
 .status-gray {
-  background-color: #6c757d; /* Default */
+  background: linear-gradient(135deg, #9e9e9e, #616161);
+  color: #fff;
+}
+
+/* ✨ Pequeño efecto hover */
+.status-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
 }
 
 /* Ajustes responsivos para móviles */
