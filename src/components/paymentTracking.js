@@ -126,17 +126,36 @@ function PaymentTracking() {
 
   // 🔹 Función para obtener clase CSS según el estado
   const getStatusClass = (status) => {
-  if (!status) return "status-gray";
-  const s = status.toString().toLowerCase();
+    if (!status) return "status-gray";
 
-  if (s.includes("pag")) return "status-green";
-  if (s.includes("vencida") || s.includes("vencido")) return "status-red";
-  if (s.includes("por vencer")) return "status-yellow";
-  if (s.includes("pend")) return "status-orange";
+    const normalized = status.toLowerCase().trim();
 
-  return "status-gray";
-};
+    if (
+      normalized === "pagado" ||
+      normalized === "pagada" ||
+      normalized === "confirmado"
+    ) {
+      return "status-green";
+    }
 
+    if (normalized === "pendiente") {
+      return "status-orange";
+    }
+
+    if (normalized === "por vencer" || normalized === "porvencer") {
+      return "status-yellow";
+    }
+
+    if (
+      normalized === "rechazado" ||
+      normalized === "vencido" ||
+      normalized === "vencida"
+    ) {
+      return "status-red";
+    }
+
+    return "status-gray";
+  };
 
   return (
     <div className="container-fluid clients-container">
@@ -186,7 +205,9 @@ function PaymentTracking() {
                       <td>${p.amount}</td>
                       <td>{p.paymentMethod}</td>
                       <td>
-                        <span className={`status-badge ${getStatusClass(p.status)}`}>
+                        <span
+                          className={`status-badge ${getStatusClass(p.status)}`}
+                        >
                           {p.status}
                         </span>
                       </td>
@@ -258,7 +279,6 @@ function PaymentTracking() {
           </ul>
         </nav>
       )}
-
 
       {/* Modal de edición */}
       {showEditModal && trackingToEdit && (
