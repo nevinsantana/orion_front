@@ -75,9 +75,10 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value="Pendiente">Pendiente</option>
-                  <option value="Confirmado">Confirmado</option>
-                  <option value="Rechazado">Rechazado</option>
+                  <option value="Pagada">Confirmado</option>
+                  <option value="Pendiente">Por vencer</option>
+                  <option value="Vencida">Vencida</option>
+                  <option value="Rechazada">Rechazado</option>
                 </select>
               </div>
 
