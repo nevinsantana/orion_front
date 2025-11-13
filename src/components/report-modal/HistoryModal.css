@@ -1,0 +1,133 @@
+/* === Fondo del modal === */
+.history-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* === Contenedor principal === */
+.history-content {
+  background: #1c1c1c;
+  color: #f0f0f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 700px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  animation: fadeIn 0.3s ease;
+}
+
+/* === Tabla === */
+.history-table-wrapper {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.history-table th,
+.history-table td {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #333;
+}
+
+.history-table th {
+  background: #2a2a2a;
+  color: #f0f0f0;
+  font-weight: 600;
+}
+
+.history-table tr:nth-child(even) {
+  background: #252525;
+}
+
+.history-table tr:hover {
+  background: #333;
+}
+
+/* === Botón de descarga === */
+.btn-download {
+  background: #222;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-download:hover {
+  background: #333;
+  transform: scale(1.05);
+}
+
+/* === Botón cerrar pequeño === */
+.close-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.btn-close {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background: #444;
+  transform: scale(1.05);
+}
+
+/* === Responsividad === */
+@media (max-width: 600px) {
+  .history-content {
+    padding: 1rem;
+    width: 95%;
+  }
+
+  .history-table th,
+  .history-table td {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+
+  .history-content h2 {
+    font-size: 1.1rem;
+  }
+}
+
+/* === Animación === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
