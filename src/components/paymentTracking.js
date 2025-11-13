@@ -13,35 +13,37 @@ function PaymentTracking() {
 
   // ✅ Cargar datos reales desde el backend
   useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        const response = await axiosInstance.get("/paymentFollowUp/portfolio");
-        if (!response.data.error) {
-          // Ajustamos el formato a lo que espera la tabla
-          const formattedData = response.data.body.map((item) => ({
-            id: item.id,
-            client: item.client?.name || "Sin nombre",
-            amount: item.total_amount,
-            paymentDate: item.due_date,
-            paymentMethod: item.metodo_pago,
-            status: item.status,
-            comments: `Saldo pendiente: $${item.saldoPendiente}`,
-          }));
-          setPayments(formattedData);
-        }
-      } catch (error) {
-        console.error("Error al obtener los pagos:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error al cargar datos",
-          text: "No se pudieron obtener los registros de seguimiento de pago.",
-          confirmButtonColor: "#8b5cf6",
-        });
-      }
-    };
+  const fetchPayments = async () => {
+    try {
+      const response = await axiosInstance.get("/invoices/getAllReminderCodes");
 
-    fetchPayments();
-  }, []);
+      if (response.data?.codes) {
+        const formattedData = response.data.codes.map((item) => ({
+          id: item.id,
+          client: item.invoice?.client?.name || "Sin cliente",
+          paymentDate: item.created_at,
+          amount: "---", // Este WS no devuelve importe
+          paymentMethod: "---", // Tampoco devuelve método
+          status: item.code, // PAGADA-4 / PORVENCER-2 / etc.
+          comments: item.used ? "Código ya usado" : "Código disponible",
+        }));
+
+        setPayments(formattedData);
+      }
+    } catch (error) {
+      console.error("Error al obtener los códigos:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error al cargar datos",
+        text: "No se pudieron obtener los códigos del backend.",
+        confirmButtonColor: "#8b5cf6",
+      });
+    }
+  };
+
+  fetchPayments();
+}, []);
+
 
   // Datos simulados (mock)
   // useEffect(() => {
@@ -191,7 +193,6 @@ function PaymentTracking() {
                   <th>Importe</th>
                   <th>Método</th>
                   <th>Estatus</th>
-                  <th>Comentarios</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -211,7 +212,6 @@ function PaymentTracking() {
                           {p.status}
                         </span>
                       </td>
-                      <td>{p.comments}</td>
                       <td>
                         <button
                           className="btn btn-sm"
