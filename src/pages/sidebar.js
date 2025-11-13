@@ -16,6 +16,7 @@ import { MdPayments } from "react-icons/md";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import "./sidebar.css";
 import { TbReportSearch } from "react-icons/tb";
+import { TbCalendarClock } from "react-icons/tb";
 
 const Sidebar = ({ setActiveView }) => {
   const [active, setActive] = useState("dashboard");
@@ -116,6 +117,12 @@ const Sidebar = ({ setActiveView }) => {
               onClick={() => handleClick("AgingReport")}
             >
               <LiaFileInvoiceDollarSolid className="icon" /> <span>Reporte De Cuentas</span>
+            </li>
+            <li
+              className={active === "PaymentTracking" ? "active" : ""}
+              onClick={() => handleClick("PaymentTracking")}
+            >
+              <TbCalendarClock className="icon" /> <span>Seguimiento de Pago</span>
             </li>
           </ul>
         </nav>
