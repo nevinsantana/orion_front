@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import api from "../api/axiosInstance"; // 👈 Importa tu configuración de axios centralizada
+import api from "../api/axiosInstance";
 import "./InvoicesReport.css";
+import { IoIosDownload } from "react-icons/io";
+import HistoryModal from "./report-modal/HistoryModal";
 
 function InvoicesReport() {
   const token = localStorage.getItem("token");
@@ -12,28 +14,40 @@ function InvoicesReport() {
   const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // === Obtener datos del backend ===
+  // 🔹 Estado para historial
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyFiles, setHistoryFiles] = useState([]);
+
+  // === Obtener datos ===
+  const fetchData = async (from = "", to = "") => {
+    try {
+      let url = "/invoiceReports/data";
+      if (from && to) url += `?date_from=${from}&date_to=${to}`;
+      const res = await api.get(url);
+      const result = res.data.body || [];
+      setData(result);
+      setFilteredData(result);
+      setCurrentPage(1);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          err.response?.data?.message ||
+          "No se pudo obtener la información del reporte.",
+        background: "#1e1e1e",
+        color: "#fff",
+      });
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await api.get("/invoiceReports/data");
-        setData(res.data.body || []);
-        setFilteredData(res.data.body || []);
-      } catch (err) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: err.response?.data?.message || "No se pudo obtener la información del reporte.",
-          background: "#1e1e1e",
-          color: "#fff",
-        });
-      }
-    };
     fetchData();
   }, [token]);
 
-  // === Filtro por fechas ===
-  const handleSearch = () => {
+  // === Buscar ===
+  // === Buscar (filtrar por fechas) ===
+  const handleSearch = async () => {
     if (!startDate || !endDate) {
       Swal.fire({
         icon: "warning",
@@ -45,69 +59,131 @@ function InvoicesReport() {
       return;
     }
 
-    const filtered = data.filter((item) => {
-      const fecha = new Date(item.fecha_emision);
-      return fecha >= new Date(startDate) && fecha <= new Date(endDate);
-    });
-    setFilteredData(filtered);
-    setCurrentPage(1);
+    try {
+      // Llamada al backend con las fechas
+      const res = await api.get("/invoiceReports/data", {
+        params: {
+          date_from: startDate,
+          date_to: endDate,
+        },
+      });
+
+      // Recibimos todos los datos (por si el backend no filtra correctamente)
+      const allData = res.data.body || [];
+
+      // 🔹 Filtrado adicional en frontend
+      const filtered = allData.filter((item) => {
+        const due = new Date(item.due_date);
+        const from = new Date(startDate);
+        const to = new Date(endDate);
+        return due >= from && due <= to;
+      });
+
+      if (filtered.length === 0) {
+        Swal.fire({
+          icon: "info",
+          title: "Sin resultados",
+          text: "No hay facturas dentro del rango de fechas seleccionado.",
+          background: "#1e1e1e",
+          color: "#fff",
+        });
+      }
+
+      setFilteredData(filtered);
+      setCurrentPage(1);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error al filtrar",
+        text: err.response?.data?.message || "No se pudo filtrar por fechas.",
+        background: "#1e1e1e",
+        color: "#fff",
+      });
+    }
   };
 
-  // === Limpiar filtros ===
+  // === Limpiar ===
   const handleClear = () => {
     setStartDate("");
     setEndDate("");
-    setFilteredData(data);
+    fetchData();
   };
 
   // === Exportar XLS ===
-  // === Exportar XLS ===
-const handleExport = async () => {
-  try {
-    const genRes = await api.post("/invoiceReports/xls");
+  const handleExport = async () => {
+    try {
+      const payload = {};
+      if (startDate && endDate) {
+        payload.date_from = startDate;
+        payload.date_to = endDate;
+      }
 
-    const fileData = genRes.data.body;
-    const fileUrl = fileData.url;
-    const fileName = fileData.fileName;
+      const genRes = await api.post("/invoiceReports/xls", payload);
 
-    if (!fileUrl) {
-      throw new Error("No se recibió una URL de descarga.");
+      Swal.fire({
+        icon: "success",
+        title: "Exportación completada",
+        text: genRes.data?.message || "El reporte se generó exitosamente.",
+        background: "#1e1e1e",
+        color: "#fff",
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error al exportar",
+        text:
+          err.response?.data?.message ||
+          err.message ||
+          "No se pudo generar el archivo XLS.",
+        background: "#1e1e1e",
+        color: "#fff",
+      });
     }
+  };
 
-    // Crear un enlace temporal para descargar el archivo directamente desde la URL S3
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.setAttribute("download", fileName || "reporte-facturas.xlsx");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+  // === Historial ===
+  const handleHistory = async () => {
+    try {
+      const res = await api.get("/invoiceReports/repo"); //  ruta correcta del backend
+      const files = res.data.body?.files || []; //  lee la propiedad correcta
 
-    Swal.fire({
-      icon: "success",
-      title: "Descarga iniciada",
-      text: `El archivo ${fileName} está siendo descargado.`,
-      background: "#1e1e1e",
-      color: "#fff",
-    });
-  } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "Error al exportar",
-      text:
-        err.response?.data?.message ||
-        err.message ||
-        "No se pudo generar el archivo XLS.",
-      background: "#1e1e1e",
-      color: "#fff",
-    });
-  }
-};
+      if (!files.length) {
+        Swal.fire({
+          icon: "info",
+          title: "Sin registros",
+          text: "No se encontraron archivos en el historial.",
+          background: "#1e1e1e",
+          color: "#fff",
+        });
+        return;
+      }
 
+      setHistoryFiles(files);
+      setShowHistory(true);
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error al obtener historial",
+        text:
+          err.response?.data?.message ||
+          "No se pudo cargar el historial de reportes.",
+        background: "#1e1e1e",
+        color: "#fff",
+      });
+    }
+  };
+
+  const handleOpenFile = (url) => {
+    window.open(url, "_blank");
+  };
 
   // === Paginación ===
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentRecords = filteredData.slice(indexOfFirstRecord, indexOfLastRecord);
+  const currentRecords = filteredData.slice(
+    indexOfFirstRecord,
+    indexOfLastRecord
+  );
   const totalPages = Math.ceil(filteredData.length / recordsPerPage);
 
   return (
@@ -151,10 +227,13 @@ const handleExport = async () => {
           <button className="btn-pink" onClick={handleExport}>
             Exportar
           </button>
-          <button className="btn-green">Historial</button>
+          <button className="btn-green" onClick={handleHistory}>
+            Historial
+          </button>
         </div>
       </div>
 
+      {/* === TABLA PRINCIPAL === */}
       <div className="table-wrapper">
         <table className="report-table">
           <thead>
@@ -162,32 +241,39 @@ const handleExport = async () => {
               <th>ID</th>
               <th>Cliente</th>
               <th>Monto</th>
-              <th>Fecha Emisión</th>
+              <th>Fecha Vencimiento</th>
               <th>Estado</th>
             </tr>
           </thead>
-         <tbody>
-  {currentRecords.length > 0 ? (
-    currentRecords.map((item, idx) => (
-      <tr key={idx}>
-        <td>{item.id}</td>
-        <td>{item.client?.name}</td> {/* cliente */}
-        <td>${item.total_amount.toLocaleString()}</td> {/* monto */}
-        <td>{new Date(item.due_date).toLocaleDateString()}</td> {/* fecha emisión */}
-        <td>{item.status}</td> {/* estado */}
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="5" className="no-data">
-        No hay registros
-      </td>
-    </tr>
-  )}
-</tbody>
+          <tbody>
+            {currentRecords.length > 0 ? (
+              currentRecords.map((item, idx) => (
+                <tr key={idx}>
+                  <td>{item.id}</td>
+                  <td>{item.client?.name}</td>
+                  <td>
+                    $
+                    {item.total_amount.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>{new Date(item.due_date).toLocaleDateString()}</td>
+                  <td>{item.status}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="no-data">
+                  No hay registros
+                </td>
+              </tr>
+            )}
+          </tbody>
         </table>
       </div>
 
+      {/* === PAGINACIÓN === */}
       <div className="pagination-controls">
         <button
           className="pagination-btn"
@@ -199,7 +285,9 @@ const handleExport = async () => {
         {[...Array(totalPages)].map((_, i) => (
           <button
             key={i}
-            className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
+            className={`pagination-btn ${
+              currentPage === i + 1 ? "active" : ""
+            }`}
             onClick={() => setCurrentPage(i + 1)}
           >
             {i + 1}
@@ -213,6 +301,16 @@ const handleExport = async () => {
           Siguiente
         </button>
       </div>
+
+      {/* === MODAL HISTORIAL === */}
+      {showHistory && (
+  <HistoryModal
+    files={historyFiles}
+    onClose={() => setShowHistory(false)}
+    onDownload={handleOpenFile}
+  />
+)}
+
     </div>
   );
 }
