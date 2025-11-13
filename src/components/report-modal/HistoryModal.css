@@ -16,90 +16,133 @@
 
 /* === Contenedor principal === */
 .history-content {
-  background: #1c1c1c;
+  background: #1a1a1a;
   color: #f0f0f0;
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
   width: 90%;
   max-width: 700px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
   animation: fadeIn 0.3s ease;
+  border: 1px solid #2f2f2f;
+}
+
+.history-content h2 {
+  font-size: 1.2rem;
+  margin: 0 0 1rem;
+  font-weight: 600;
+  color: #fff;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
 }
 
 /* === Tabla === */
 .history-table-wrapper {
   overflow-x: auto;
+  max-height: 300px;
 }
 
 .history-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .history-table th,
 .history-table td {
-  padding: 0.75rem;
+  padding: 0.6rem 0.8rem;
   text-align: left;
   font-size: 0.9rem;
   border-bottom: 1px solid #333;
 }
 
+/* === Encabezados tipo Bootstrap === */
 .history-table th {
-  background: #2a2a2a;
-  color: #f0f0f0;
+  background: #003366;
+  color: #fff;
   font-weight: 600;
+  text-transform: capitalize;
 }
 
+/* === Filas === */
 .history-table tr:nth-child(even) {
-  background: #252525;
+  background: #202020;
+}
+
+.history-table tr:nth-child(odd) {
+  background: #151515;
 }
 
 .history-table tr:hover {
-  background: #333;
+  background: #2a2a2a;
+  transition: 0.2s ease;
 }
 
-/* === Botón de descarga === */
+/* === Botón descarga === */
 .btn-download {
-  background: #222;
-  border: 1px solid #444;
+  background: #003366;
   color: #fff;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-download:hover {
-  background: #333;
+  background: #004c99;
   transform: scale(1.05);
 }
 
-/* === Botón cerrar pequeño === */
+/* === Cerrar === */
 .close-container {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
+/* === Botón Cerrar === */
 .btn-close {
+  display: flex;                
+  align-items: center;
+  justify-content: center;
   background: #2a2a2a;
   color: #fff;
-  border: 1px solid #444;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  border: 1px solid #555;
+  padding: 12px 28px;           
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .btn-close:hover {
-  background: #444;
+  background: #3b3b3b;
   transform: scale(1.05);
+}
+
+
+
+/* === Scroll interno === */
+.history-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.history-table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 4px;
+}
+.history-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
 }
 
 /* === Responsividad === */
@@ -116,7 +159,7 @@
   }
 
   .history-content h2 {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 }
 
