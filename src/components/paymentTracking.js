@@ -13,37 +13,58 @@ function PaymentTracking() {
 
   // ✅ Cargar datos reales desde el backend
   useEffect(() => {
-  const fetchPayments = async () => {
-    try {
-      const response = await axiosInstance.get("/invoices/getAllReminderCodes");
+    const fetchPayments = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/invoices/getAllReminderCodes"
+        );
 
-      if (response.data?.codes) {
-        const formattedData = response.data.codes.map((item) => ({
-          id: item.id,
-          client: item.invoice?.client?.name || "Sin cliente",
-          paymentDate: item.created_at,
-          amount: "---", // Este WS no devuelve importe
-          paymentMethod: "---", // Tampoco devuelve método
-          status: item.code, // PAGADA-4 / PORVENCER-2 / etc.
-          comments: item.used ? "Código ya usado" : "Código disponible",
-        }));
+        if (response.data?.codes) {
+          // Convertir el WS a lo que tu tabla necesita
+          const formattedData = response.data.codes.map((item) => {
+            // Convertir código a estatus compatible
+            let cleanStatus = "Desconocido";
+            const code = item.code.toUpperCase();
 
-        setPayments(formattedData);
+            if (code.startsWith("PAGADA") || code.startsWith("PAGADO")) {
+              cleanStatus = "Confirmado";
+            } else if (code.startsWith("PENDIENTE")) {
+              cleanStatus = "Pendiente";
+            } else if (code.startsWith("PORVENCER")) {
+              cleanStatus = "Por vencer";
+            } else if (
+              code.startsWith("VENCIDA") ||
+              code.startsWith("VENCIDO")
+            ) {
+              cleanStatus = "Vencido";
+            }
+
+            return {
+              id: item.id,
+              client: item.invoice?.client?.name || "Sin cliente",
+              paymentDate: item.created_at,
+              amount: "—",
+              paymentMethod: "—",
+              status: cleanStatus, // 🔥 el estatus limpio sí activa tus colores
+              comments: item.used ? "Código ya usado" : "Código disponible",
+            };
+          });
+
+          setPayments(formattedData);
+        }
+      } catch (error) {
+        console.error("Error al obtener los códigos:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error al cargar datos",
+          text: "No se pudieron obtener los códigos del backend.",
+          confirmButtonColor: "#8b5cf6",
+        });
       }
-    } catch (error) {
-      console.error("Error al obtener los códigos:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar datos",
-        text: "No se pudieron obtener los códigos del backend.",
-        confirmButtonColor: "#8b5cf6",
-      });
-    }
-  };
+    };
 
-  fetchPayments();
-}, []);
-
+    fetchPayments();
+  }, []);
 
   // Datos simulados (mock)
   // useEffect(() => {
@@ -187,7 +208,6 @@ function PaymentTracking() {
             <table className="table table-dark table-striped clients-table">
               <thead>
                 <tr className="text-center">
-                  <th>ID</th>
                   <th>Cliente</th>
                   <th>Fecha Pago</th>
                   <th>Importe</th>
@@ -200,7 +220,6 @@ function PaymentTracking() {
                 {displayedPayments.length > 0 ? (
                   displayedPayments.map((p) => (
                     <tr key={p.id} className="text-center">
-                      <td>{p.id}</td>
                       <td>{p.client}</td>
                       <td>{new Date(p.paymentDate).toLocaleDateString()}</td>
                       <td>${p.amount}</td>
