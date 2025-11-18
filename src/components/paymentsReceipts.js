@@ -61,27 +61,32 @@ const PaymentsReceipts = () => {
     }
 
     const formData = new FormData();
+    // 🔑 EL NOMBRE EXACTO QUE ESPERA MULTER
+    formData.append("validationImage", image, image.name);
     formData.append("code", selectedCode);
-    formData.append("image", image);
-
-    // Debug
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
 
     setLoading(true);
 
     try {
-      await axiosInstance.post("/reminders/validate", formData, {
+      const res = await axiosInstance.post("/reminders/validate", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // No necesitas Content-Type: axios lo setea automáticamente
+        },
       });
 
-      Swal.fire("Éxito", "Comprobante enviado correctamente", "success");
+      Swal.fire("Éxito", res.data.message, "success");
+
+      setSelectedCode("");
+      setImage(null);
+      document.getElementById("fileInput").value = "";
     } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "No se pudo enviar el comprobante.", "error");
+      console.error("Error Upload:", error.response || error);
+      Swal.fire(
+        "Error",
+        error.response?.data?.message || "No se pudo enviar el comprobante.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -130,6 +135,7 @@ const PaymentsReceipts = () => {
                   type="file"
                   accept="image/*"
                   className="form-control"
+                  id="fileInput"
                   onChange={(e) => setImage(e.target.files[0])}
                   required
                 />

@@ -1,20 +1,21 @@
 import axios from "axios";
 
-// Crear una instancia COMPLETAMENTE aislada
 const axiosAI = axios.create({
   baseURL: "http://localhost:9000/api",
+
+  // 👇 ESTA LÍNEA ES LA QUE CORRIGE TODO
+  transformRequest: (data) => data,
 });
 
-// IMPORTANTE:
-// Usar interceptores propios de axiosAI, no de axios global
 axiosAI.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  // 👇 No permitir que Axios invente un Content-Type
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
   }
 
-  // NO agregar Content-Type
-  // NO tocar nada más
   return config;
 });
 

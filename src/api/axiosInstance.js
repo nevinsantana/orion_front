@@ -18,19 +18,24 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// 🔐 INTERCEPTOR
+// Interceptor — SOLO cuando es necesario
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
 
-  // 🚫 JAMÁS tocar Content-Type si el body es FormData
+  // Si es FormData → NO TOCAR CONTENT-TYPE
   if (config.data instanceof FormData) {
-    // ELIMINA cualquier Content-Type
     delete config.headers["Content-Type"];
     return config;
   }
 
-  // Si NO es FormData → JSON normal
+  // Si NO tiene body, no pongas JSON
+  if (!config.data) {
+    delete config.headers["Content-Type"];
+    return config;
+  }
+
+  // Si tiene body que NO es FormData
   config.headers["Content-Type"] = "application/json";
   return config;
 });
