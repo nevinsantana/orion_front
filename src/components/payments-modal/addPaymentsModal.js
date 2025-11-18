@@ -3,7 +3,7 @@ import "./addPaymentsModal.css";
 import { FaTimes } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
 import Swal from "sweetalert2";
-import axiosInstance from "../../api/axiosConfig";
+import axiosInstance from "../../api/axiosInstance";
 
 function AddPaymentsModal({ onClose, onSave }) {
   const [invoiceId, setInvoiceId] = useState("");

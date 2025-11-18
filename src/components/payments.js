@@ -4,7 +4,7 @@ import "./payments.css";
 import AddPaymentsModal from "./payments-modal/addPaymentsModal";
 import EditPaymentsModal from "./payments-modal/editPaymentsModal";
 import Swal from "sweetalert2";
-import axiosInstance from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 
 function Payments() {
   const [searchTerm, setSearchTerm] = useState("");

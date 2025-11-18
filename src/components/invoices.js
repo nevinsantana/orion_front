@@ -4,7 +4,7 @@ import './invoices.css'
 import AddInvoicesModal from "./invoices-modal/addInvoicesModal";
 import EditInvoicesModal from "./invoices-modal/editInvoicesModal";
 import Swal from "sweetalert2";
-import axiosInstance from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 
 function Invoices() {
   const [searchTerm, setSearchTerm] = useState("");

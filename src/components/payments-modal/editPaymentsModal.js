@@ -3,7 +3,7 @@ import "./addPaymentsModal.css";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import Swal from "sweetalert2";
-import axiosInstance from "../../api/axiosConfig";
+import axiosInstance from "../../api/axiosInstance";
 
 function EditPaymentsModal({ payments, onClose, onSave }) {
   const [amount, setAmount] = useState(payments.amount || "");

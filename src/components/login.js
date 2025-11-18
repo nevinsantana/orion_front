@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "../api/axiosConfig"; // 👈 Importa tu configuración de Axios
+import axiosInstance from "../api/axiosInstance"; // 👈 Importa tu configuración de Axios
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
 const Login = () => {
   const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get("redirect");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [ready, setReady] = useState(false);
@@ -21,7 +23,7 @@ const Login = () => {
 
     try {
       // 👇 Petición al backend con los datos del formulario
-      const response = await axios.post("/users/login", {
+      const response = await axiosInstance.post("/users/login", {
         email,
         password,
       });
@@ -39,17 +41,22 @@ const Login = () => {
         Swal.fire({
           title: "¡Bienvenido a RAK Orion!",
           text: "Has iniciado sesión correctamente",
-          theme: 'dark',
+          theme: "dark",
           icon: "success",
           confirmButtonText: "Continuar",
           confirmButtonColor: "#8b5cf6",
         }).then(() => {
-          navigate("/dashboard");
+          // navigate("/dashboard");
+          if (redirect) {
+            navigate(redirect);
+          } else {
+            navigate("/dashboard");
+          }
         });
       } else {
         Swal.fire({
           title: "Error",
-          theme: 'dark',
+          theme: "dark",
           text: "No se recibió un token válido del servidor.",
           icon: "error",
           confirmButtonText: "Intentar de nuevo",
@@ -65,7 +72,7 @@ const Login = () => {
 
       Swal.fire({
         title: "Error al iniciar sesión",
-        theme: 'dark',
+        theme: "dark",
         text: message,
         icon: "error",
         confirmButtonText: "Intentar de nuevo",

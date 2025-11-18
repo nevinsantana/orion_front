@@ -3,7 +3,7 @@ import { FaPen, FaTrash } from "react-icons/fa";
 import "./clients.css";
 import AddClientModal from "../components/client-modal/addClientModal";
 import EditClientModal from "../components/client-modal/editClientModal";
-import axiosInstance from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 import Swal from "sweetalert2";
 
 function Clients() {

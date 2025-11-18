@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
-import axios from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 import Swal from "sweetalert2";
 
 const ForgotPassword = () => {
@@ -47,7 +47,7 @@ const ForgotPassword = () => {
 
     try {
       // 🔹 Petición POST al backend sin enviar el token de login
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "/users/reset-password",
         {
           code: code,

@@ -1,60 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
+import axiosInstance from "../api/axiosInstance";
 
 const PaymentsReceipts = () => {
+  const [codes, setCodes] = useState([]);
+  const [selectedCode, setSelectedCode] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 👉 Permitir solo una imagen
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  // Leer token para pruebas
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-    if (file && !file.type.startsWith("image/")) {
-      Swal.fire({
-        icon: "error",
-        title: "Archivo inválido",
-        text: "Solo se permiten imágenes (PNG, JPG, JPEG).",
-      });
-      e.target.value = "";
-      return;
+    if (!token) {
+      console.warn("⚠ No hay token, pero se permite continuar para pruebas.");
+      // DESCOMENTAR cuando ya esté funcionando:
+      /*
+      const currentUrl = window.location.pathname + window.location.search;
+      window.location.href = `/login?redirect=${encodeURIComponent(currentUrl)}`;
+      */
     }
+  }, []);
 
-    setImage(file);
-  };
+  // Cargar códigos del backend
+  useEffect(() => {
+    const fetchCodes = async () => {
+      try {
+        const res = await axiosInstance.get("/invoices/getAllReminderCodes");
+        setCodes(res.data.codes || []);
+      } catch (error) {
+        console.error("Error al cargar códigos", error);
+        Swal.fire(
+          "Error",
+          "No se pudieron cargar los códigos. Verifica tu conexión.",
+          "error"
+        );
+      }
+    };
 
+    fetchCodes();
+  }, []);
+
+  // Enviar comprobante
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!selectedCode) {
+      return Swal.fire(
+        "Código requerido",
+        "Debes seleccionar un código.",
+        "warning"
+      );
+    }
+
     if (!image) {
-      Swal.fire({
-        icon: "warning",
-        title: "Sin archivo",
-        text: "Debes seleccionar una imagen antes de enviar.",
-      });
-      return;
+      return Swal.fire("Imagen requerida", "Selecciona una imagen.", "warning");
+    }
+
+    const formData = new FormData();
+    formData.append("code", selectedCode);
+    formData.append("image", image);
+
+    // Debug
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
     }
 
     setLoading(true);
 
     try {
-      // 👉 Preparar FormData (cuando conectes el backend)
-      // const formData = new FormData();
-      // formData.append("image", image);
+      await axiosInstance.post("/reminders/validate", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      });
 
-      Swal.fire({
-        icon: "success",
-        title: "Imagen lista",
-        text: "La imagen está lista para enviarse al backend.",
-      });
+      Swal.fire("Éxito", "Comprobante enviado correctamente", "success");
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Ocurrió un error al procesar la imagen.",
-      });
+      console.error(error);
+      Swal.fire("Error", "No se pudo enviar el comprobante.", "error");
     } finally {
       setLoading(false);
     }
@@ -63,37 +90,50 @@ const PaymentsReceipts = () => {
   return (
     <div className="container-fluid vh-100 p-0">
       <div className="row g-0 h-100">
-        {/* Columna izquierda */}
         <div className="col-12 col-md-6 d-none d-md-flex login-left"></div>
 
-        {/* Columna derecha */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            {/* Enlace regresar */}
             <div className="mb-4 text-start">
               <Link to="/" className="text-decoration-none btn btn-link backTo">
                 ← Regresar
               </Link>
             </div>
 
-            {/* Título */}
             <div className="mb-4 text-center">
-              <h4 className="mb-0">Subir Comprobante</h4>
+              <h4 className="mb-0">Subir Comprobante de Pago</h4>
             </div>
 
             <form onSubmit={handleSubmit}>
-              {/* subir imagen */}
+              {/* SELECT */}
+              <div className="mb-3">
+                <label className="form-label">Selecciona tu código</label>
+                <select
+                  className="form-select"
+                  value={selectedCode}
+                  onChange={(e) => setSelectedCode(e.target.value)}
+                >
+                  <option value="">-- Elige una opción --</option>
+
+                  {codes.map((item) => (
+                    <option key={item.id} value={item.code}>
+                      {item.code} — {item.invoice?.client?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Imagen */}
               <div className="mb-3 text-start">
-                <label className="form-label">Seleccionar imagen</label>
+                <label className="form-label">Sube tu comprobante</label>
                 <input
                   type="file"
                   accept="image/*"
                   className="form-control"
-                  onChange={handleImageChange}
+                  onChange={(e) => setImage(e.target.files[0])}
                   required
                 />
 
-                {/* mostrar nombre del archivo */}
                 {image && (
                   <p className="mt-2 small">
                     Archivo seleccionado: <strong>{image.name}</strong>
@@ -101,14 +141,14 @@ const PaymentsReceipts = () => {
                 )}
               </div>
 
-              {/* botón */}
+              {/* Botón */}
               <div className="d-flex justify-content-center">
                 <button
                   type="submit"
                   className="btn btn-sesion"
                   disabled={loading}
                 >
-                  {loading ? "Procesando..." : "Enviar imagen"}
+                  {loading ? "Enviando..." : "Enviar comprobante"}
                 </button>
               </div>
             </form>

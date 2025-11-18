@@ -3,7 +3,7 @@ import { FaPen } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "./payments.css";
 import EditPaymentTrackingModal from "./paymentTracking-modal/editPatmentTrackingModal";
-import axiosInstance from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 
 function PaymentTracking() {
   const [searchTerm, setSearchTerm] = useState("");

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom"; // 👈 importa Link
 import Swal from "sweetalert2";
-import axios from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 
@@ -15,7 +15,7 @@ const RequestPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("/users/forgot-password", { email });
+      const response = await axiosInstance.post("/users/forgot-password", { email });
 
       if (response.data.code === 1) {
         Swal.fire({
