@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
@@ -10,6 +10,7 @@ const PaymentsReceipts = () => {
   const [selectedCode, setSelectedCode] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Leer token para pruebas
   useEffect(() => {
@@ -75,11 +76,13 @@ const PaymentsReceipts = () => {
         },
       });
 
-      Swal.fire("Éxito", res.data.message, "success");
+      Swal.fire("Éxito", res.data.message, "success").then(() => {
+        setSelectedCode("");
+        setImage(null);
+        document.getElementById("fileInput").value = "";
 
-      setSelectedCode("");
-      setImage(null);
-      document.getElementById("fileInput").value = "";
+        navigate("/dashboard");
+      });
     } catch (error) {
       console.error("Error Upload:", error.response || error);
       Swal.fire(
