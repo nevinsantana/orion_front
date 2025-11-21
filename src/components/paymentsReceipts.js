@@ -6,7 +6,6 @@ import "./login.css";
 import axiosInstance from "../api/axiosInstance";
 
 const PaymentsReceipts = () => {
-  const [codes, setCodes] = useState([]);
   const [selectedCode, setSelectedCode] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,35 +25,12 @@ const PaymentsReceipts = () => {
     }
   }, []);
 
-  // Cargar códigos del backend
-  useEffect(() => {
-    const fetchCodes = async () => {
-      try {
-        const res = await axiosInstance.get("/invoices/getAllReminderCodes");
-        setCodes(res.data.codes || []);
-      } catch (error) {
-        console.error("Error al cargar códigos", error);
-        Swal.fire(
-          "Error",
-          "No se pudieron cargar los códigos. Verifica tu conexión.",
-          "error"
-        );
-      }
-    };
-
-    fetchCodes();
-  }, []);
-
   // Enviar comprobante
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedCode) {
-      return Swal.fire(
-        "Código requerido",
-        "Debes seleccionar un código.",
-        "warning"
-      );
+    if (!selectedCode.trim()) {
+      return Swal.fire("Código requerido", "Debes ingresar el código.", "warning")
     }
 
     if (!image) {
@@ -64,7 +40,7 @@ const PaymentsReceipts = () => {
     const formData = new FormData();
     // 🔑 EL NOMBRE EXACTO QUE ESPERA MULTER
     formData.append("validationImage", image, image.name);
-    formData.append("code", selectedCode);
+    formData.append("code", selectedCode.trim());
 
     setLoading(true);
 
@@ -81,7 +57,7 @@ const PaymentsReceipts = () => {
         setImage(null);
         document.getElementById("fileInput").value = "";
 
-        navigate("/dashboard");
+        navigate("/confirm-payment");
       });
     } catch (error) {
       console.error("Error Upload:", error.response || error);
@@ -115,20 +91,15 @@ const PaymentsReceipts = () => {
             <form onSubmit={handleSubmit}>
               {/* SELECT */}
               <div className="mb-3">
-                <label className="form-label">Selecciona tu código</label>
-                <select
-                  className="form-select"
+                <label className="form-label">Ingresa tu código</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Escribe el código recibido por correo"
                   value={selectedCode}
                   onChange={(e) => setSelectedCode(e.target.value)}
-                >
-                  <option value="">-- Elige una opción --</option>
-
-                  {codes.map((item) => (
-                    <option key={item.id} value={item.code}>
-                      {item.code} — {item.invoice?.client?.name}
-                    </option>
-                  ))}
-                </select>
+                  required
+                />
               </div>
 
               {/* Imagen */}

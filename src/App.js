@@ -17,7 +17,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         
         {/* 👉 Ruta para pruebas de subir imagen */}
-        <Route path="/upload-test" element={<PaymentsReceipts />} />
+        <Route path="/confirm-payment" element={<PaymentsReceipts />} />
 
         <Route
           path="/dashboard"
