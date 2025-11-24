@@ -14,17 +14,20 @@ function InvoicesReport() {
   const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 🔹 Estado para historial
   const [showHistory, setShowHistory] = useState(false);
   const [historyFiles, setHistoryFiles] = useState([]);
 
-  // === Obtener datos ===
+  const [loadingExport, setLoadingExport] = useState(false);
+
+  // === Obtener datos iniciales ===
   const fetchData = async (from = "", to = "") => {
     try {
       let url = "/invoiceReports/data";
       if (from && to) url += `?date_from=${from}&date_to=${to}`;
+
       const res = await api.get(url);
       const result = res.data.body || [];
+
       setData(result);
       setFilteredData(result);
       setCurrentPage(1);
@@ -45,8 +48,7 @@ function InvoicesReport() {
     fetchData();
   }, [token]);
 
-  // === Buscar ===
-  // === Buscar (filtrar por fechas) ===
+  // === Filtrar ===
   const handleSearch = async () => {
     if (!startDate || !endDate) {
       Swal.fire({
@@ -60,7 +62,6 @@ function InvoicesReport() {
     }
 
     try {
-      // Llamada al backend con las fechas
       const res = await api.get("/invoiceReports/data", {
         params: {
           date_from: startDate,
@@ -68,14 +69,11 @@ function InvoicesReport() {
         },
       });
 
-      // Recibimos todos los datos (por si el backend no filtra correctamente)
       const allData = res.data.body || [];
-
-      // 🔹 Filtrado adicional en frontend
       const filtered = allData.filter((item) => {
         const due = new Date(item.due_date);
-        const from = new Date(startDate);
-        const to = new Date(endDate);
+        const from = new Date(startDate + "T00:00:00");
+        const to = new Date(endDate + "T23:59:59");
         return due >= from && due <= to;
       });
 
@@ -102,7 +100,6 @@ function InvoicesReport() {
     }
   };
 
-  // === Limpiar ===
   const handleClear = () => {
     setStartDate("");
     setEndDate("");
@@ -112,6 +109,17 @@ function InvoicesReport() {
   // === Exportar XLS ===
   const handleExport = async () => {
     try {
+      setLoadingExport(true);
+
+      Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espera",
+        background: "#1e1e1e",
+        color: "#fff",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
       const payload = {};
       if (startDate && endDate) {
         payload.date_from = startDate;
@@ -138,20 +146,32 @@ function InvoicesReport() {
         background: "#1e1e1e",
         color: "#fff",
       });
+    } finally {
+      setLoadingExport(false);
     }
   };
 
-  // === Historial ===
+  // === HISTORIAL SOLO FACTURAS ===
   const handleHistory = async () => {
     try {
-      const res = await api.get("/invoiceReports/repo"); //  ruta correcta del backend
-      const files = res.data.body?.files || []; //  lee la propiedad correcta
+      const res = await api.get("/invoiceReports/repo");
+      let files = res.data.body?.files || [];
+
+      // 🔥 FILTRO CRÍTICO: SOLO ARCHIVOS DE FACTURAS
+      files = files.filter((f) => {
+        const name = f.key.toLowerCase();
+        return (
+          name.includes("invoice") ||
+          name.includes("factura") ||
+          name.includes("invoices")
+        );
+      });
 
       if (!files.length) {
         Swal.fire({
           icon: "info",
           title: "Sin registros",
-          text: "No se encontraron archivos en el historial.",
+          text: "No se encontraron reportes de facturas.",
           background: "#1e1e1e",
           color: "#fff",
         });
@@ -173,17 +193,16 @@ function InvoicesReport() {
     }
   };
 
-  const handleOpenFile = (url) => {
-    window.open(url, "_blank");
-  };
+  const handleOpenFile = (url) => window.open(url, "_blank");
 
-  // === Paginación ===
+  // === PAGINACIÓN ===
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = filteredData.slice(
     indexOfFirstRecord,
     indexOfLastRecord
   );
+
   const totalPages = Math.ceil(filteredData.length / recordsPerPage);
 
   return (
@@ -212,28 +231,43 @@ function InvoicesReport() {
             onChange={(e) => setStartDate(e.target.value)}
             className="input-dark"
           />
+
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             className="input-dark"
           />
+
           <button className="btn-purple" onClick={handleSearch}>
             Buscar
           </button>
+
           <button className="btn-red" onClick={handleClear}>
             Limpiar
           </button>
-          <button className="btn-pink" onClick={handleExport}>
-            Exportar
+
+          <button
+            className="btn-pink"
+            onClick={handleExport}
+            disabled={loadingExport}
+          >
+            {loadingExport ? (
+              "Generando..."
+            ) : (
+              <>
+                <IoIosDownload /> Exportar
+              </>
+            )}
           </button>
+
           <button className="btn-green" onClick={handleHistory}>
             Historial
           </button>
         </div>
       </div>
 
-      {/* === TABLA PRINCIPAL === */}
+      {/* TABLA */}
       <div className="table-wrapper">
         <table className="report-table">
           <thead>
@@ -245,6 +279,7 @@ function InvoicesReport() {
               <th>Estado</th>
             </tr>
           </thead>
+
           <tbody>
             {currentRecords.length > 0 ? (
               currentRecords.map((item, idx) => (
@@ -253,7 +288,7 @@ function InvoicesReport() {
                   <td>{item.client?.name}</td>
                   <td>
                     $
-                    {item.total_amount.toLocaleString("en-US", {
+                    {Number(item.total_amount).toLocaleString("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
@@ -273,7 +308,7 @@ function InvoicesReport() {
         </table>
       </div>
 
-      {/* === PAGINACIÓN === */}
+      {/* PAGINACIÓN */}
       <div className="pagination-controls">
         <button
           className="pagination-btn"
@@ -282,6 +317,7 @@ function InvoicesReport() {
         >
           Anterior
         </button>
+
         {[...Array(totalPages)].map((_, i) => (
           <button
             key={i}
@@ -293,6 +329,7 @@ function InvoicesReport() {
             {i + 1}
           </button>
         ))}
+
         <button
           className="pagination-btn"
           disabled={currentPage === totalPages}
@@ -302,15 +339,14 @@ function InvoicesReport() {
         </button>
       </div>
 
-      {/* === MODAL HISTORIAL === */}
+      {/* MODAL HISTORIAL */}
       {showHistory && (
-  <HistoryModal
-    files={historyFiles}
-    onClose={() => setShowHistory(false)}
-    onDownload={handleOpenFile}
-  />
-)}
-
+        <HistoryModal
+          files={historyFiles}
+          onClose={() => setShowHistory(false)}
+          onDownload={handleOpenFile}
+        />
+      )}
     </div>
   );
 }

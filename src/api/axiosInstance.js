@@ -14,7 +14,7 @@ function getBaseURL() {
   if (envURL) return envURL;
 
   // Valor por defecto si no hay variable de entorno
-  return `${protocol}//${hostname}:7777/api`;
+  return `${protocol}//${hostname}:9000/api`;
 }
 
 // 🧩 Crear la instancia de Axios
