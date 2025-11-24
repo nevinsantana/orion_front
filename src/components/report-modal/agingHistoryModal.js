@@ -52,7 +52,6 @@ export default function AgingHistoryModal({ files = [], onClose, onDownload }) {
           )}
         </div>
 
-        {/* 🔥 Botón abajo a la derecha */}
         <div
           style={{
             display: "flex",
