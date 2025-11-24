@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./addInvoicesModal.css";
 import { FaTimes } from "react-icons/fa";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
-import axiosInstance from "../../api/axiosConfig";
+import axiosInstance from "../../api/axiosInstance";
 import Swal from "sweetalert2";
 
 function EditInvoicesModal({ invoices, onClose, onSave }) {

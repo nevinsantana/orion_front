@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "./addInvoicesModal.css";
 import { FaTimes, FaFileUpload } from "react-icons/fa";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
-import axiosInstance from "../../api/axiosConfig";
-import { axiosAI } from "../../api/axiosAI";
+import axiosInstance from "../../api/axiosInstance";
+import axiosAI from "../../api/axiosAI";
 import Swal from "sweetalert2";
 
 function AddInvoicesModal({ onClose, onSave }) {

@@ -18,7 +18,7 @@ import Clients from "../components/clients";
 import Coins from "../components/coins";
 import Payments from "../components/payments";
 import Invoices from "./invoices";
-import axios from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 import { jwtDecode } from "jwt-decode";
 import InvoicesReport from "./InvoicesReport";
 import AgingReport from "./AgingReport";
@@ -42,7 +42,7 @@ const Dashboard = () => {
           return;
         }
 
-        const response = await axios.get(`/users/${userId}`, {
+        const response = await axiosInstance.get(`/users/${userId}`, {
           // 👈 reemplaza 2 por el ID dinámico si lo tienes
           headers: {
             Authorization: `Bearer ${token}`,

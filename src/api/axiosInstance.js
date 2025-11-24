@@ -3,13 +3,10 @@ import axios from "axios";
 function getBaseURL() {
   const { hostname, protocol } = window.location;
 
-  // 🌐 Si estás en producción (por ejemplo, dominio real o despliegue en Vercel)
   if (hostname !== "localhost" && hostname !== "127.0.0.1") {
     return `${protocol}//${hostname}/api`;
   }
 
-  // 💻 Si estás trabajando en local, usa el puerto del backend
-  // Puedes cambiar el puerto si tu backend corre en otro (por ejemplo 7777)
   const envURL = process.env.REACT_APP_API_URL;
   if (envURL) return envURL;
 
@@ -17,21 +14,30 @@ function getBaseURL() {
   return `${protocol}//${hostname}:9000/api`;
 }
 
-// 🧩 Crear la instancia de Axios
 const axiosInstance = axios.create({
   baseURL: getBaseURL(),
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true, // para enviar cookies si las usas
+  withCredentials: true,
 });
 
-// 🔐 Interceptor para agregar el token automáticamente
+// Interceptor — SOLO cuando es necesario
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  // Si es FormData → NO TOCAR CONTENT-TYPE
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+    return config;
   }
+
+  // Si NO tiene body, no pongas JSON
+  if (!config.data) {
+    delete config.headers["Content-Type"];
+    return config;
+  }
+
+  // Si tiene body que NO es FormData
+  config.headers["Content-Type"] = "application/json";
   return config;
 });
 

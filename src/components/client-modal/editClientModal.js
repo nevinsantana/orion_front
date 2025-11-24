@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./addClientModal.css";
 import { FaUserGroup } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
-import axiosInstance from "../../api/axiosConfig";
+import axiosInstance from "../../api/axiosInstance";
 import Swal from "sweetalert2";
 
 function EditClientModal({ client, onClose, onSave }) {

@@ -3,7 +3,7 @@ import { FaPen } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "./payments.css";
 import EditPaymentTrackingModal from "./paymentTracking-modal/editPatmentTrackingModal";
-import axiosInstance from "../api/axiosConfig";
+import axiosInstance from "../api/axiosInstance";
 
 function PaymentTracking() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,26 +15,49 @@ function PaymentTracking() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await axiosInstance.get("/paymentFollowUp/portfolio");
-        if (!response.data.error) {
-          // Ajustamos el formato a lo que espera la tabla
-          const formattedData = response.data.body.map((item) => ({
-            id: item.id,
-            client: item.client?.name || "Sin nombre",
-            amount: item.total_amount,
-            paymentDate: item.due_date,
-            paymentMethod: item.metodo_pago,
-            status: item.status,
-            comments: `Saldo pendiente: $${item.saldoPendiente}`,
-          }));
+        const response = await axiosInstance.get(
+          "/invoices/getAllReminderCodes"
+        );
+
+        if (response.data?.codes) {
+          // Convertir el WS a lo que tu tabla necesita
+          const formattedData = response.data.codes.map((item) => {
+            // Convertir código a estatus compatible
+            let cleanStatus = "Desconocido";
+            const code = item.code.toUpperCase();
+
+            if (code.startsWith("PAGADA") || code.startsWith("PAGADO")) {
+              cleanStatus = "Confirmado";
+            } else if (code.startsWith("PENDIENTE")) {
+              cleanStatus = "Pendiente";
+            } else if (code.startsWith("PORVENCER")) {
+              cleanStatus = "Por vencer";
+            } else if (
+              code.startsWith("VENCIDA") ||
+              code.startsWith("VENCIDO")
+            ) {
+              cleanStatus = "Vencido";
+            }
+
+            return {
+              id: item.id,
+              client: item.invoice?.client?.name || "Sin cliente",
+              paymentDate: item.created_at,
+              amount: "—",
+              paymentMethod: "—",
+              status: cleanStatus, // 🔥 el estatus limpio sí activa tus colores
+              comments: item.used ? "Código ya usado" : "Código disponible",
+            };
+          });
+
           setPayments(formattedData);
         }
       } catch (error) {
-        console.error("Error al obtener los pagos:", error);
+        console.error("Error al obtener los códigos:", error);
         Swal.fire({
           icon: "error",
           title: "Error al cargar datos",
-          text: "No se pudieron obtener los registros de seguimiento de pago.",
+          text: "No se pudieron obtener los códigos del backend.",
           confirmButtonColor: "#8b5cf6",
         });
       }
@@ -185,13 +208,11 @@ function PaymentTracking() {
             <table className="table table-dark table-striped clients-table">
               <thead>
                 <tr className="text-center">
-                  <th>ID</th>
                   <th>Cliente</th>
                   <th>Fecha Pago</th>
                   <th>Importe</th>
                   <th>Método</th>
                   <th>Estatus</th>
-                  <th>Comentarios</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -199,7 +220,6 @@ function PaymentTracking() {
                 {displayedPayments.length > 0 ? (
                   displayedPayments.map((p) => (
                     <tr key={p.id} className="text-center">
-                      <td>{p.id}</td>
                       <td>{p.client}</td>
                       <td>{new Date(p.paymentDate).toLocaleDateString()}</td>
                       <td>${p.amount}</td>
@@ -211,7 +231,6 @@ function PaymentTracking() {
                           {p.status}
                         </span>
                       </td>
-                      <td>{p.comments}</td>
                       <td>
                         <button
                           className="btn btn-sm"

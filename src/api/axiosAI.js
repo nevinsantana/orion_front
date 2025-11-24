@@ -1,13 +1,22 @@
 import axios from "axios";
 
-export const axiosAI = axios.create({
-  baseURL: "http://localhost:9000/api", // URL absoluta para AI
+const axiosAI = axios.create({
+  baseURL: "http://localhost:9000/api",
+
+  // 👇 ESTA LÍNEA ES LA QUE CORRIGE TODO
+  transformRequest: (data) => data,
 });
 
 axiosAI.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  // 👇 No permitir que Axios invente un Content-Type
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
   }
+
   return config;
 });
+
+export default axiosAI;
