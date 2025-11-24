@@ -6,12 +6,11 @@ import Swal from "sweetalert2";
 
 function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
   const [status, setStatus] = useState(tracking.status || "Pendiente");
-  const [comments, setComments] = useState(tracking.comments || "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!status || !comments.trim()) {
+    if (!status) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
@@ -24,7 +23,6 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
     const updatedTracking = {
       ...tracking,
       status,
-      comments,
     };
 
     onSave(updatedTracking);
@@ -83,13 +81,12 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
               </div>
 
               <div className="col-md-6 col-12">
-                <label className="form-label">Comentarios</label>
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={comments}
-                  onChange={(e) => setComments(e.target.value)}
-                ></textarea>
+                <label className="form-label">Comprobante de pago</label>
+                {tracking.image ? (
+                  <p style={{ fontWeight: "500" }}>{tracking.image}</p>
+                ) : (
+                  <p className="text-muted">Sin comprobante</p>
+                )}
               </div>
             </div>
 

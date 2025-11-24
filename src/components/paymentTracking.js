@@ -41,10 +41,10 @@ function PaymentTracking() {
 
             return {
               id: item.id,
-              client: item.invoice?.client?.name || "Sin cliente",
-              paymentDate: item.created_at,
-              amount: "—",
-              paymentMethod: "—",
+              id_invoice: item.id_invoice,
+              client: item.invoice?.client?.name,
+              image: item.image,
+              image_url: item.image_url,
               status: cleanStatus, // 🔥 el estatus limpio sí activa tus colores
               comments: item.used ? "Código ya usado" : "Código disponible",
             };
@@ -65,49 +65,6 @@ function PaymentTracking() {
 
     fetchPayments();
   }, []);
-
-  // Datos simulados (mock)
-  // useEffect(() => {
-  //   const mockData = [
-  //     {
-  //       id: 1,
-  //       client: "Juan Pérez",
-  //       amount: 1500,
-  //       paymentDate: "2025-11-07",
-  //       paymentMethod: "Transferencia",
-  //       status: "Pendiente",
-  //       comments: "Esperando confirmación bancaria",
-  //     },
-  //     {
-  //       id: 2,
-  //       client: "María López",
-  //       amount: 2200,
-  //       paymentDate: "2025-11-05",
-  //       paymentMethod: "Tarjeta crédito",
-  //       status: "Confirmado",
-  //       comments: "Pago confirmado el mismo día",
-  //     },
-  //     {
-  //       id: 3,
-  //       client: "Carlos Hernández",
-  //       amount: 500,
-  //       paymentDate: "2025-11-03",
-  //       paymentMethod: "Efectivo",
-  //       status: "Rechazado",
-  //       comments: "Fondos insuficientes",
-  //     },
-  //     {
-  //       id: 4,
-  //       client: "Luis Martínez",
-  //       amount: 1200,
-  //       paymentDate: "2025-11-09",
-  //       paymentMethod: "Transferencia",
-  //       status: "Por vencer",
-  //       comments: "Pago próximo a vencer",
-  //     },
-  //   ];
-  //   setPayments(mockData);
-  // }, []);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -209,9 +166,8 @@ function PaymentTracking() {
               <thead>
                 <tr className="text-center">
                   <th>Cliente</th>
-                  <th>Fecha Pago</th>
-                  <th>Importe</th>
-                  <th>Método</th>
+                  <th>Número Factura</th>
+                  <th>Factura</th>
                   <th>Estatus</th>
                   <th>Acciones</th>
                 </tr>
@@ -221,9 +177,13 @@ function PaymentTracking() {
                   displayedPayments.map((p) => (
                     <tr key={p.id} className="text-center">
                       <td>{p.client}</td>
-                      <td>{new Date(p.paymentDate).toLocaleDateString()}</td>
-                      <td>${p.amount}</td>
-                      <td>{p.paymentMethod}</td>
+                      <td>{p.id_invoice}</td>
+                      <td>
+                        {p.image
+                          ? p.image // ya es el nombre que guardas
+                          : "Sin comprobante"}
+                      </td>
+
                       <td>
                         <span
                           className={`status-badge ${getStatusClass(p.status)}`}

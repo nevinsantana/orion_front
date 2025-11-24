@@ -5,7 +5,6 @@ import Dashboard from "./components/dashboard";
 import ForgotPassword from "./components/forgotPassword";
 import RequestPassword from "./components/requestPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
-import PaymentsReceipts from "./components/paymentsReceipts";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -17,7 +16,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         
         {/* 👉 Ruta para pruebas de subir imagen */}
-        <Route path="/confirm-payment" element={<PaymentsReceipts />} />
+        {/* <Route path="/confirm-payment" element={<PaymentsReceipts />} /> */}
 
         <Route
           path="/dashboard"
