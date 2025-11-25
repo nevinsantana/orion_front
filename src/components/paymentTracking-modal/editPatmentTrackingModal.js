@@ -5,7 +5,7 @@ import { TbCalendarClock } from "react-icons/tb";
 import Swal from "sweetalert2";
 
 function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
-  const [status, setStatus] = useState(tracking.status || "Pendiente");
+  const [status, setStatus] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -66,28 +66,60 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
 
           <form onSubmit={handleSubmit} className="form-clientes">
             <div className="row g-3">
-              <div className="col-md-6 col-12">
+              <div className="col-md-6 col-12 text-start">
                 <label className="form-label">Estatus</label>
                 <select
                   className="form-select"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value="Pagada">Confirmado</option>
-                  <option value="Pendiente">Por vencer</option>
-                  <option value="Vencida">Vencida</option>
-                  <option value="Rechazada">Rechazado</option>
+                  <option value="" disabled>
+                    Selecciona...
+                  </option>
+                  <option value="Confirmado">Confirmado</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Por vencer">Por vencer</option>
+                  <option value="Vencida">Vencido</option>
+                  <option value="Rechazado">Rechazado</option>
                 </select>
               </div>
 
-              <div className="col-md-6 col-12">
+              <div className="col-md-6 col-12 text-start">
+                <label className="form-label d-block mb-1">
+                  Comprobante de pago
+                </label>
+
+                {tracking.image ? (
+                  <a
+                    href={`http://localhost:9000/validation_images/${tracking.image}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontWeight: "500",
+                      color: "#8A2CF1",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      display: "inline-block",
+                      marginTop: "5px",
+                    }}
+                  >
+                    {tracking.image}
+                  </a>
+                ) : (
+                  <p className="text-muted sinComprobante mt-1">
+                    Sin comprobante
+                  </p>
+                )}
+              </div>
+
+              {/* <div className="col-md-6 col-12">
                 <label className="form-label">Comprobante de pago</label>
                 {tracking.image ? (
                   <p style={{ fontWeight: "500" }}>{tracking.image}</p>
                 ) : (
                   <p className="text-muted">Sin comprobante</p>
                 )}
-              </div>
+              </div> */}
             </div>
 
             <div className="d-flex justify-content-center gap-2 mt-4 flex-wrap">
