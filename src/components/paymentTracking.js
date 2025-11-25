@@ -167,7 +167,7 @@ function PaymentTracking() {
                 <tr className="text-center">
                   <th>Cliente</th>
                   <th>Número Factura</th>
-                  <th>Factura</th>
+                  <th>Comprobante</th>
                   <th>Estatus</th>
                   <th>Acciones</th>
                 </tr>
@@ -179,9 +179,13 @@ function PaymentTracking() {
                       <td>{p.client}</td>
                       <td>{p.id_invoice}</td>
                       <td>
-                        {p.image
-                          ? p.image // ya es el nombre que guardas
-                          : "Sin comprobante"}
+                        {p.image ? (
+                          <span className="comprobante-loaded">
+                            Comprobante cargado
+                          </span>
+                        ) : (
+                          "Sin comprobante"
+                        )}
                       </td>
 
                       <td>

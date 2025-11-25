@@ -27,6 +27,7 @@ import PaymentTracking from "./paymentTracking";
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [user, setUser] = useState(null);
+  const [dpcData, setDpcData] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,6 +61,27 @@ const Dashboard = () => {
     };
 
     fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchAverageCollectionDays = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/analytics/average-collection-days"
+        );
+
+        if (response.data.code === 1) {
+          setDpcData(response.data.data);
+          console.log("DPC:", response.data.data);
+        } else {
+          console.error("No se pudo obtener el DPC");
+        }
+      } catch (error) {
+        console.error("Error al obtener DPC:", error);
+      }
+    };
+
+    fetchAverageCollectionDays();
   }, []);
 
   // Datos de ejemplo
@@ -276,6 +298,28 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+
+            {/* ========== FILA 4 ========== */}
+            <div className="row">
+              <div className="col-md-12">
+                {dpcData && (
+                  <div className="card-dark p-3 text-white mb-3">
+                    <h5>Días Promedio de Cobro (DPC)</h5>
+                    <p>
+                      <strong>Actual:</strong> {dpcData.currentDPC} días
+                    </p>
+                    <p>
+                      <strong>Riesgo:</strong>{" "}
+                      {dpcData.historicalData[0].risk_category}
+                    </p>
+                    <p>
+                      <strong>Predicción próximo mes:</strong>{" "}
+                      {dpcData.prediction.nextMonthDPC}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -285,8 +329,8 @@ const Dashboard = () => {
         {activeView === "Payments" && <Payments />}
         {activeView === "Invoices" && <Invoices />}
         {activeView === "InvoicesReport" && <InvoicesReport />}
-        {activeView === "AgingReport" && <AgingReport/>}
-        {activeView === "PaymentTracking" && <PaymentTracking/>}
+        {activeView === "AgingReport" && <AgingReport />}
+        {activeView === "PaymentTracking" && <PaymentTracking />}
       </div>
     </div>
   );

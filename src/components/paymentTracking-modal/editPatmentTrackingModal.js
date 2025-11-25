@@ -3,9 +3,11 @@ import "./editPaymentTrackingModal.css";
 import { FaTimes } from "react-icons/fa";
 import { TbCalendarClock } from "react-icons/tb";
 import Swal from "sweetalert2";
+import axiosInstance from "../../api/axiosInstance";
 
 function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
   const [status, setStatus] = useState("");
+  const serverURL = axiosInstance.defaults.baseURL.replace("/api", "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -91,19 +93,20 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
 
                 {tracking.image ? (
                   <a
-                    href={`http://localhost:9000/validation_images/${tracking.image}`}
+                    // href={`http://localhost:9000/validation_images/${tracking.image}`}
+                    href={`${serverURL}/validation_images/${tracking.image}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
                       fontWeight: "500",
-                      color: "#8A2CF1",
-                      textDecoration: "underline",
+                      color: "#00e676",
+                      textDecoration: "none",
                       cursor: "pointer",
                       display: "inline-block",
                       marginTop: "5px",
                     }}
                   >
-                    {tracking.image}
+                    Ver comprobante
                   </a>
                 ) : (
                   <p className="text-muted sinComprobante mt-1">

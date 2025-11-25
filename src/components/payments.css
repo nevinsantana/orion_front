@@ -129,6 +129,11 @@
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
 }
 
+.comprobante-loaded {
+  color: #00e676;
+  font-weight: 600;
+}
+
 /* Ajustes responsivos para móviles */
 @media (max-width: 767px) {
   /* Contenedor de las columnas */
