@@ -35,6 +35,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [collectionRateData, setCollectionRateData] = useState(null);
 
+  /* ============================================
+     OBTENER USUARIO LOGGEADO
+  ============================================= */
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -43,11 +46,6 @@ const Dashboard = () => {
 
         const decoded = jwtDecode(token);
         const userId = decoded.id || decoded.user_id;
-
-        if (!userId) {
-          console.log("No se encontro el ID en el token");
-          return;
-        }
 
         const response = await axiosInstance.get(`/users/${userId}`, {
           // 👈 reemplaza 2 por el ID dinámico si lo tienes
@@ -69,6 +67,9 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
+  /* ============================================
+      WS DPC — GLOBAL, CLIENTE Y POR FECHAS
+  ============================================= */
   const fetchAverageCollectionDays = async () => {
     try {
       setLoading(true);
@@ -102,8 +103,14 @@ const Dashboard = () => {
     }
   };
 
+  /* ============================================
+      WS COLLECTION RATE — SOLO GLOBAL
+  ============================================= */
   const fetchCollectionRate = async () => {
     try {
+      // Si seleccionan un cliente distinto de 0, este WS NO debe ejecutarse
+      if (selectedClientId !== 0) return;
+
       let url = "/analytics/collection-rate";
       const params = [];
 
@@ -121,38 +128,52 @@ const Dashboard = () => {
       if (response.data.code === 1) {
         setCollectionRateData(response.data.data);
       } else {
-        console.error("No se pudo obtener la Tasa de Cobranza");
+        console.error("No se pudo obtener la Tasa de Cobranza global");
       }
     } catch (error) {
-      console.error("Error al obtener Tasa de Cobranza:", error);
+      console.error("Error:", error);
     }
   };
 
+  /* ============================================
+      WS COLLECTION RATE — POR CLIENTE
+  ============================================= */
+  const fetchClientRate = async () => {
+    try {
+      // Si selecciona "Todos los clientes", no llamar este WS
+      if (!selectedClientId || selectedClientId === 0) return;
+
+      const response = await axiosInstance.get(
+        `/analytics/client-rate/${selectedClientId}`
+      );
+
+      if (response.data.code === 1) {
+        setCollectionRateData(response.data.data);
+      } else {
+        console.error("No se pudo obtener la Tasa de Cobranza del cliente");
+      }
+    } catch (error) {
+      console.error("Error al obtener Client Rate:", error);
+    }
+  };
+
+  /* ============================================
+      ACTUALIZA AL CAMBIAR CLIENTE
+  ============================================= */
   useEffect(() => {
     fetchAverageCollectionDays();
+    setCollectionRateData(null);
+
+    if (selectedClientId === 0) {
+      fetchCollectionRate();
+    } else {
+      fetchClientRate();
+    }
   }, [selectedClientId]);
 
-  useEffect(() => {
-    fetchCollectionRate();
-  }, []);
-
-  // Datos de ejemplo
-  const lineData = [
-    { name: "Ene", value: 30 },
-    { name: "Feb", value: 45 },
-    { name: "Mar", value: 60 },
-    { name: "Abr", value: 20 },
-  ];
-
-  const pieData = [
-    { name: "Alquiler", value: 400 },
-    { name: "Servicios", value: 300 },
-    { name: "Compras", value: 300 },
-    { name: "Otros", value: 200 },
-  ];
-
-  const COLORS = ["#8B5CF6", "#6B7280", "#10B981", "#F59E0B"];
-
+  /* ============================================
+      FILTRAR POR FECHAS
+  ============================================= */
   const handleFilter = () => {
     if ((startDate && !endDate) || (!startDate && endDate)) {
       Swal.fire("Error", "Debes seleccionar ambas fechas.", "warning");
@@ -160,7 +181,25 @@ const Dashboard = () => {
     }
 
     fetchAverageCollectionDays();
-    fetchCollectionRate();
+
+    if (selectedClientId === 0) {
+      fetchCollectionRate(); // global filtrado
+    } else {
+      fetchClientRate(); // cliente (sin filtros)
+    }
+  };
+
+  /* ============================================
+      LIMPIAR FILTROS
+  ============================================= */
+  const handleClear = () => {
+    setStartDate("");
+    setEndDate("");
+
+    fetchAverageCollectionDays();
+
+    if (selectedClientId === 0) fetchCollectionRate();
+    else fetchClientRate();
   };
 
   return (
@@ -210,21 +249,14 @@ const Dashboard = () => {
                     Filtrar
                   </button>
 
-                  <button
-                    className="btn btn-limpiar"
-                    onClick={() => {
-                      setStartDate("");
-                      setEndDate("");
-                      fetchAverageCollectionDays();
-                      fetchCollectionRate();
-                    }}
-                  >
+                  <button className="btn btn-limpiar" onClick={handleClear}>
                     Limpiar
                   </button>
                 </div>
               </div>
             </div>
 
+            {/* SELECT CLIENTE */}
             <div className="row">
               <div className="col-md-12">
                 <select
@@ -242,169 +274,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* ========== FILA 2 ========== */}
-            <div className="row mb-4">
-              {/* Resumen Saldo */}
-              {/* <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
-                <div className="card-dark p-3 h-100 d-flex flex-column">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="text-white mb-0">Resumen Saldo</h5>
-                    <button className="btn btn-vermas">Ver más</button>
-                  </div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={lineData}>
-                      <XAxis dataKey="name" stroke="#fff" />
-                      <YAxis stroke="#fff" />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#8B5CF6"
-                        strokeWidth={3}
-                        dot={{ r: 4, fill: "#8B5CF6" }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div> */}
-
-              {/* Gastos Pie */}
-              {/* <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
-                <div className="card-dark p-3 h-100 d-flex flex-column">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="text-white mb-0">Gastos</h5>
-                    <button className="btn btn-vermas">Ver más</button>
-                  </div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={60}
-                        fill="#8884d8"
-                        label
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div> */}
-
-              {/* Gastos Detallados (Tabla) */}
-              {/* <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
-                <div className="card-dark p-3 h-100 d-flex flex-column">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="text-white mb-0">Próximos pagos</h5>
-                    <button className="btn btn-vermas">Ver todo</button>
-                  </div>
-                  <div className="table-responsive mt-2">
-                    <table className="table table-dark table-striped mb-0">
-                      <thead>
-                        <tr>
-                          <th>Descripción</th>
-                          <th>Cantidad</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Alquiler</td>
-                          <td>$400</td>
-                        </tr>
-                        <tr>
-                          <td>Luz</td>
-                          <td>$50</td>
-                        </tr>
-                        <tr>
-                          <td>Supermercado</td>
-                          <td>$200</td>
-                        </tr>
-                        <tr>
-                          <td>Transporte</td>
-                          <td>$30</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div> */}
-            </div>
-
-            {/* ========== FILA 3 ========== */}
-            {/* <div className="row">
-              <div className="col-md-8 mb-3 cont-fila3">
-                <div className="card-dark p-3">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h5 className="text-white mb-0">Transacciones Recientes</h5>
-                    <button className="btn btn-vermas">Ver todo</button>
-                  </div>
-                  <div className="table-responsive">
-                    <table className="table table-dark table-striped mb-0">
-                      <thead>
-                        <tr>
-                          <th>Descripción</th>
-                          <th>Fecha</th>
-                          <th>Categoría</th>
-                          <th>Cantidad</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Dato 1</td>
-                          <td>Dato 2</td>
-                          <td>Dato 3</td>
-                          <td>Dato 4</td>
-                        </tr>
-                        <tr>
-                          <td>Dato A</td>
-                          <td>Dato B</td>
-                          <td>Dato C</td>
-                          <td>Dato D</td>
-                        </tr>
-                        <tr>
-                          <td>Dato 5</td>
-                          <td>Dato 6</td>
-                          <td>Dato 7</td>
-                          <td>Dato 8</td>
-                        </tr>
-                        <tr>
-                          <td>Dato E</td>
-                          <td>Dato F</td>
-                          <td>Dato G</td>
-                          <td>Dato H</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-3 cont-fila3">
-                <div className="card-dark p-3 d-flex flex-column justify-content-between">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="text-white">Ahorros</h5>
-                    <button className="btn btn-vermas">Ver más</button>
-                  </div>
-                  <p className="text-white mt-4">
-                    $1.725 <span className="text-white-50">de $5,000</span>
-                  </p>
-                  <p className="text-white-50 mt-3">
-                    Aquí puedes agregar más contenido...
-                  </p>
-                </div>
-              </div>
-            </div> */}
-
-            {/* ========== FILA 4 ========== */}
+            {/* ========== DPC ========== */}
             <div className="row">
               <div className="col-md-12">
                 {dpcData && (
@@ -417,8 +287,7 @@ const Dashboard = () => {
 
                     <p>
                       <strong>Riesgo:</strong>{" "}
-                      {dpcData.historicalData &&
-                      dpcData.historicalData.length > 0
+                      {dpcData.historicalData?.length > 0
                         ? dpcData.historicalData[0].risk_category
                         : "Sin datos"}
                     </p>
@@ -432,6 +301,7 @@ const Dashboard = () => {
               </div>
             </div>
 
+            {/* COLLECTION RATE */}
             <div className="row">
               <div className="col-md-12">
                 {collectionRateData && (
@@ -447,8 +317,7 @@ const Dashboard = () => {
 
                     <p>
                       <strong>Riesgo:</strong>{" "}
-                      {collectionRateData.historicalData &&
-                      collectionRateData.historicalData.length > 0
+                      {collectionRateData.historicalData?.length > 0
                         ? collectionRateData.historicalData[0].risk_category
                         : "Sin datos"}
                     </p>
@@ -457,6 +326,14 @@ const Dashboard = () => {
                       <strong>Predicción próximo mes:</strong>{" "}
                       {collectionRateData.prediction?.nextMonth
                         ? collectionRateData.prediction.nextMonth.toFixed(2) +
+                          "%"
+                        : "N/A"}
+                    </p>
+
+                    <p>
+                      <strong>Predicción próximo trimestre:</strong>{" "}
+                      {collectionRateData.prediction?.nextQuarter
+                        ? collectionRateData.prediction.nextQuarter.toFixed(2) +
                           "%"
                         : "N/A"}
                     </p>
