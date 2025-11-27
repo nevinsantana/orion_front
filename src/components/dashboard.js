@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import "./dashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Swal from "sweetalert2";
 import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
 import Coins from "../components/coins";
@@ -29,6 +30,9 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [selectedClientId, setSelectedClientId] = useState(0);
   const [dpcData, setDpcData] = useState(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -64,27 +68,41 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
-  const fetchAverageCollectionDays = async (clientId = 0) => {
+  const fetchAverageCollectionDays = async () => {
     try {
-      const url =
-        clientId === 0
-          ? `/analytics/average-collection-days` // WS GLOBAL
-          : `/analytics/average-collection-days?clientId=${clientId}`; // WS POR CLIENTE
+      setLoading(true);
+      let url = "/analytics/average-collection-days";
+      const params = [];
+
+      if (selectedClientId !== 0) {
+        params.push(`clientId=${selectedClientId}`);
+      }
+
+      if (startDate && endDate) {
+        params.push(`startDate=${startDate}`);
+        params.push(`endDate=${endDate}`);
+      }
+
+      if (params.length > 0) {
+        url += `?${params.join("&")}`;
+      }
 
       const response = await axiosInstance.get(url);
 
       if (response.data.code === 1) {
         setDpcData(response.data.data);
       } else {
-        console.error("No se pudo obtener el DPC");
+        console.error("No se pudo obtener la información del DPC");
       }
     } catch (error) {
       console.error("Error al obtener DPC:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAverageCollectionDays(selectedClientId);
+    fetchAverageCollectionDays();
   }, [selectedClientId]);
 
   // Datos de ejemplo
@@ -103,6 +121,15 @@ const Dashboard = () => {
   ];
 
   const COLORS = ["#8B5CF6", "#6B7280", "#10B981", "#F59E0B"];
+
+  const handleFilter = () => {
+    if ((startDate && !endDate) || (!startDate && endDate)) {
+      Swal.fire("Error", "Debes seleccionar ambas fechas.", "warning");
+      return;
+    }
+
+    fetchAverageCollectionDays();
+  };
 
   return (
     <div className="container-fluid contenedor-padre">
@@ -133,17 +160,59 @@ const Dashboard = () => {
               </div>
               <div className="col-md-6 d-flex flex-column align-items-center">
                 <div className="d-flex gap-3 mb-3">
-                  <input type="date" className="form-control input-dark" />
-                  <input type="date" className="form-control input-dark" />
+                  <input
+                    type="date"
+                    className="form-control input-dark"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    className="form-control input-dark"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
                 </div>
-                <button className="btn btn-filtrar">Filtrar</button>
+                <div className="d-flex gap-3">
+                  <button className="btn btn-filtrar" onClick={handleFilter}>
+                    Filtrar
+                  </button>
+
+                  <button
+                    className="btn btn-limpiar"
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                      fetchAverageCollectionDays();
+                    }}
+                  >
+                    Limpiar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-12">
+                <select
+                  className="form-control input-dark mb-3"
+                  value={selectedClientId}
+                  onChange={(e) => setSelectedClientId(Number(e.target.value))}
+                >
+                  <option value="" disabled>
+                    Selecciona...
+                  </option>
+                  <option value="0">Todos los clientes</option>
+                  <option value="1">Cliente 1</option>
+                  <option value="2">Cliente 2</option>
+                </select>
               </div>
             </div>
 
             {/* ========== FILA 2 ========== */}
             <div className="row mb-4">
               {/* Resumen Saldo */}
-              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
+              {/* <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
                 <div className="card-dark p-3 h-100 d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h5 className="text-white mb-0">Resumen Saldo</h5>
@@ -164,10 +233,10 @@ const Dashboard = () => {
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </div> */}
 
               {/* Gastos Pie */}
-              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
+              {/* <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
                 <div className="card-dark p-3 h-100 d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h5 className="text-white mb-0">Gastos</h5>
@@ -196,10 +265,10 @@ const Dashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </div> */}
 
               {/* Gastos Detallados (Tabla) */}
-              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
+              {/* <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
                 <div className="card-dark p-3 h-100 d-flex flex-column">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h5 className="text-white mb-0">Próximos pagos</h5>
@@ -234,11 +303,11 @@ const Dashboard = () => {
                     </table>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* ========== FILA 3 ========== */}
-            <div className="row">
+            {/* <div className="row">
               <div className="col-md-8 mb-3 cont-fila3">
                 <div className="card-dark p-3">
                   <div className="d-flex justify-content-between align-items-center mb-3">
@@ -300,7 +369,7 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* ========== FILA 4 ========== */}
             <div className="row">
@@ -329,23 +398,10 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
-
-            <div className="row">
-              <div className="col-md-12">
-                <select
-                  className="form-control input-dark mb-3"
-                  value={selectedClientId}
-                  onChange={(e) => setSelectedClientId(Number(e.target.value))}
-                >
-                  <option value="0">Todos los clientes</option>
-                  <option value="1">Cliente 1</option>
-                  <option value="2">Cliente 2</option>
-                </select>
-              </div>
-            </div>
           </div>
         )}
 
+        {/* ========== Vistas de los módulos del sidebar ========== */}
         {activeView === "AdminUsers" && <AdminUsers />}
         {activeView === "Clients" && <Clients />}
         {activeView === "Coins" && <Coins />}

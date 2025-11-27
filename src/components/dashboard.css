@@ -79,6 +79,17 @@
   color: #fff;
 }
 
+.btn-limpiar {
+  background-color: #00e676;
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn-limpiar:hover {
+  background-color: #00c853;
+  color: #fff;
+}
+
 /* Tarjetas */
 .card-dark {
   background-color: #1a1a1a;
