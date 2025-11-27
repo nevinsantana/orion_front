@@ -27,6 +27,7 @@ import PaymentTracking from "./paymentTracking";
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [user, setUser] = useState(null);
+  const [selectedClientId, setSelectedClientId] = useState(0);
   const [dpcData, setDpcData] = useState(null);
 
   useEffect(() => {
@@ -63,26 +64,28 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
-  useEffect(() => {
-    const fetchAverageCollectionDays = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "/analytics/average-collection-days"
-        );
+  const fetchAverageCollectionDays = async (clientId = 0) => {
+    try {
+      const url =
+        clientId === 0
+          ? `/analytics/average-collection-days` // WS GLOBAL
+          : `/analytics/average-collection-days?clientId=${clientId}`; // WS POR CLIENTE
 
-        if (response.data.code === 1) {
-          setDpcData(response.data.data);
-          console.log("DPC:", response.data.data);
-        } else {
-          console.error("No se pudo obtener el DPC");
-        }
-      } catch (error) {
-        console.error("Error al obtener DPC:", error);
+      const response = await axiosInstance.get(url);
+
+      if (response.data.code === 1) {
+        setDpcData(response.data.data);
+      } else {
+        console.error("No se pudo obtener el DPC");
       }
-    };
+    } catch (error) {
+      console.error("Error al obtener DPC:", error);
+    }
+  };
 
-    fetchAverageCollectionDays();
-  }, []);
+  useEffect(() => {
+    fetchAverageCollectionDays(selectedClientId);
+  }, [selectedClientId]);
 
   // Datos de ejemplo
   const lineData = [
@@ -305,19 +308,39 @@ const Dashboard = () => {
                 {dpcData && (
                   <div className="card-dark p-3 text-white mb-3">
                     <h5>Días Promedio de Cobro (DPC)</h5>
+
                     <p>
                       <strong>Actual:</strong> {dpcData.currentDPC} días
                     </p>
+
                     <p>
                       <strong>Riesgo:</strong>{" "}
-                      {dpcData.historicalData[0].risk_category}
+                      {dpcData.historicalData &&
+                      dpcData.historicalData.length > 0
+                        ? dpcData.historicalData[0].risk_category
+                        : "Sin datos"}
                     </p>
+
                     <p>
                       <strong>Predicción próximo mes:</strong>{" "}
-                      {dpcData.prediction.nextMonthDPC}
+                      {dpcData.prediction?.nextMonthDPC ?? "N/A"}
                     </p>
                   </div>
                 )}
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-12">
+                <select
+                  className="form-control input-dark mb-3"
+                  value={selectedClientId}
+                  onChange={(e) => setSelectedClientId(Number(e.target.value))}
+                >
+                  <option value="0">Todos los clientes</option>
+                  <option value="1">Cliente 1</option>
+                  <option value="2">Cliente 2</option>
+                </select>
               </div>
             </div>
           </div>
