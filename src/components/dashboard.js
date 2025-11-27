@@ -33,6 +33,7 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [collectionRateData, setCollectionRateData] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -101,9 +102,39 @@ const Dashboard = () => {
     }
   };
 
+  const fetchCollectionRate = async () => {
+    try {
+      let url = "/analytics/collection-rate";
+      const params = [];
+
+      if (startDate && endDate) {
+        params.push(`startDate=${startDate}`);
+        params.push(`endDate=${endDate}`);
+      }
+
+      if (params.length > 0) {
+        url += `?${params.join("&")}`;
+      }
+
+      const response = await axiosInstance.get(url);
+
+      if (response.data.code === 1) {
+        setCollectionRateData(response.data.data);
+      } else {
+        console.error("No se pudo obtener la Tasa de Cobranza");
+      }
+    } catch (error) {
+      console.error("Error al obtener Tasa de Cobranza:", error);
+    }
+  };
+
   useEffect(() => {
     fetchAverageCollectionDays();
   }, [selectedClientId]);
+
+  useEffect(() => {
+    fetchCollectionRate();
+  }, []);
 
   // Datos de ejemplo
   const lineData = [
@@ -129,6 +160,7 @@ const Dashboard = () => {
     }
 
     fetchAverageCollectionDays();
+    fetchCollectionRate();
   };
 
   return (
@@ -184,6 +216,7 @@ const Dashboard = () => {
                       setStartDate("");
                       setEndDate("");
                       fetchAverageCollectionDays();
+                      fetchCollectionRate();
                     }}
                   >
                     Limpiar
@@ -393,6 +426,39 @@ const Dashboard = () => {
                     <p>
                       <strong>Predicción próximo mes:</strong>{" "}
                       {dpcData.prediction?.nextMonthDPC ?? "N/A"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-12">
+                {collectionRateData && (
+                  <div className="card-dark p-3 text-white mb-3">
+                    <h5>Tasa de Cobranza</h5>
+
+                    <p>
+                      <strong>Actual:</strong>{" "}
+                      {collectionRateData.currentRate
+                        ? collectionRateData.currentRate.toFixed(2) + "%"
+                        : "0%"}
+                    </p>
+
+                    <p>
+                      <strong>Riesgo:</strong>{" "}
+                      {collectionRateData.historicalData &&
+                      collectionRateData.historicalData.length > 0
+                        ? collectionRateData.historicalData[0].risk_category
+                        : "Sin datos"}
+                    </p>
+
+                    <p>
+                      <strong>Predicción próximo mes:</strong>{" "}
+                      {collectionRateData.prediction?.nextMonth
+                        ? collectionRateData.prediction.nextMonth.toFixed(2) +
+                          "%"
+                        : "N/A"}
                     </p>
                   </div>
                 )}
