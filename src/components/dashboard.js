@@ -13,7 +13,6 @@ import {
 import "./dashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
-import { motion } from "framer-motion";
 import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
 import Coins from "../components/coins";
@@ -364,57 +363,6 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* ========== KPI CARDS ========== */}
-            <div className="row mb-4">
-              <div className="col-md-4">
-                <motion.div
-                  className="kpi-card"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <h6>DPC Actual</h6>
-                  <p className="kpi-value">
-                    {dpcData?.currentDPC ?? "N/A"} días
-                  </p>
-                </motion.div>
-              </div>
-
-              <div className="col-md-4">
-                <motion.div
-                  className="kpi-card"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45 }}
-                >
-                  <h6>Tasa Actual</h6>
-                  <p className="kpi-value">
-                    {collectionRateData?.currentRate !== undefined
-                      ? collectionRateData.currentRate.toFixed(2) + "%"
-                      : "0%"}
-                  </p>
-                </motion.div>
-              </div>
-
-              <div className="col-md-4">
-                <motion.div
-                  className="kpi-card"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <h6>Predicción Próximo Mes</h6>
-                  <p className="kpi-value">
-                    {dpcData?.prediction?.nextMonthDPC ??
-                      (collectionRateData?.prediction?.nextMonth
-                        ? collectionRateData.prediction.nextMonth.toFixed(2) +
-                          "%"
-                        : "N/A")}
-                  </p>
-                </motion.div>
-              </div>
-            </div>
-
             {/* loader global DPC */}
             {loadingDpc && (
               <div className="loader-container mb-3">
@@ -441,7 +389,7 @@ const Dashboard = () => {
                       }}
                     />
                     <p>
-                      <strong>Actual:</strong> {dpcData.currentDPC} días
+                      <strong>Días promedio de pago:</strong> {dpcData.currentDPC} días
                     </p>
 
                     <p>
@@ -461,6 +409,11 @@ const Dashboard = () => {
                     <p>
                       <strong>Predicción próximo mes:</strong>{" "}
                       {dpcData.prediction?.nextMonthDPC ?? "N/A"}
+                    </p>
+
+                    <p>
+                      <strong>Predicción próximo trimestre:</strong>{" "}
+                      {dpcData.prediction?.nextQuarterDPC ?? "N/A"}
                     </p>
 
                     {/* HISTÓRICO */}
