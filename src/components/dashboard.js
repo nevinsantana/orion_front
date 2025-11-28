@@ -7,13 +7,13 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  PieChart,
-  Pie,
-  Cell,
+  BarChart,
+  Bar,
 } from "recharts";
 import "./dashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
 import Coins from "../components/coins";
@@ -28,12 +28,47 @@ import PaymentTracking from "./paymentTracking";
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [user, setUser] = useState(null);
-  const [selectedClientId, setSelectedClientId] = useState(0);
+  const [selectedClientId, setSelectedClientId] = useState("");
   const [dpcData, setDpcData] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [loading, setLoading] = useState(false);
   const [collectionRateData, setCollectionRateData] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [loadingDpc, setLoadingDpc] = useState(false);
+  const [loadingCollection, setLoadingCollection] = useState(false);
+
+  /* ===========================
+     Utilidades
+  ============================ */
+  const getRiskColor = (risk) => {
+    if (!risk) return "#9e9e9e";
+    const r = risk.toLowerCase();
+    if (r.includes("bajo")) return "#4caf50"; // verde
+    if (r.includes("medio")) return "#ffeb3b"; // amarillo
+    if (r.includes("alto")) return "#ff9800"; // naranja
+    if (r.includes("crítico") || r.includes("critico")) return "#f44336"; // rojo fuerte
+    return "#9e9e9e";
+  };
+
+  // Normaliza los datos de historicalData para charts DPC
+  const mapDpcChartData = (historical = []) =>
+    historical.map((h) => ({
+      month: h.month,
+      value:
+        typeof h.average_days_to_collect === "number"
+          ? h.average_days_to_collect
+          : h.average_days_to_collect ?? null,
+      risk: h.risk_category,
+    }));
+
+  // Normaliza los datos de historicalData para collectionRate (barras)
+  const mapCollectionChartData = (historical = []) =>
+    historical.map((h) => ({
+      month: h.month,
+      total_invoices: h.total_invoices ?? 0,
+      paid_on_time: h.paid_on_time ?? 0,
+      risk: h.risk_category,
+    }));
 
   /* ============================================
      OBTENER USUARIO LOGGEADO
@@ -68,11 +103,36 @@ const Dashboard = () => {
   }, []);
 
   /* ============================================
+     OBTENER LISTA DE CLIENTES (DINÁMICO)
+  ============================================= */
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const res = await axiosInstance.get("/clients"); // ajusta ruta si es diferente
+        // asumo respuesta { code: 1, clients: [...] } — adapta si es distinto
+        if (res.data?.code === 1 && Array.isArray(res.data.Clients)) {
+          setClients(res.data.Clients);
+        } else {
+          // si estructura distinta, intenta leer res.data.data o res.data
+          setClients([]);
+          // const fallback = res.data?.data || res.data;
+          // if (Array.isArray(fallback)) setClients(fallback);
+        }
+      } catch (err) {
+        console.error("No se pudieron cargar los clientes:", err);
+        setClients([]);
+      }
+    };
+
+    fetchClients();
+  }, []);
+
+  /* ============================================
       WS DPC — GLOBAL, CLIENTE Y POR FECHAS
   ============================================= */
   const fetchAverageCollectionDays = async () => {
     try {
-      setLoading(true);
+      setLoadingDpc(true);
       let url = "/analytics/average-collection-days";
       const params = [];
 
@@ -99,7 +159,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error al obtener DPC:", error);
     } finally {
-      setLoading(false);
+      setLoadingDpc(false);
     }
   };
 
@@ -110,6 +170,8 @@ const Dashboard = () => {
     try {
       // Si seleccionan un cliente distinto de 0, este WS NO debe ejecutarse
       if (selectedClientId !== 0) return;
+
+      setLoadingCollection(true);
 
       let url = "/analytics/collection-rate";
       const params = [];
@@ -128,10 +190,14 @@ const Dashboard = () => {
       if (response.data.code === 1) {
         setCollectionRateData(response.data.data);
       } else {
+        setCollectionRateData(null);
         console.error("No se pudo obtener la Tasa de Cobranza global");
       }
     } catch (error) {
       console.error("Error:", error);
+      setCollectionRateData(null);
+    } finally {
+      setLoadingCollection(false);
     }
   };
 
@@ -143,6 +209,8 @@ const Dashboard = () => {
       // Si selecciona "Todos los clientes", no llamar este WS
       if (!selectedClientId || selectedClientId === 0) return;
 
+      setLoadingCollection(true);
+
       const response = await axiosInstance.get(
         `/analytics/client-rate/${selectedClientId}`
       );
@@ -150,10 +218,14 @@ const Dashboard = () => {
       if (response.data.code === 1) {
         setCollectionRateData(response.data.data);
       } else {
+        setCollectionRateData(null);
         console.error("No se pudo obtener la Tasa de Cobranza del cliente");
       }
     } catch (error) {
       console.error("Error al obtener Client Rate:", error);
+      setCollectionRateData(null);
+    } finally {
+      setLoadingCollection(false);
     }
   };
 
@@ -164,12 +236,21 @@ const Dashboard = () => {
     fetchAverageCollectionDays();
     setCollectionRateData(null);
 
-    if (selectedClientId === 0) {
-      fetchCollectionRate();
-    } else {
-      fetchClientRate();
-    }
+    if (selectedClientId === 0) fetchCollectionRate();
+    else fetchClientRate();
   }, [selectedClientId]);
+
+  // re-ejecutar cuando cambien fechas manualmente con filtro
+  useEffect(() => {
+    // si hay fechas, no llamamos automáticamente al cambiar la fecha hasta que el usuario haga "Filtrar".
+    // aquí solo limpiamos los datos si las fechas se borran
+    if (!startDate && !endDate) {
+      fetchAverageCollectionDays();
+      if (selectedClientId === 0) fetchCollectionRate();
+      else fetchClientRate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate]);
 
   /* ============================================
       FILTRAR POR FECHAS
@@ -182,11 +263,8 @@ const Dashboard = () => {
 
     fetchAverageCollectionDays();
 
-    if (selectedClientId === 0) {
-      fetchCollectionRate(); // global filtrado
-    } else {
-      fetchClientRate(); // cliente (sin filtros)
-    }
+    if (selectedClientId === 0) fetchCollectionRate();
+    else fetchClientRate();
   };
 
   /* ============================================
@@ -201,6 +279,14 @@ const Dashboard = () => {
     if (selectedClientId === 0) fetchCollectionRate();
     else fetchClientRate();
   };
+
+  /* ============================================
+      Gráficas - preparaciones
+  ============================================= */
+  const dpcChartData = mapDpcChartData(dpcData?.historicalData || []);
+  const collectionChartData = mapCollectionChartData(
+    collectionRateData?.historicalData || []
+  );
 
   return (
     <div className="container-fluid contenedor-padre">
@@ -267,12 +353,74 @@ const Dashboard = () => {
                   <option value="" disabled>
                     Selecciona...
                   </option>
-                  <option value="0">Todos los clientes</option>
-                  <option value="1">Cliente 1</option>
-                  <option value="2">Cliente 2</option>
+                  <option value={0}>Todos los clientes</option>
+                  {clients.length > 0 &&
+                    clients.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
                 </select>
               </div>
             </div>
+
+            {/* ========== KPI CARDS ========== */}
+            <div className="row mb-4">
+              <div className="col-md-4">
+                <motion.div
+                  className="kpi-card"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <h6>DPC Actual</h6>
+                  <p className="kpi-value">
+                    {dpcData?.currentDPC ?? "N/A"} días
+                  </p>
+                </motion.div>
+              </div>
+
+              <div className="col-md-4">
+                <motion.div
+                  className="kpi-card"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45 }}
+                >
+                  <h6>Tasa Actual</h6>
+                  <p className="kpi-value">
+                    {collectionRateData?.currentRate !== undefined
+                      ? collectionRateData.currentRate.toFixed(2) + "%"
+                      : "0%"}
+                  </p>
+                </motion.div>
+              </div>
+
+              <div className="col-md-4">
+                <motion.div
+                  className="kpi-card"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h6>Predicción Próximo Mes</h6>
+                  <p className="kpi-value">
+                    {dpcData?.prediction?.nextMonthDPC ??
+                      (collectionRateData?.prediction?.nextMonth
+                        ? collectionRateData.prediction.nextMonth.toFixed(2) +
+                          "%"
+                        : "N/A")}
+                  </p>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* loader global DPC */}
+            {loadingDpc && (
+              <div className="loader-container mb-3">
+                <div className="spinner" />
+              </div>
+            )}
 
             {/* ========== DPC ========== */}
             <div className="row">
@@ -280,26 +428,73 @@ const Dashboard = () => {
                 {dpcData && (
                   <div className="card-dark p-3 text-white mb-3">
                     <h5>Días Promedio de Cobro (DPC)</h5>
-
+                    <div
+                      className="risk-indicator"
+                      title={
+                        dpcData.historicalData?.[0]?.risk_category ||
+                        "Sin datos"
+                      }
+                      style={{
+                        background: getRiskColor(
+                          dpcData.historicalData?.[0]?.risk_category
+                        ),
+                      }}
+                    />
                     <p>
                       <strong>Actual:</strong> {dpcData.currentDPC} días
                     </p>
 
                     <p>
                       <strong>Riesgo:</strong>{" "}
-                      {dpcData.historicalData?.length > 0
-                        ? dpcData.historicalData[0].risk_category
-                        : "Sin datos"}
+                      <span
+                        style={{
+                          color: getRiskColor(
+                            dpcData.historicalData?.[0]?.risk_category
+                          ),
+                        }}
+                      >
+                        {dpcData.historicalData?.[0]?.risk_category ||
+                          "Sin datos"}
+                      </span>
                     </p>
 
                     <p>
                       <strong>Predicción próximo mes:</strong>{" "}
                       {dpcData.prediction?.nextMonthDPC ?? "N/A"}
                     </p>
+
+                    {/* HISTÓRICO */}
+                    {dpcChartData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={250}>
+                        <LineChart data={dpcChartData}>
+                          <XAxis dataKey="month" stroke="#fff" />
+                          <YAxis stroke="#fff" />
+                          <Tooltip />
+                          <Line
+                            type="monotone"
+                            dataKey="value"
+                            stroke="#8B5CF6"
+                            strokeWidth={3}
+                            dot={{ r: 4 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <p className="text-white-50 small">
+                        No hay histórico para mostrar.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
             </div>
+
+            {/* loader collection */}
+            {loadingCollection && (
+              <div className="loader-container mb-3">
+                <div className="spinner" />
+              </div>
+            )}
 
             {/* COLLECTION RATE */}
             <div className="row">
@@ -307,19 +502,39 @@ const Dashboard = () => {
                 {collectionRateData && (
                   <div className="card-dark p-3 text-white mb-3">
                     <h5>Tasa de Cobranza</h5>
+                    <div
+                      className="risk-indicator"
+                      title={
+                        collectionRateData.historicalData?.[0]?.risk_category ||
+                        "Sin datos"
+                      }
+                      style={{
+                        background: getRiskColor(
+                          collectionRateData.historicalData?.[0]?.risk_category
+                        ),
+                      }}
+                    />
 
                     <p>
                       <strong>Actual:</strong>{" "}
-                      {collectionRateData.currentRate
+                      {collectionRateData.currentRate !== undefined
                         ? collectionRateData.currentRate.toFixed(2) + "%"
                         : "0%"}
                     </p>
 
                     <p>
                       <strong>Riesgo:</strong>{" "}
-                      {collectionRateData.historicalData?.length > 0
-                        ? collectionRateData.historicalData[0].risk_category
-                        : "Sin datos"}
+                      <span
+                        style={{
+                          color: getRiskColor(
+                            collectionRateData.historicalData?.[0]
+                              ?.risk_category
+                          ),
+                        }}
+                      >
+                        {collectionRateData.historicalData?.[0]
+                          ?.risk_category || "Sin datos"}
+                      </span>
                     </p>
 
                     <p>
@@ -337,6 +552,33 @@ const Dashboard = () => {
                           "%"
                         : "N/A"}
                     </p>
+
+                    {/* HISTÓRICO (barras) */}
+                    {collectionChartData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart data={collectionChartData}>
+                          <XAxis dataKey="month" stroke="#fff" />
+                          <YAxis stroke="#fff" />
+                          <Tooltip />
+                          <Bar
+                            dataKey="total_invoices"
+                            name="Total facturas"
+                            barSize={12}
+                            fill="#4F46E5"
+                          />
+                          <Bar
+                            dataKey="paid_on_time"
+                            name="Pagadas a tiempo"
+                            barSize={12}
+                            fill="#22C55E"
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <p className="text-white-50 small">
+                        No hay histórico para mostrar.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
