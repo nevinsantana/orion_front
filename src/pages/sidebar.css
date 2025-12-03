@@ -27,18 +27,36 @@
 }
 
 .sidebar-menu {
-  -ms-overflow-style: none;  /* IE/Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-/* Logo escritorio */
+/* Logo contenedor */
 .sidebar-logo {
-  display: block;
-  margin-bottom: 20px;
-  width: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  background: transparent !important; /* Fondo transparente */
+  border-radius: 0;
+}
+
+/* Imagen del logo */
+.sidebar-img {
+  width: 65%;
+  max-width: 160px;
   height: auto;
   object-fit: contain;
 }
+
+/* --- RESPONSIVE: esconder logo en tablet/móvil --- */
+@media (max-width: 1024px) {
+  .sidebar-logo {
+    display: none !important;
+  }
+}
+
+
 
 /* Menú principal */
 .sidebar-menu ul {
@@ -156,12 +174,11 @@
     flex-direction: column;
     justify-content: space-between;
     padding-top: 60px;
-    
-}
+  }
   .sidebar.open {
     left: 0;
   }
-  
+
   /* Fondo overlay */
   .overlay {
     position: fixed;
@@ -185,11 +202,6 @@
   }
   .sidebar-footer {
     align-items: center;
-  }
-
-  /* Ocultar logo en responsive */
-  .sidebar-logo {
-    display: none;
   }
 }
 
@@ -208,12 +220,11 @@
     flex-direction: column;
     justify-content: space-between;
     padding-top: 60px;
-    
-}
+  }
   .sidebar.open {
     left: 0;
   }
-  
+
   /* Fondo overlay */
   .overlay {
     position: fixed;
@@ -239,12 +250,8 @@
     align-items: center;
   }
 
-  /* Ocultar logo en responsive */
-  .sidebar-logo {
-    display: none;
-  }
-}
 
+}
 
 @media (max-width: 375px) {
   .sidebar {

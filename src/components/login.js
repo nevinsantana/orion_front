@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import axiosInstance from "../api/axiosInstance"; // 👈 Importa tu configuración de Axios
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
+import OrionLogo from '../assets/images/img-login/Orion.png';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -92,11 +93,7 @@ const Login = () => {
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
             <div className="text-center mb-4 mt-4 mt-md-0">
-              <img
-                src="https://placehold.co/400x100/888888/ffffff?text=Imagen"
-                alt=""
-                className="img-fluid"
-              />
+              <img src={OrionLogo} alt="Orion" className="img-fluid" />
             </div>
 
             <form onSubmit={handleLogin} className="p-4">

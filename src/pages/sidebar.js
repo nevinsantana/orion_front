@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
-
+import OrionLogo from "../assets/images/img-login/Orion.png";
 
 import {
   FaHome,
@@ -40,11 +40,11 @@ const Sidebar = ({ setActiveView }) => {
     <>
       {/* Topbar para tablet/móvil */}
       <div className="topbar">
-        <div className="topbar-left">
+        <div className="sidebar-logo text-center p-4">
           <img
-            src="https://placehold.co/150x50/888888/ffffff?text=Logo"
-            alt="Logo"
-            className="logo-topbar"
+            src={OrionLogo}
+            alt="Orion Logo"
+            className="img-fluid sidebar-img"
           />
         </div>
         <div className="topbar-right">
@@ -62,11 +62,10 @@ const Sidebar = ({ setActiveView }) => {
       {/* Sidebar / menú */}
       <aside className={`sidebar ${isOpen ? "open" : ""}`}>
         {/* Logo escritorio */}
-        <img
-          src="https://placehold.co/150x50/888888/ffffff?text=Logo"
-          alt="Logo"
-          className="sidebar-logo"
-        />
+        {/* Logo escritorio */}
+        <div className="sidebar-logo">
+          <img src={OrionLogo} alt="Orion Logo" className="sidebar-img" />
+        </div>
 
         <nav className="sidebar-menu">
           <ul>
@@ -106,23 +105,25 @@ const Sidebar = ({ setActiveView }) => {
             >
               <LiaFileInvoiceSolid className="icon" /> <span>Facturas</span>
             </li>
-             <li
+            <li
               className={active === "InvoicesReport" ? "active" : ""}
               onClick={() => handleClick("InvoicesReport")}
             >
-              <TbReportSearch className="icon" /> <span>Estado De Facturas</span>
+              <TbReportSearch className="icon" /> <span>Reporte Facturas</span>
             </li>
             <li
               className={active === "AgingReport" ? "active" : ""}
               onClick={() => handleClick("AgingReport")}
             >
-              <LiaFileInvoiceDollarSolid className="icon" /> <span>Reporte De Cuentas</span>
+              <LiaFileInvoiceDollarSolid className="icon" />{" "}
+              <span>Reporte Antigüedad</span>
             </li>
             <li
               className={active === "PaymentTracking" ? "active" : ""}
               onClick={() => handleClick("PaymentTracking")}
             >
-              <TbCalendarClock className="icon" /> <span>Seguimiento de Pago</span>
+              <TbCalendarClock className="icon" />{" "}
+              <span>Seguimiento de Pago</span>
             </li>
           </ul>
         </nav>

@@ -19,7 +19,7 @@ import {
 } from "react-bootstrap";
 
 // 🔹 Base API
-const BASE_API_URL = "http://localhost:7777/api";
+const BASE_API_URL = "http://localhost:9000/api";
 const API_ENDPOINT_COINS = `${BASE_API_URL}/coins`;
 
 // 🔐 Obtener encabezados de autorización
