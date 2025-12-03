@@ -97,7 +97,7 @@ const PaymentsReceipts = () => {
 
             <form onSubmit={handleSubmit}>
               {/* SELECT */}
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label className="form-label">Ingresa tu código</label>
                 <input
                   type="text"
@@ -107,7 +107,7 @@ const PaymentsReceipts = () => {
                   onChange={(e) => setSelectedCode(e.target.value)}
                   required
                 />
-              </div>
+              </div> */}
 
               {/* Imagen */}
               <div className="mb-3 text-start">
