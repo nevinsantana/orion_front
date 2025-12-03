@@ -7,12 +7,12 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  PieChart,
-  Pie,
-  Cell,
+  BarChart,
+  Bar,
 } from "recharts";
 import "./dashboard.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Swal from "sweetalert2";
 import AdminUsers from "../components/AdminUsers";
 import Clients from "../components/clients";
 import Coins from "../components/coins";
@@ -27,7 +27,51 @@ import PaymentTracking from "./paymentTracking";
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [user, setUser] = useState(null);
+  const [selectedClientId, setSelectedClientId] = useState("");
+  const [dpcData, setDpcData] = useState(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [collectionRateData, setCollectionRateData] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [loadingDpc, setLoadingDpc] = useState(false);
+  const [loadingCollection, setLoadingCollection] = useState(false);
 
+  /* ===========================
+     Utilidades
+  ============================ */
+  const getRiskColor = (risk) => {
+    if (!risk) return "#9e9e9e";
+    const r = risk.toLowerCase();
+    if (r.includes("bajo")) return "#4caf50"; // verde
+    if (r.includes("medio")) return "#ffeb3b"; // amarillo
+    if (r.includes("alto")) return "#ff9800"; // naranja
+    if (r.includes("crítico") || r.includes("critico")) return "#f44336"; // rojo fuerte
+    return "#9e9e9e";
+  };
+
+  // Normaliza los datos de historicalData para charts DPC
+  const mapDpcChartData = (historical = []) =>
+    historical.map((h) => ({
+      month: h.month,
+      value:
+        typeof h.average_days_to_collect === "number"
+          ? h.average_days_to_collect
+          : h.average_days_to_collect ?? null,
+      risk: h.risk_category,
+    }));
+
+  // Normaliza los datos de historicalData para collectionRate (barras)
+  const mapCollectionChartData = (historical = []) =>
+    historical.map((h) => ({
+      month: h.month,
+      total_invoices: h.total_invoices ?? 0,
+      paid_on_time: h.paid_on_time ?? 0,
+      risk: h.risk_category,
+    }));
+
+  /* ============================================
+     OBTENER USUARIO LOGGEADO
+  ============================================= */
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -36,11 +80,6 @@ const Dashboard = () => {
 
         const decoded = jwtDecode(token);
         const userId = decoded.id || decoded.user_id;
-
-        if (!userId) {
-          console.log("No se encontro el ID en el token");
-          return;
-        }
 
         const response = await axiosInstance.get(`/users/${userId}`, {
           // 👈 reemplaza 2 por el ID dinámico si lo tienes
@@ -62,22 +101,191 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
-  // Datos de ejemplo
-  const lineData = [
-    { name: "Ene", value: 30 },
-    { name: "Feb", value: 45 },
-    { name: "Mar", value: 60 },
-    { name: "Abr", value: 20 },
-  ];
+  /* ============================================
+     OBTENER LISTA DE CLIENTES (DINÁMICO)
+  ============================================= */
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const res = await axiosInstance.get("/clients"); // ajusta ruta si es diferente
+        // asumo respuesta { code: 1, clients: [...] } — adapta si es distinto
+        if (res.data?.code === 1 && Array.isArray(res.data.Clients)) {
+          setClients(res.data.Clients);
+        } else {
+          // si estructura distinta, intenta leer res.data.data o res.data
+          setClients([]);
+          // const fallback = res.data?.data || res.data;
+          // if (Array.isArray(fallback)) setClients(fallback);
+        }
+      } catch (err) {
+        console.error("No se pudieron cargar los clientes:", err);
+        setClients([]);
+      }
+    };
 
-  const pieData = [
-    { name: "Alquiler", value: 400 },
-    { name: "Servicios", value: 300 },
-    { name: "Compras", value: 300 },
-    { name: "Otros", value: 200 },
-  ];
+    fetchClients();
+  }, []);
 
-  const COLORS = ["#8B5CF6", "#6B7280", "#10B981", "#F59E0B"];
+  /* ============================================
+      WS DPC — GLOBAL, CLIENTE Y POR FECHAS
+  ============================================= */
+  const fetchAverageCollectionDays = async () => {
+    try {
+      setLoadingDpc(true);
+      let url = "/analytics/average-collection-days";
+      const params = [];
+
+      if (selectedClientId !== 0) {
+        params.push(`clientId=${selectedClientId}`);
+      }
+
+      if (startDate && endDate) {
+        params.push(`startDate=${startDate}`);
+        params.push(`endDate=${endDate}`);
+      }
+
+      if (params.length > 0) {
+        url += `?${params.join("&")}`;
+      }
+
+      const response = await axiosInstance.get(url);
+
+      if (response.data.code === 1) {
+        setDpcData(response.data.data);
+      } else {
+        console.error("No se pudo obtener la información del DPC");
+      }
+    } catch (error) {
+      console.error("Error al obtener DPC:", error);
+    } finally {
+      setLoadingDpc(false);
+    }
+  };
+
+  /* ============================================
+      WS COLLECTION RATE — SOLO GLOBAL
+  ============================================= */
+  const fetchCollectionRate = async () => {
+    try {
+      // Si seleccionan un cliente distinto de 0, este WS NO debe ejecutarse
+      if (selectedClientId !== 0) return;
+
+      setLoadingCollection(true);
+
+      let url = "/analytics/collection-rate";
+      const params = [];
+
+      if (startDate && endDate) {
+        params.push(`startDate=${startDate}`);
+        params.push(`endDate=${endDate}`);
+      }
+
+      if (params.length > 0) {
+        url += `?${params.join("&")}`;
+      }
+
+      const response = await axiosInstance.get(url);
+
+      if (response.data.code === 1) {
+        setCollectionRateData(response.data.data);
+      } else {
+        setCollectionRateData(null);
+        console.error("No se pudo obtener la Tasa de Cobranza global");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setCollectionRateData(null);
+    } finally {
+      setLoadingCollection(false);
+    }
+  };
+
+  /* ============================================
+      WS COLLECTION RATE — POR CLIENTE
+  ============================================= */
+  const fetchClientRate = async () => {
+    try {
+      // Si selecciona "Todos los clientes", no llamar este WS
+      if (!selectedClientId || selectedClientId === 0) return;
+
+      setLoadingCollection(true);
+
+      const response = await axiosInstance.get(
+        `/analytics/client-rate/${selectedClientId}`
+      );
+
+      if (response.data.code === 1) {
+        setCollectionRateData(response.data.data);
+      } else {
+        setCollectionRateData(null);
+        console.error("No se pudo obtener la Tasa de Cobranza del cliente");
+      }
+    } catch (error) {
+      console.error("Error al obtener Client Rate:", error);
+      setCollectionRateData(null);
+    } finally {
+      setLoadingCollection(false);
+    }
+  };
+
+  /* ============================================
+      ACTUALIZA AL CAMBIAR CLIENTE
+  ============================================= */
+  useEffect(() => {
+    fetchAverageCollectionDays();
+    setCollectionRateData(null);
+
+    if (selectedClientId === 0) fetchCollectionRate();
+    else fetchClientRate();
+  }, [selectedClientId]);
+
+  // re-ejecutar cuando cambien fechas manualmente con filtro
+  useEffect(() => {
+    // si hay fechas, no llamamos automáticamente al cambiar la fecha hasta que el usuario haga "Filtrar".
+    // aquí solo limpiamos los datos si las fechas se borran
+    if (!startDate && !endDate) {
+      fetchAverageCollectionDays();
+      if (selectedClientId === 0) fetchCollectionRate();
+      else fetchClientRate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate]);
+
+  /* ============================================
+      FILTRAR POR FECHAS
+  ============================================= */
+  const handleFilter = () => {
+    if ((startDate && !endDate) || (!startDate && endDate)) {
+      Swal.fire("Error", "Debes seleccionar ambas fechas.", "warning");
+      return;
+    }
+
+    fetchAverageCollectionDays();
+
+    if (selectedClientId === 0) fetchCollectionRate();
+    else fetchClientRate();
+  };
+
+  /* ============================================
+      LIMPIAR FILTROS
+  ============================================= */
+  const handleClear = () => {
+    setStartDate("");
+    setEndDate("");
+
+    fetchAverageCollectionDays();
+
+    if (selectedClientId === 0) fetchCollectionRate();
+    else fetchClientRate();
+  };
+
+  /* ============================================
+      Gráficas - preparaciones
+  ============================================= */
+  const dpcChartData = mapDpcChartData(dpcData?.historicalData || []);
+  const collectionChartData = mapCollectionChartData(
+    collectionRateData?.historicalData || []
+  );
 
   return (
     <div className="container-fluid contenedor-padre">
@@ -108,185 +316,238 @@ const Dashboard = () => {
               </div>
               <div className="col-md-6 d-flex flex-column align-items-center">
                 <div className="d-flex gap-3 mb-3">
-                  <input type="date" className="form-control input-dark" />
-                  <input type="date" className="form-control input-dark" />
+                  <input
+                    type="date"
+                    className="form-control input-dark"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    className="form-control input-dark"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
                 </div>
-                <button className="btn btn-filtrar">Filtrar</button>
-              </div>
-            </div>
+                <div className="d-flex gap-3">
+                  <button className="btn btn-filtrar" onClick={handleFilter}>
+                    Filtrar
+                  </button>
 
-            {/* ========== FILA 2 ========== */}
-            <div className="row mb-4">
-              {/* Resumen Saldo */}
-              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
-                <div className="card-dark p-3 h-100 d-flex flex-column">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="text-white mb-0">Resumen Saldo</h5>
-                    <button className="btn btn-vermas">Ver más</button>
-                  </div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={lineData}>
-                      <XAxis dataKey="name" stroke="#fff" />
-                      <YAxis stroke="#fff" />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#8B5CF6"
-                        strokeWidth={3}
-                        dot={{ r: 4, fill: "#8B5CF6" }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              {/* Gastos Pie */}
-              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
-                <div className="card-dark p-3 h-100 d-flex flex-column">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="text-white mb-0">Gastos</h5>
-                    <button className="btn btn-vermas">Ver más</button>
-                  </div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={60}
-                        fill="#8884d8"
-                        label
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              {/* Gastos Detallados (Tabla) */}
-              <div className="col-lg-4 col-md-12 mb-3 cont-fila2">
-                <div className="card-dark p-3 h-100 d-flex flex-column">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="text-white mb-0">Próximos pagos</h5>
-                    <button className="btn btn-vermas">Ver todo</button>
-                  </div>
-                  <div className="table-responsive mt-2">
-                    <table className="table table-dark table-striped mb-0">
-                      <thead>
-                        <tr>
-                          <th>Descripción</th>
-                          <th>Cantidad</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Alquiler</td>
-                          <td>$400</td>
-                        </tr>
-                        <tr>
-                          <td>Luz</td>
-                          <td>$50</td>
-                        </tr>
-                        <tr>
-                          <td>Supermercado</td>
-                          <td>$200</td>
-                        </tr>
-                        <tr>
-                          <td>Transporte</td>
-                          <td>$30</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <button className="btn btn-limpiar" onClick={handleClear}>
+                    Limpiar
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* ========== FILA 3 ========== */}
+            {/* SELECT CLIENTE */}
             <div className="row">
-              <div className="col-md-8 mb-3 cont-fila3">
-                <div className="card-dark p-3">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h5 className="text-white mb-0">Transacciones Recientes</h5>
-                    <button className="btn btn-vermas">Ver todo</button>
-                  </div>
-                  <div className="table-responsive">
-                    <table className="table table-dark table-striped mb-0">
-                      <thead>
-                        <tr>
-                          <th>Descripción</th>
-                          <th>Fecha</th>
-                          <th>Categoría</th>
-                          <th>Cantidad</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Dato 1</td>
-                          <td>Dato 2</td>
-                          <td>Dato 3</td>
-                          <td>Dato 4</td>
-                        </tr>
-                        <tr>
-                          <td>Dato A</td>
-                          <td>Dato B</td>
-                          <td>Dato C</td>
-                          <td>Dato D</td>
-                        </tr>
-                        <tr>
-                          <td>Dato 5</td>
-                          <td>Dato 6</td>
-                          <td>Dato 7</td>
-                          <td>Dato 8</td>
-                        </tr>
-                        <tr>
-                          <td>Dato E</td>
-                          <td>Dato F</td>
-                          <td>Dato G</td>
-                          <td>Dato H</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+              <div className="col-md-12">
+                <select
+                  className="form-control input-dark mb-3"
+                  value={selectedClientId}
+                  onChange={(e) => setSelectedClientId(Number(e.target.value))}
+                >
+                  <option value="" disabled>
+                    Selecciona...
+                  </option>
+                  <option value={0}>Todos los clientes</option>
+                  {clients.length > 0 &&
+                    clients.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                </select>
               </div>
+            </div>
 
-              <div className="col-md-4 mb-3 cont-fila3">
-                <div className="card-dark p-3 d-flex flex-column justify-content-between">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="text-white">Ahorros</h5>
-                    <button className="btn btn-vermas">Ver más</button>
+            {/* loader global DPC */}
+            {loadingDpc && (
+              <div className="loader-container mb-3">
+                <div className="spinner" />
+              </div>
+            )}
+
+            {/* ========== DPC ========== */}
+            <div className="row">
+              <div className="col-md-12">
+                {dpcData && (
+                  <div className="card-dark p-3 text-white mb-3">
+                    <h5>Días Promedio de Cobro (DPC)</h5>
+                    <div
+                      className="risk-indicator"
+                      title={
+                        dpcData.historicalData?.[0]?.risk_category ||
+                        "Sin datos"
+                      }
+                      style={{
+                        background: getRiskColor(
+                          dpcData.historicalData?.[0]?.risk_category
+                        ),
+                      }}
+                    />
+                    <p>
+                      <strong>Días promedio de pago:</strong> {dpcData.currentDPC} días
+                    </p>
+
+                    <p>
+                      <strong>Riesgo:</strong>{" "}
+                      <span
+                        style={{
+                          color: getRiskColor(
+                            dpcData.historicalData?.[0]?.risk_category
+                          ),
+                        }}
+                      >
+                        {dpcData.historicalData?.[0]?.risk_category ||
+                          "Sin datos"}
+                      </span>
+                    </p>
+
+                    <p>
+                      <strong>Predicción próximo mes:</strong>{" "}
+                      {dpcData.prediction?.nextMonthDPC ?? "N/A"}
+                    </p>
+
+                    <p>
+                      <strong>Predicción próximo trimestre:</strong>{" "}
+                      {dpcData.prediction?.nextQuarterDPC ?? "N/A"}
+                    </p>
+
+                    {/* HISTÓRICO */}
+                    {dpcChartData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={250}>
+                        <LineChart data={dpcChartData}>
+                          <XAxis dataKey="month" stroke="#fff" />
+                          <YAxis stroke="#fff" />
+                          <Tooltip />
+                          <Line
+                            type="monotone"
+                            dataKey="value"
+                            stroke="#8B5CF6"
+                            strokeWidth={3}
+                            dot={{ r: 4 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <p className="text-white-50 small">
+                        No hay histórico para mostrar.
+                      </p>
+                    )}
                   </div>
-                  <p className="text-white mt-4">
-                    $1.725 <span className="text-white-50">de $5,000</span>
-                  </p>
-                  <p className="text-white-50 mt-3">
-                    Aquí puedes agregar más contenido...
-                  </p>
-                </div>
+                )}
+              </div>
+            </div>
+
+            {/* loader collection */}
+            {loadingCollection && (
+              <div className="loader-container mb-3">
+                <div className="spinner" />
+              </div>
+            )}
+
+            {/* COLLECTION RATE */}
+            <div className="row">
+              <div className="col-md-12">
+                {collectionRateData && (
+                  <div className="card-dark p-3 text-white mb-3">
+                    <h5>Tasa de Cobranza</h5>
+                    <div
+                      className="risk-indicator"
+                      title={
+                        collectionRateData.historicalData?.[0]?.risk_category ||
+                        "Sin datos"
+                      }
+                      style={{
+                        background: getRiskColor(
+                          collectionRateData.historicalData?.[0]?.risk_category
+                        ),
+                      }}
+                    />
+
+                    <p>
+                      <strong>Actual:</strong>{" "}
+                      {collectionRateData.currentRate !== undefined
+                        ? collectionRateData.currentRate.toFixed(2) + "%"
+                        : "0%"}
+                    </p>
+
+                    <p>
+                      <strong>Riesgo:</strong>{" "}
+                      <span
+                        style={{
+                          color: getRiskColor(
+                            collectionRateData.historicalData?.[0]
+                              ?.risk_category
+                          ),
+                        }}
+                      >
+                        {collectionRateData.historicalData?.[0]
+                          ?.risk_category || "Sin datos"}
+                      </span>
+                    </p>
+
+                    <p>
+                      <strong>Predicción próximo mes:</strong>{" "}
+                      {collectionRateData.prediction?.nextMonth
+                        ? collectionRateData.prediction.nextMonth.toFixed(2) +
+                          "%"
+                        : "N/A"}
+                    </p>
+
+                    <p>
+                      <strong>Predicción próximo trimestre:</strong>{" "}
+                      {collectionRateData.prediction?.nextQuarter
+                        ? collectionRateData.prediction.nextQuarter.toFixed(2) +
+                          "%"
+                        : "N/A"}
+                    </p>
+
+                    {/* HISTÓRICO (barras) */}
+                    {collectionChartData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart data={collectionChartData}>
+                          <XAxis dataKey="month" stroke="#fff" />
+                          <YAxis stroke="#fff" />
+                          <Tooltip />
+                          <Bar
+                            dataKey="total_invoices"
+                            name="Total facturas"
+                            barSize={12}
+                            fill="#4F46E5"
+                          />
+                          <Bar
+                            dataKey="paid_on_time"
+                            name="Pagadas a tiempo"
+                            barSize={12}
+                            fill="#22C55E"
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <p className="text-white-50 small">
+                        No hay histórico para mostrar.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         )}
 
+        {/* ========== Vistas de los módulos del sidebar ========== */}
         {activeView === "AdminUsers" && <AdminUsers />}
         {activeView === "Clients" && <Clients />}
         {activeView === "Coins" && <Coins />}
         {activeView === "Payments" && <Payments />}
         {activeView === "Invoices" && <Invoices />}
         {activeView === "InvoicesReport" && <InvoicesReport />}
-        {activeView === "AgingReport" && <AgingReport/>}
-        {activeView === "PaymentTracking" && <PaymentTracking/>}
+        {activeView === "AgingReport" && <AgingReport />}
+        {activeView === "PaymentTracking" && <PaymentTracking />}
       </div>
     </div>
   );

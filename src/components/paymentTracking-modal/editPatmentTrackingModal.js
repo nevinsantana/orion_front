@@ -3,15 +3,16 @@ import "./editPaymentTrackingModal.css";
 import { FaTimes } from "react-icons/fa";
 import { TbCalendarClock } from "react-icons/tb";
 import Swal from "sweetalert2";
+import axiosInstance from "../../api/axiosInstance";
 
 function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
-  const [status, setStatus] = useState(tracking.status || "Pendiente");
-  const [comments, setComments] = useState(tracking.comments || "");
+  const [status, setStatus] = useState("");
+  const serverURL = axiosInstance.defaults.baseURL.replace("/api", "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!status || !comments.trim()) {
+    if (!status) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
@@ -24,7 +25,6 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
     const updatedTracking = {
       ...tracking,
       status,
-      comments,
     };
 
     onSave(updatedTracking);
@@ -68,29 +68,61 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
 
           <form onSubmit={handleSubmit} className="form-clientes">
             <div className="row g-3">
-              <div className="col-md-6 col-12">
+              <div className="col-md-6 col-12 text-start">
                 <label className="form-label">Estatus</label>
                 <select
                   className="form-select"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value="Pagada">Confirmado</option>
-                  <option value="Pendiente">Por vencer</option>
-                  <option value="Vencida">Vencida</option>
-                  <option value="Rechazada">Rechazado</option>
+                  <option value="" disabled>
+                    Selecciona...
+                  </option>
+                  <option value="Confirmado">Confirmado</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Por vencer">Por vencer</option>
+                  <option value="Vencida">Vencido</option>
+                  <option value="Rechazado">Rechazado</option>
                 </select>
               </div>
 
-              <div className="col-md-6 col-12">
-                <label className="form-label">Comentarios</label>
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={comments}
-                  onChange={(e) => setComments(e.target.value)}
-                ></textarea>
+              <div className="col-md-6 col-12 text-start">
+                <label className="form-label d-block mb-1">
+                  Comprobante de pago
+                </label>
+
+                {tracking.image ? (
+                  <a
+                    // href={`http://localhost:9000/validation_images/${tracking.image}`}
+                    href={`${serverURL}/validation_images/${tracking.image}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontWeight: "500",
+                      color: "#00e676",
+                      textDecoration: "none",
+                      cursor: "pointer",
+                      display: "inline-block",
+                      marginTop: "5px",
+                    }}
+                  >
+                    Ver comprobante
+                  </a>
+                ) : (
+                  <p className="text-muted sinComprobante mt-1">
+                    Sin comprobante
+                  </p>
+                )}
               </div>
+
+              {/* <div className="col-md-6 col-12">
+                <label className="form-label">Comprobante de pago</label>
+                {tracking.image ? (
+                  <p style={{ fontWeight: "500" }}>{tracking.image}</p>
+                ) : (
+                  <p className="text-muted">Sin comprobante</p>
+                )}
+              </div> */}
             </div>
 
             <div className="d-flex justify-content-center gap-2 mt-4 flex-wrap">

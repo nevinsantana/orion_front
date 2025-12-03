@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
@@ -30,7 +30,11 @@ const PaymentsReceipts = () => {
     e.preventDefault();
 
     if (!selectedCode.trim()) {
-      return Swal.fire("Código requerido", "Debes ingresar el código.", "warning")
+      return Swal.fire(
+        "Código requerido",
+        "Debes ingresar el código.",
+        "warning"
+      );
     }
 
     if (!image) {
@@ -71,6 +75,15 @@ const PaymentsReceipts = () => {
     }
   };
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const codeFromUrl = params.get("code");
+
+    if (codeFromUrl) {
+      setSelectedCode(codeFromUrl);
+    }
+  }, []);
+
   return (
     <div className="container-fluid vh-100 p-0">
       <div className="row g-0 h-100">
@@ -78,12 +91,6 @@ const PaymentsReceipts = () => {
 
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
           <div className="w-75">
-            <div className="mb-4 text-start">
-              <Link to="/" className="text-decoration-none btn btn-link backTo">
-                ← Regresar
-              </Link>
-            </div>
-
             <div className="mb-4 text-center">
               <h4 className="mb-0">Subir Comprobante de Pago</h4>
             </div>

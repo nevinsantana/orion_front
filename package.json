@@ -4,6 +4,9 @@
   "private": true,
   "proxy": "http://localhost:9000",
   "dependencies": {
+    "@mui/icons-material": "^7.3.5",
+    "@mui/lab": "^7.0.1-beta.19",
+    "@mui/material": "^7.3.5",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
@@ -11,6 +14,7 @@
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "crypto-js": "^4.2.0",
+    "framer-motion": "^12.23.24",
     "jwt-decode": "^4.0.0",
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.10",
@@ -18,7 +22,7 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.8.2",
     "react-scripts": "5.0.1",
-    "recharts": "^3.2.1",
+    "recharts": "^3.5.0",
     "sweetalert2": "^11.23.0",
     "web-vitals": "^2.1.4"
   },
@@ -32,7 +36,18 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": ["node_modules/recharts/**"],
+        "rules": {
+          "import/no-webpack-loader-syntax": "off"
+        }
+      }
     ]
+  },
+  "resolutions": {
+    "source-map-loader": "3.0.2"
   },
   "browserslist": {
     "production": [
