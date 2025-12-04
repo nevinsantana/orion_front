@@ -5,6 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+console.log("--- DEBUGGING VARIABLES ---");
+console.log("API URL detectada:", process.env.REACT_APP_API_URL);
+console.log("--- FIN DEBUG ---");
 root.render(
   <React.StrictMode>
     <App />
