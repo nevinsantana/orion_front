@@ -173,7 +173,6 @@ function Invoices() {
                   <th>Nombre</th>
                   <th>Nombre Contacto</th>
                   <th>RFC</th>
-                  <th>Correo electrónico</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -184,7 +183,6 @@ function Invoices() {
                       <td>{m.name}</td>
                       <td>{m.contact_name}</td>
                       <td>{m.rfc}</td>
-                      <td>{m.contact_email}</td>
                       <td>
                         <button
                           className="btn btn-sm me-2"

@@ -10,8 +10,12 @@ function getBaseURL() {
   const envURL = process.env.REACT_APP_API_URL;
   if (envURL) return envURL;
 
+  const DEV_PORTS = [7777, 9000];
+
+  const fallbackPort = DEV_PORTS[0];
+
   // Valor por defecto si no hay variable de entorno
-  return `${protocol}//${hostname}:9000/api`;
+  return `${protocol}//${hostname}:${fallbackPort}/api`;
 }
 
 const axiosInstance = axios.create({
