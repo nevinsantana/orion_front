@@ -123,6 +123,29 @@
   color: #fff;
 }
 
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status-green {
+  background-color: #28a745;
+  color: white;
+}
+
+.status-red {
+  background-color: #dc3545;
+  color: white;
+}
+
+.status-gray {
+  background-color: #6c757d;
+  color: white;
+}
+
+
 /* ✨ Pequeño efecto hover */
 .status-badge:hover {
   transform: scale(1.05);
