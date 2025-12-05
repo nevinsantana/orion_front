@@ -292,18 +292,25 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
     if (!client) return;
 
     setName(client.name || "");
-    setRfc(client.tax_regime || "");
+    setRfc(client.rfc || ""); // FIX ✔
     setTaxAddress(client.tax_address || "");
     setTaxRegime(client.tax_regime || "");
+
     setContactName(client.contact_name || "");
     setContactEmail(client.contact_email || "");
     setContactPhone(client.contact_phone || "");
+
     setUsoCfdi(client.uso_cfdi || "");
     setRegimenFiscalReceptor(client.regimen_fiscal_receptor || "");
     setDomicilioFiscalReceptor(client.domicilio_fiscal_receptor || "");
     setMetodoPago(client.metodo_pago || "");
     setFormaPago(client.forma_pago || "");
+
     setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
+
+    // 🔥 CAMPOS QUE FALTABAN
+    setTotalAmount(client.total_amount || "");
+    setDueDate(client.due_date ? client.due_date.substring(0, 10) : "");
   };
 
   const handleUploadImage = async () => {
