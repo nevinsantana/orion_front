@@ -80,6 +80,11 @@
   background-color: #6d44c0;
 }
 
+.form-control:focus {
+  background-color: #2b2b2b !important;
+  color: #fff !important;
+}
+
 
 @media (max-width: 768px) {
   .modal-content-clients {
