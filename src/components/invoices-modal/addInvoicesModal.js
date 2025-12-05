@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./addInvoicesModal.css";
 import { FaTimes, FaFileUpload } from "react-icons/fa";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
@@ -24,6 +24,29 @@ function AddInvoicesModal({ onClose, onSave }) {
   const [dueDate, setDueDate] = useState("");
   const [pdfFile, setPdfFile] = useState(null);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [selectedClientId, setSelectedClientId] = useState("");
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const res = await axiosInstance.get("/clients");
+        if (res.data.code === 1) {
+          setClients(res.data.Clients);
+        }
+      } catch (err) {
+        console.error("Error cargando clientes:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudieron cargar los clientes",
+          confirmButtonColor: "#8b5cf6",
+        });
+      }
+    };
+
+    fetchClients();
+  }, []);
 
   // Selección del PDF
   const handlePdfSelect = (e) => {
@@ -64,9 +87,9 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
       );
 
       // Log para debug
-    for (let pair of formData.entries()) {
-      console.log("FormData:", pair[0], pair[1]);
-    }
+      for (let pair of formData.entries()) {
+        console.log("FormData:", pair[0], pair[1]);
+      }
 
       // Usar axiosAI con baseURL correcto
       const pdfResponse = await axiosAI.post("/ai/analyze-pdf", formData);
@@ -253,6 +276,27 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
     }
   };
 
+  const handleClientChange = (clientId) => {
+    setSelectedClientId(clientId);
+
+    const client = clients.find((c) => c.id === parseInt(clientId));
+    if (!client) return;
+
+    setName(client.name || "");
+    setRfc(client.tax_regime || "");
+    setTaxAddress(client.tax_address || "");
+    setTaxRegime(client.tax_regime || "");
+    setContactName(client.contact_name || "");
+    setContactEmail(client.contact_email || "");
+    setContactPhone(client.contact_phone || "");
+    setUsoCfdi(client.uso_cfdi || "");
+    setRegimenFiscalReceptor(client.regimen_fiscal_receptor || "");
+    setDomicilioFiscalReceptor(client.domicilio_fiscal_receptor || "");
+    setMetodoPago(client.metodo_pago || "");
+    setFormaPago(client.forma_pago || "");
+    setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
+  };
+
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content-clients">
@@ -270,6 +314,22 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
           <div className="tituloIconoClients d-flex align-items-center gap-2 mb-3">
             <LiaFileInvoiceSolid className="icon" />
             <h6 className="m-0">Datos de Factura</h6>
+          </div>
+
+          <div className="col-md-12 mb-3">
+            <label className="form-label">Selecciona Cliente</label>
+            <select
+              className="form-control input-dark"
+              value={selectedClientId}
+              onChange={(e) => handleClientChange(e.target.value)}
+            >
+              <option value="">Selecciona...</option>
+              {clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <form onSubmit={handleSubmit} className="form-clientes">
@@ -442,7 +502,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
             </div>
 
             <div className="row g-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <div className="mb-3">
                   <label className="form-label">Fecha Vencimiento</label>
                   <input
@@ -453,7 +513,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
                   />
                 </div>
               </div>
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <label className="form-label">Archivo PDF</label>
                 <div className="d-flex align-items-center gap-2">
                   <label
@@ -481,6 +541,11 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
                     Analizar PDF
                   </button>
                 )}
+              </div>
+              <div className="col-md-4 col-12">
+                <div className="mb-3">
+                  <label className="form-label">Factura</label>
+                </div>
               </div>
             </div>
 
