@@ -1,6 +1,8 @@
 import React from "react";
 import { IoIosDownload } from "react-icons/io";
 import './agingHistoryModal.css';
+import { IoCloseOutline } from "react-icons/io5";
+
 
 export default function AgingHistoryModal({ files = [], onClose, onDownload }) {
   return (
@@ -60,7 +62,7 @@ export default function AgingHistoryModal({ files = [], onClose, onDownload }) {
           }}
         >
           <button className="aging-close-btn" onClick={onClose}>
-            Cerrar
+            <IoCloseOutline />
           </button>
         </div>
 

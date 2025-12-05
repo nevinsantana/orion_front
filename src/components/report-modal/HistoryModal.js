@@ -1,6 +1,7 @@
 import React from "react";
 import { IoIosDownload } from "react-icons/io";
 import "./HistoryModal.css";
+import { IoCloseOutline } from "react-icons/io5";
 
 // --- Corrige fechas mal formateadas tipo "2025-11-24T17-15-50-263Z"
 const fixDateString = (raw) => {
@@ -88,7 +89,7 @@ const HistoryModal = ({ files, onClose, onDownload }) => {
 
         <div className="close-container">
           <button className="btn-close" onClick={onClose}>
-            Cerrar
+            <IoCloseOutline />
           </button>
         </div>
       </div>

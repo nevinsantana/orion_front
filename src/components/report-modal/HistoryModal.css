@@ -110,27 +110,20 @@
 
 /* === Botón Cerrar === */
 .btn-close {
-  display: flex;                
-  align-items: center;
-  justify-content: center;
   background: #2a2a2a;
   color: #fff;
   border: 1px solid #555;
-  padding: 12px 28px;           
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
 }
 
 .btn-close:hover {
   background: #3b3b3b;
   transform: scale(1.05);
 }
-
-
 
 /* === Scroll interno === */
 .history-table-wrapper::-webkit-scrollbar {

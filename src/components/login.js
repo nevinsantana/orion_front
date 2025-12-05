@@ -87,7 +87,9 @@ const Login = () => {
     <div className="container-fluid vh-100 p-0">
       <div className="row h-100 g-0">
         {/* Columna izquierda */}
-        <div className="col-12 col-md-6 d-none d-md-flex d-dm-block login-left"></div>
+        <div className="col-12 col-md-6 d-none d-md-flex d-dm-block login-left">
+        
+        </div>
 
         {/* Columna derecha */}
         <div className="col-12 col-md-6 d-flex align-items-center justify-content-center back-form">
