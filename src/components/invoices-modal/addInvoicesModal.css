@@ -85,6 +85,15 @@
   color: #fff !important;
 }
 
+/* Forzar que los selects muestren la flecha normal */
+.input-dark,
+select.form-control {
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+}
+
+
 
 @media (max-width: 768px) {
   .modal-content-clients {

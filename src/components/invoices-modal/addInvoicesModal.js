@@ -26,6 +26,7 @@ function AddInvoicesModal({ onClose, onSave }) {
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [clients, setClients] = useState([]);
   const [selectedClientId, setSelectedClientId] = useState("");
+  const [imgFile, setImgFile] = useState(null);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -53,6 +54,14 @@ function AddInvoicesModal({ onClose, onSave }) {
     const file = e.target.files[0];
     if (file) {
       setPdfFile(file);
+    }
+  };
+
+  // Selección de la imagen
+  const handleImgSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImgFile(file);
     }
   };
 
@@ -297,6 +306,42 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
     setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
   };
 
+  const handleUploadImage = async () => {
+    if (!imgFile) {
+      Swal.fire({
+        icon: "warning",
+        title: "Selecciona una imagen",
+        text: "Debes elegir una imagen antes de subirla.",
+        confirmButtonColor: "#8b5cf6",
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: "Subiendo factura...",
+      text: "Simulando carga, por favor espera...",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    // Simulación de envío
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    Swal.fire({
+      icon: "success",
+      title: "Factura subida",
+      text: "La imagen fue cargada correctamente (simulación).",
+      confirmButtonColor: "#8b5cf6",
+    });
+
+    // 👉 Limpia la imagen del estado
+    setImgFile(null);
+
+    // 👉 Limpia el input de archivo manualmente
+    const fileInput = document.getElementById("img-upload");
+    if (fileInput) fileInput.value = "";
+  };
+
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content-clients">
@@ -513,13 +558,14 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
                   />
                 </div>
               </div>
+
               <div className="col-md-4 col-12">
                 <label className="form-label">Archivo PDF</label>
                 <div className="d-flex align-items-center gap-2">
                   <label
                     htmlFor="pdf-upload"
                     className="btn addCliente"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", marginRight: "0" }}
                   >
                     <FaFileUpload /> Seleccionar PDF
                   </label>
@@ -542,10 +588,36 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
                   </button>
                 )}
               </div>
+
+              {/* Segundo boton para subir imagenes de factura */}
               <div className="col-md-4 col-12">
-                <div className="mb-3">
-                  <label className="form-label">Factura</label>
+                <label className="form-label">Subir Factura</label>
+                <div className="d-flex align-items-center gap-2">
+                  <label
+                    htmlFor="img-upload"
+                    className="btn addCliente"
+                    style={{ cursor: "pointer", marginRight: "0" }}
+                  >
+                    <FaFileUpload /> Seleccionar imagen
+                  </label>
+                  <input
+                    type="file"
+                    id="img-upload"
+                    accept="img/*"
+                    onChange={handleImgSelect}
+                    style={{ display: "none" }}
+                  />
+                  {imgFile && <span>{imgFile.name}</span>}
                 </div>
+                {imgFile && (
+                  <button
+                    type="button"
+                    className="btn btn-analizar"
+                    onClick={handleUploadImage}
+                  >
+                    Subir Factura
+                  </button>
+                )}
               </div>
             </div>
 
