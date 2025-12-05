@@ -20,23 +20,13 @@ function PaymentTracking() {
         );
 
         if (response.data?.codes) {
-          // Convertir el WS a lo que tu tabla necesita
           const formattedData = response.data.codes.map((item) => {
-            // Convertir código a estatus compatible
-            let cleanStatus = "Desconocido";
+            let cleanStatus = "RECHAZADO"; // Por defecto
+
             const code = item.code.toUpperCase();
 
             if (code.startsWith("PAGADA") || code.startsWith("PAGADO")) {
-              cleanStatus = "Confirmado";
-            } else if (code.startsWith("PENDIENTE")) {
-              cleanStatus = "Pendiente";
-            } else if (code.startsWith("PORVENCER")) {
-              cleanStatus = "Por vencer";
-            } else if (
-              code.startsWith("VENCIDA") ||
-              code.startsWith("VENCIDO")
-            ) {
-              cleanStatus = "Vencido";
+              cleanStatus = "ACEPTADO";
             }
 
             return {
@@ -45,7 +35,7 @@ function PaymentTracking() {
               client: item.invoice?.client?.name,
               image: item.image,
               image_url: item.image_url,
-              status: cleanStatus, // 🔥 el estatus limpio sí activa tus colores
+              status: cleanStatus,
               comments: item.used ? "Código ya usado" : "Código disponible",
             };
           });
@@ -110,27 +100,11 @@ function PaymentTracking() {
 
     const normalized = status.toLowerCase().trim();
 
-    if (
-      normalized === "pagado" ||
-      normalized === "pagada" ||
-      normalized === "confirmado"
-    ) {
+    if (normalized === "aceptado") {
       return "status-green";
     }
 
-    if (normalized === "pendiente") {
-      return "status-orange";
-    }
-
-    if (normalized === "por vencer" || normalized === "porvencer") {
-      return "status-yellow";
-    }
-
-    if (
-      normalized === "rechazado" ||
-      normalized === "vencido" ||
-      normalized === "vencida"
-    ) {
+    if (normalized === "rechazado") {
       return "status-red";
     }
 

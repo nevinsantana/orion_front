@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import axiosInstance from "../api/axiosInstance"; // 👈 Importa tu configuración de Axios
+import axios from "axios"; // 👈 CAMBIO 1: Usamos axios directo para evitar fallos de configuración
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./login.css";
 import OrionLogo from '../assets/images/img-login/Orion.png';
@@ -23,19 +23,25 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      // 👇 Petición al backend con los datos del formulario
-      const response = await axiosInstance.post("/users/login", {
+      // 👈 CAMBIO 2: Estrategia de seguridad.
+      // Si el .env falla (undefined), usa automáticamente la URL de AWS.
+      // Esto arregla el error 405 (Method Not Allowed) de S3.
+      const API_URL = process.env.REACT_APP_API_URL || "https://192gbhh0ha.execute-api.us-east-1.amazonaws.com/dev/api";
+
+      console.log("Intentando login en:", `${API_URL}/users/login`); // Debug para que veas en consola a dónde va
+
+      // 👇 Petición directa con la URL completa
+      const response = await axios.post(`${API_URL}/users/login`, {
         email,
         password,
       });
 
-      // ✅ Si la respuesta contiene un token (ajusta el nombre si tu backend devuelve algo distinto)
+      // ✅ Si la respuesta contiene un token
       if (response.data && response.data.token) {
         const token = response.data.token;
 
         // Guarda el token en localStorage
         localStorage.setItem("token", token);
-
         localStorage.setItem("isLoggedIn", "true");
 
         // Muestra alerta y redirige al dashboard
@@ -47,7 +53,6 @@ const Login = () => {
           confirmButtonText: "Continuar",
           confirmButtonColor: "#8b5cf6",
         }).then(() => {
-          // navigate("/dashboard");
           if (redirect) {
             navigate(redirect);
           } else {

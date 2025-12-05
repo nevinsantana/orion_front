@@ -98,9 +98,9 @@ const PaymentsReceipts = () => {
             <form onSubmit={handleSubmit}>
               {/* SELECT */}
               <div className="mb-3">
-                <label className="form-label">Ingresa tu código</label>
                 <input
-                  type="text"
+                  type="hidden"
+                  name="code"
                   className="form-control"
                   placeholder="Escribe el código recibido por correo"
                   value={selectedCode}

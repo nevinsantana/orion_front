@@ -7,7 +7,7 @@ import "./UserForm.css";
 import axios from "axios"; 
 
 // Definimos el endpoint de la API
-const BASE_API_URL = "http://localhost:7777/api";
+const BASE_API_URL = process.env.REACT_APP_API_URL;
 const API_ENDPOINT_USERS = `${BASE_API_URL}/users`;
 
 // Función de utilidad para obtener los encabezados de autorización

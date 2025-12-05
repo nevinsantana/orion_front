@@ -27,7 +27,8 @@ import PaymentTracking from "./paymentTracking";
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [user, setUser] = useState(null);
-  const [selectedClientId, setSelectedClientId] = useState("");
+  // const [selectedClientId, setSelectedClientId] = useState("");
+  const [selectedClientId, setSelectedClientId] = useState(0);
   const [dpcData, setDpcData] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -126,6 +127,16 @@ const Dashboard = () => {
     fetchClients();
   }, []);
 
+  useEffect(() => {
+    fetchAverageCollectionDays();
+
+    if (selectedClientId === 0) {
+      fetchCollectionRate();
+    } else {
+      fetchClientRate();
+    }
+  }, [selectedClientId, startDate, endDate]);
+
   /* ============================================
       WS DPC — GLOBAL, CLIENTE Y POR FECHAS
   ============================================= */
@@ -185,6 +196,7 @@ const Dashboard = () => {
       }
 
       const response = await axiosInstance.get(url);
+      console.log("📘 GLOBAL COLLECTION RATE RESPONSE:", response.data);
 
       if (response.data.code === 1) {
         setCollectionRateData(response.data.data);
@@ -205,14 +217,24 @@ const Dashboard = () => {
   ============================================= */
   const fetchClientRate = async () => {
     try {
-      // Si selecciona "Todos los clientes", no llamar este WS
       if (!selectedClientId || selectedClientId === 0) return;
 
       setLoadingCollection(true);
 
-      const response = await axiosInstance.get(
-        `/analytics/client-rate/${selectedClientId}`
-      );
+      let url = `/analytics/client-rate/${selectedClientId}`;
+      const params = [];
+
+      if (startDate && endDate) {
+        params.push(`startDate=${startDate}`);
+        params.push(`endDate=${endDate}`);
+      }
+
+      if (params.length > 0) {
+        url += `?${params.join("&")}`;
+      }
+
+      const response = await axiosInstance.get(url);
+      console.log("📗 CLIENT COLLECTION RATE RESPONSE:", response.data);
 
       if (response.data.code === 1) {
         setCollectionRateData(response.data.data);
@@ -229,29 +251,6 @@ const Dashboard = () => {
   };
 
   /* ============================================
-      ACTUALIZA AL CAMBIAR CLIENTE
-  ============================================= */
-  useEffect(() => {
-    fetchAverageCollectionDays();
-    setCollectionRateData(null);
-
-    if (selectedClientId === 0) fetchCollectionRate();
-    else fetchClientRate();
-  }, [selectedClientId]);
-
-  // re-ejecutar cuando cambien fechas manualmente con filtro
-  useEffect(() => {
-    // si hay fechas, no llamamos automáticamente al cambiar la fecha hasta que el usuario haga "Filtrar".
-    // aquí solo limpiamos los datos si las fechas se borran
-    if (!startDate && !endDate) {
-      fetchAverageCollectionDays();
-      if (selectedClientId === 0) fetchCollectionRate();
-      else fetchClientRate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, endDate]);
-
-  /* ============================================
       FILTRAR POR FECHAS
   ============================================= */
   const handleFilter = () => {
@@ -262,8 +261,11 @@ const Dashboard = () => {
 
     fetchAverageCollectionDays();
 
-    if (selectedClientId === 0) fetchCollectionRate();
-    else fetchClientRate();
+    if (selectedClientId === 0) {
+      fetchCollectionRate();
+    } else {
+      fetchClientRate();
+    }
   };
 
   /* ============================================
@@ -272,11 +274,7 @@ const Dashboard = () => {
   const handleClear = () => {
     setStartDate("");
     setEndDate("");
-
-    fetchAverageCollectionDays();
-
-    if (selectedClientId === 0) fetchCollectionRate();
-    else fetchClientRate();
+    setSelectedClientId(0);
   };
 
   /* ============================================
@@ -334,7 +332,11 @@ const Dashboard = () => {
                     Filtrar
                   </button>
 
-                  <button className="btn btn-limpiar" onClick={handleClear}>
+                  <button
+                    type="button"
+                    className="btn btn-limpiar"
+                    onClick={handleClear}
+                  >
                     Limpiar
                   </button>
                 </div>
@@ -389,7 +391,8 @@ const Dashboard = () => {
                       }}
                     />
                     <p>
-                      <strong>Días promedio de pago:</strong> {dpcData.currentDPC} días
+                      <strong>Días promedio de pago:</strong>{" "}
+                      {dpcData.currentDPC} días
                     </p>
 
                     <p>

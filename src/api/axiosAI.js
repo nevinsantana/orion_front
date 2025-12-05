@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosAI = axios.create({
-  baseURL: "http://localhost:9000/api",
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:9000/api',
 
   // 👇 ESTA LÍNEA ES LA QUE CORRIGE TODO
   transformRequest: (data) => data,

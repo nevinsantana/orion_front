@@ -9,35 +9,63 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
   const [status, setStatus] = useState("");
   const serverURL = axiosInstance.defaults.baseURL.replace("/api", "");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!status) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
-        text: "Por favor completa todos los campos antes de guardar.",
+        text: "Por favor seleccione un estatus.",
         confirmButtonColor: "#8b5cf6",
       });
       return;
     }
 
-    const updatedTracking = {
-      ...tracking,
-      status,
-    };
+    try {
+      const body = {
+        reminder_id: tracking.id,
+        status: status, // <-- se envía ACEPATADO o RECHAZADO directo
+      };
 
-    onSave(updatedTracking);
+      const res = await axiosInstance.post("/invoices/update-status", body);
 
-    Swal.fire({
-      icon: "success",
-      title: "Seguimiento actualizado",
-      text: "Los datos se guardaron correctamente.",
-      timer: 2000,
-      showConfirmButton: false,
-    });
+      if (res.data.code === 1) {
+        // Actualizar la fila en la tabla
+        const updatedPayment = {
+          ...tracking,
+          status: status,
+        };
 
-    onClose();
+        onSave(updatedPayment);
+
+        Swal.fire({
+          icon: "success",
+          title: "Estatus actualizado",
+          text: res.data.message,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        onClose();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: res.data.message || "No se pudo actualizar el estatus.",
+        });
+      }
+    } catch (error) {
+      console.error("Error WS update-status:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error de servidor",
+        text:
+          error.response?.data?.message ||
+          "Ocurrió un error al actualizar el estado.",
+      });
+    }
   };
 
   // Cerrar modal al hacer clic fuera
@@ -78,11 +106,8 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
                   <option value="" disabled>
                     Selecciona...
                   </option>
-                  <option value="Confirmado">Confirmado</option>
-                  <option value="Pendiente">Pendiente</option>
-                  <option value="Por vencer">Por vencer</option>
-                  <option value="Vencida">Vencido</option>
-                  <option value="Rechazado">Rechazado</option>
+                  <option value="ACEPTADO">ACEPTADO</option>
+                  <option value="RECHAZADO">RECHAZADO</option>
                 </select>
               </div>
 
