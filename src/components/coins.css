@@ -33,6 +33,15 @@
   padding: 0.375rem 0.75rem;
   height: auto;
 }
+.search-button:active,
+.search-button:focus,
+.search-button:focus-visible {
+  background-color: #6e23c1 !important;
+  color: #fff !important;
+  border-color: #6e23c1 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
 
 .search-button:hover {
   background-color: #5a1e9e;

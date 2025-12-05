@@ -35,6 +35,18 @@
   color: #fff;
 }
 
+/* Evitar que el botón cambie a color negativo en :active */
+.buscarClientes:active,
+.buscarClientes:focus,
+.buscarClientes:focus-visible {
+  background-color: #6e23c1 !important;
+  color: #fff !important;
+  border-color: #6e23c1 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
 .addCliente {
   background-color: #6e23c1;
   color: #fff;
