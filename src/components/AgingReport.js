@@ -143,41 +143,60 @@ export default function AgingReport() {
   // -------------------------
   // Fetch repository and FILTER only antiguedad files
   // -------------------------
-  const fetchRepoFiles = async () => {
-    try {
-      setFilesLoading(true);
-      const res = await api.get("/invoiceReports/repo");
-      // backend returns { body: { repositoryName, files: [...] } }
-      const rawFiles = res.data?.body?.files ?? [];
-      // Keep only keys that start with 'reporte-antiguedad-' (case-insensitive)
-      const agingFiles = rawFiles.filter((f) => {
-        const key = (f.key || f.fileName || f.name || "").toString().toLowerCase();
-        return key.startsWith("reporte-antiguedad-") || key.includes("antiguedad");
-      });
-      // normalize entries to { key, url, size, date }
-      const normalized = agingFiles.map((f) => ({
-        key: f.key || f.fileName || f.name,
-        url: f.url || `https://rak-orion-invoice-reports.s3.amazonaws.com/${f.key || f.fileName || f.name}`,
-        size: f.size || f.Size || f.bytes || null,
-        date: f.date || f.lastModified || f.LastModified || null,
-      }));
-      setHistoryFiles(normalized);
-      setShowHistory(true);
-    } catch (err) {
-      console.error("Error fetching repo files:", err);
+ const fetchRepoFiles = async () => {
+  try {
+    setFilesLoading(true);
+    const res = await api.get("/invoiceReports/repo");
+
+    const rawFiles = res.data?.body?.files ?? [];
+
+    const agingFiles = rawFiles.filter((f) => {
+      const key = (f.key || f.fileName || f.name || "").toString().toLowerCase();
+      return key.startsWith("reporte-antiguedad-") || key.includes("antiguedad");
+    });
+
+    const normalized = agingFiles.map((f) => ({
+      key: f.key || f.fileName || f.name,
+      url:
+        f.url ||
+        `https://rak-orion-invoice-reports.s3.amazonaws.com/${f.key || f.fileName || f.name}`,
+      size: f.size || f.Size || f.bytes || null,
+      date: f.date || f.lastModified || f.LastModified || null,
+    }));
+
+    // ⛔ Validación SweetAlert si está vacío
+    if (normalized.length === 0) {
       Swal.fire({
-        icon: "error",
-        title: "Error al obtener historial",
-        text:
-          err.response?.data?.message ||
-          "No se pudo cargar el historial de reportes.",
-        background: "#1e1e1e",
+        icon: "info",
+        title: "Sin registros",
+        text: "No se encontraron reportes de facturas.",
+        background: "#1f1f1f",
         color: "#fff",
+        iconColor: "#44aaff",
+        confirmButtonColor: "#6c63ff",
       });
-    } finally {
-      setFilesLoading(false);
+      return;
     }
-  };
+
+    // ✔ Mostrar modal si hay archivos
+    setHistoryFiles(normalized);
+    setShowHistory(true);
+  } catch (err) {
+    console.error("Error fetching repo files:", err);
+    Swal.fire({
+      icon: "error",
+      title: "Error al obtener historial",
+      text:
+        err.response?.data?.message ||
+        "No se pudo cargar el historial de reportes.",
+      background: "#1f1f1e",
+      color: "#fff",
+    });
+  } finally {
+    setFilesLoading(false);
+  }
+};
+
 
   const openFile = (file) => {
     const url = file.url || (file.key ? `https://rak-orion-invoice-reports.s3.amazonaws.com/${file.key}` : null);
