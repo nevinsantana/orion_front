@@ -27,6 +27,7 @@ function AddInvoicesModal({ onClose, onSave }) {
   const [clients, setClients] = useState([]);
   const [selectedClientId, setSelectedClientId] = useState("");
   const [imgFile, setImgFile] = useState(null);
+  const [invoices, setInvoices] = useState([]);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -47,6 +48,21 @@ function AddInvoicesModal({ onClose, onSave }) {
     };
 
     fetchClients();
+  }, []);
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        const res = await axiosInstance.get("/Invoices");
+        if (res.data.code === 1) {
+          setInvoices(res.data.invoices);
+        }
+      } catch (error) {
+        console.error("Error loading invoices", error);
+      }
+    };
+
+    fetchInvoices();
   }, []);
 
   // Selección del PDF
@@ -170,113 +186,211 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación de campos obligatorios
-    if (
-      !name ||
-      !rfc ||
-      !taxAddress ||
-      !taxRegime ||
-      !contactName ||
-      !contactEmail ||
-      !contactPhone ||
-      !usoCfdi ||
-      !regimenFiscalReceptor ||
-      !domicilioFiscalReceptor ||
-      !metodoPago ||
-      !formaPago ||
-      !emailRecepcionFacturas ||
-      !totalAmount ||
-      !dueDate
-    ) {
+    // Validaciones
+    if (!selectedClientId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Selecciona un cliente",
+        text: "Debes elegir un cliente antes de guardar.",
+      });
+      return;
+    }
+
+    if (!name || !rfc || !totalAmount || !dueDate) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
-        theme: "dark",
-        text: "Por favor completa todos los campos requeridos.",
-        confirmButtonColor: "#8b5cf6",
+        text: "Debes llenar al menos los campos obligatorios.",
       });
       return;
     }
 
     const token = localStorage.getItem("token");
-    if (!token) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        theme: "dark",
-        text: "Token no encontrado. Debes iniciar sesión.",
-        confirmButtonColor: "#8b5cf6",
-      });
-      return;
-    }
 
-    const body = {
-      name,
-      rfc,
-      tax_address: taxAddress,
-      tax_regime: taxRegime,
-      contact_name: contactName,
-      contact_email: contactEmail,
-      contact_phone: contactPhone,
-      uso_cfdi: usoCfdi,
-      regimen_fiscal_receptor: regimenFiscalReceptor,
-      domicilio_fiscal_receptor: domicilioFiscalReceptor,
-      metodo_pago: metodoPago,
-      forma_pago: formaPago,
-      email_recepcion_facturas: emailRecepcionFacturas,
-      total_amount: totalAmount,
-      due_date: dueDate,
-    };
+    // 👉 Se arma FormData SOLO para enviar file opcional
+    const formData = new FormData();
+
+    formData.append("client_id", selectedClientId);
+    formData.append("name", name);
+    formData.append("rfc", rfc);
+    formData.append("tax_address", taxAddress || "");
+    formData.append("tax_regime", taxRegime || "");
+    formData.append("contact_name", contactName || "");
+    formData.append("contact_email", contactEmail || "");
+    formData.append("contact_phone", contactPhone || "");
+    formData.append("uso_cfdi", usoCfdi || "");
+    formData.append("regimen_fiscal_receptor", regimenFiscalReceptor || "");
+    formData.append("domicilio_fiscal_receptor", domicilioFiscalReceptor || "");
+    formData.append("metodo_pago", metodoPago || "");
+    formData.append("forma_pago", formaPago || "");
+    formData.append("email_recepcion_facturas", emailRecepcionFacturas || "");
+    formData.append("total_amount", totalAmount);
+    formData.append("due_date", dueDate);
+
+    // 👉 Si hay imagen, se envía
+    if (imgFile) {
+      formData.append("file", imgFile); // <-- ESTE nombre pide tu backend
+    }
 
     try {
       Swal.fire({
         title: "Guardando factura...",
-        theme: "dark",
+        text: "Por favor espera...",
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
       });
 
-      // Guardar factura
-      const response = await axiosInstance.post("/invoices", body, {
+      const response = await axiosInstance.post("/invoices", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          // "Content-Type": "multipart/form-data",
         },
       });
 
       Swal.close();
 
-      if (response.data?.code === 1 && response.data.invoice) {
+      if (response.data?.code === 1) {
         Swal.fire({
           icon: "success",
-          title: "Factura agregada",
-          theme: "dark",
-          text: response.data.message,
-          confirmButtonColor: "#8b5cf6",
+          title: "Factura guardada correctamente",
         });
 
+        // 👉 Actualiza tabla (envías la nueva factura)
         onSave(response.data.invoice);
+
+        // 👉 Limpiar inputs
+        setImgFile(null);
+        document.getElementById("img-upload").value = "";
+
+        // 👉 Cerrar modal
         onClose();
       } else {
         Swal.fire({
           icon: "error",
           title: "Error",
-          theme: "dark",
-          text: "No se pudo agregar la factura.",
-          confirmButtonColor: "#8b5cf6",
+          text: response.data?.message || "No se pudo guardar la factura.",
         });
       }
     } catch (error) {
-      console.error("Error al guardar factura:", error);
+      console.error("Error guardando factura:", error);
       Swal.fire({
         icon: "error",
-        title: "Error",
-        theme: "dark",
-        text: "Ocurrió un error al guardar la factura. Revisa la consola.",
-        confirmButtonColor: "#8b5cf6",
+        title: "Error al guardar",
+        text: "Hubo un problema al guardar la factura.",
       });
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   // Validación de campos obligatorios
+  //   if (
+  //     !name ||
+  //     !rfc ||
+  //     !taxAddress ||
+  //     !taxRegime ||
+  //     !contactName ||
+  //     !contactEmail ||
+  //     !contactPhone ||
+  //     !usoCfdi ||
+  //     !regimenFiscalReceptor ||
+  //     !domicilioFiscalReceptor ||
+  //     !metodoPago ||
+  //     !formaPago ||
+  //     !emailRecepcionFacturas ||
+  //     !totalAmount ||
+  //     !dueDate
+  //   ) {
+  //     Swal.fire({
+  //       icon: "warning",
+  //       title: "Campos incompletos",
+  //       theme: "dark",
+  //       text: "Por favor completa todos los campos requeridos.",
+  //       confirmButtonColor: "#8b5cf6",
+  //     });
+  //     return;
+  //   }
+
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Error",
+  //       theme: "dark",
+  //       text: "Token no encontrado. Debes iniciar sesión.",
+  //       confirmButtonColor: "#8b5cf6",
+  //     });
+  //     return;
+  //   }
+
+  //   const body = {
+  //     name,
+  //     rfc,
+  //     tax_address: taxAddress,
+  //     tax_regime: taxRegime,
+  //     contact_name: contactName,
+  //     contact_email: contactEmail,
+  //     contact_phone: contactPhone,
+  //     uso_cfdi: usoCfdi,
+  //     regimen_fiscal_receptor: regimenFiscalReceptor,
+  //     domicilio_fiscal_receptor: domicilioFiscalReceptor,
+  //     metodo_pago: metodoPago,
+  //     forma_pago: formaPago,
+  //     email_recepcion_facturas: emailRecepcionFacturas,
+  //     total_amount: totalAmount,
+  //     due_date: dueDate,
+  //   };
+
+  //   try {
+  //     Swal.fire({
+  //       title: "Guardando factura...",
+  //       theme: "dark",
+  //       allowOutsideClick: false,
+  //       didOpen: () => Swal.showLoading(),
+  //     });
+
+  //     // Guardar factura
+  //     const response = await axiosInstance.post("/invoices", body, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     Swal.close();
+
+  //     if (response.data?.code === 1 && response.data.invoice) {
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Factura agregada",
+  //         theme: "dark",
+  //         text: response.data.message,
+  //         confirmButtonColor: "#8b5cf6",
+  //       });
+
+  //       onSave(response.data.invoice);
+  //       onClose();
+  //     } else {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Error",
+  //         theme: "dark",
+  //         text: "No se pudo agregar la factura.",
+  //         confirmButtonColor: "#8b5cf6",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al guardar factura:", error);
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Error",
+  //       theme: "dark",
+  //       text: "Ocurrió un error al guardar la factura. Revisa la consola.",
+  //       confirmButtonColor: "#8b5cf6",
+  //     });
+  //   }
+  // };
 
   // Función para cerrar al hacer clic fuera del modal
   const handleOverlayClick = (e) => {
@@ -291,26 +405,35 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
     const client = clients.find((c) => c.id === parseInt(clientId));
     if (!client) return;
 
+    // Campos que vienen del WS de clients
     setName(client.name || "");
-    setRfc(client.rfc || ""); // FIX ✔
     setTaxAddress(client.tax_address || "");
     setTaxRegime(client.tax_regime || "");
-
     setContactName(client.contact_name || "");
     setContactEmail(client.contact_email || "");
     setContactPhone(client.contact_phone || "");
-
     setUsoCfdi(client.uso_cfdi || "");
     setRegimenFiscalReceptor(client.regimen_fiscal_receptor || "");
     setDomicilioFiscalReceptor(client.domicilio_fiscal_receptor || "");
     setMetodoPago(client.metodo_pago || "");
     setFormaPago(client.forma_pago || "");
-
     setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
 
-    // 🔥 CAMPOS QUE FALTABAN
-    setTotalAmount(client.total_amount || "");
-    setDueDate(client.due_date ? client.due_date.substring(0, 10) : "");
+    // Buscar factura del cliente
+    const invoice = invoices.find(
+      (inv) => inv.client_id === parseInt(clientId)
+    );
+
+    if (invoice) {
+      setRfc(invoice.rfc || "");
+      setTotalAmount(invoice.total_amount || "");
+      setDueDate(invoice.due_date ? invoice.due_date.substring(0, 10) : "");
+    } else {
+      // Sin factura
+      setRfc("");
+      setTotalAmount("");
+      setDueDate("");
+    }
   };
 
   const handleUploadImage = async () => {
@@ -558,7 +681,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
                 <div className="mb-3">
                   <label className="form-label">Fecha Vencimiento</label>
                   <input
-                    type="text"
+                    type="date"
                     className="form-control"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
