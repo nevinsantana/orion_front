@@ -137,7 +137,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
 
         // Actualizar inputs con los datos extraídos
         setName(parsedResponse.cliente || client.name || "");
-        setTotalAmount(parsedResponse.total_monto || client.total_amount || "");
+        setTotalAmount(parsedResponse.monto_total_factura || client.total_amount || "");
         setRfc(client.rfc || "");
         setTaxAddress(client.tax_address || "");
         setTaxRegime(client.tax_regime || "");
@@ -151,14 +151,14 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
         setFormaPago(client.forma_pago || "");
         setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
         setDueDate(client.due_date || "");
-
+        setSelectedClientId(client.id || "")
         Swal.fire({
           icon: "success",
           title: "Datos cargados",
           html: `<b>Cliente:</b> ${
             parsedResponse.cliente || client.name
           }<br/><b>Total:</b> ${
-            parsedResponse.total_monto || client.total_amount
+            parsedResponse.monto_total_factura || client.total_amount
           }`,
           confirmButtonColor: "#8b5cf6",
         });
@@ -418,6 +418,11 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
     setMetodoPago(client.metodo_pago || "");
     setFormaPago(client.forma_pago || "");
     setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
+    setRfc(client.rfc || "");
+    // Buscar factura del cliente
+    const invoice = invoices.find(
+      (inv) => inv.client_id === parseInt(clientId)
+    );
 
     // Buscar factura del cliente
     const invoice = invoices.find(
@@ -497,6 +502,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
               className="form-control input-dark"
               value={selectedClientId}
               onChange={(e) => handleClientChange(e.target.value)}
+              id="client_id"
             >
               <option value="">Selecciona...</option>
               {clients.map((client) => (
