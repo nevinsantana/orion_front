@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./addInvoicesModal.css";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaFileUpload } from "react-icons/fa";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import axiosInstance from "../../api/axiosInstance";
+import axiosAI from "../../api/axiosAI";
 import Swal from "sweetalert2";
 
 function EditInvoicesModal({ invoices, onClose, onSave }) {
@@ -14,6 +15,13 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
   const [contactEmail, setContactEmail] = useState(invoices.contact_email);
   const [contactPhone, setContactPhone] = useState(invoices.contact_phone);
   const [usoCfdi, setUsoCfdi] = useState(invoices.uso_cfdi);
+  const [totalAmount, setTotalAmount] = useState(invoices.total_amount);
+  const [dueDate, setDueDate] = useState(
+    invoices.due_date ? invoices.due_date.substring(0, 10) : ""
+  );
+  const [pdfFile, setPdfFile] = useState(null);
+  const [imgFile, setImgFile] = useState(null);
+  const [loadingPdf, setLoadingPdf] = useState(false);
   const [regimenFiscalReceptor, setRegimenFiscalReceptor] = useState(
     invoices.regimen_fiscal_receptor
   );
@@ -27,112 +35,123 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
   );
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Validación de campos vacíos
-  if (
-    !name ||
-    !rfc ||
-    !taxAddress ||
-    !taxRegime ||
-    !contactName ||
-    !contactEmail ||
-    !contactPhone ||
-    !usoCfdi ||
-    !regimenFiscalReceptor ||
-    !domicilioFiscalReceptor ||
-    !metodoPago ||
-    !formaPago ||
-    !emailRecepcionFacturas
-  ) {
-    Swal.fire({
-      icon: "warning",
-      title: "Campos incompletos",
-      theme: "dark",
-      text: "Por favor completa todos los campos antes de guardar.",
-      confirmButtonColor: "#8b5cf6",
-    });
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    // Validación de campos vacíos
+    if (
+      !name ||
+      !rfc ||
+      !taxAddress ||
+      !taxRegime ||
+      !contactName ||
+      !contactEmail ||
+      !contactPhone ||
+      !usoCfdi ||
+      !regimenFiscalReceptor ||
+      !domicilioFiscalReceptor ||
+      !metodoPago ||
+      !formaPago ||
+      !emailRecepcionFacturas
+    ) {
       Swal.fire({
-        icon: "error",
-        title: "Error",
+        icon: "warning",
+        title: "Campos incompletos",
         theme: "dark",
-        text: "Token no encontrado. Debes iniciar sesión.",
+        text: "Por favor completa todos los campos antes de guardar.",
         confirmButtonColor: "#8b5cf6",
       });
       return;
     }
 
-    // Armar el cuerpo del request
-    const updatedData = {
-      name,
-      rfc,
-      tax_address: taxAddress,
-      tax_regime: taxRegime,
-      contact_name: contactName,
-      contact_email: contactEmail,
-      contact_phone: contactPhone,
-      uso_cfdi: usoCfdi,
-      regimen_fiscal_receptor: regimenFiscalReceptor,
-      domicilio_fiscal_receptor: domicilioFiscalReceptor,
-      metodo_pago: metodoPago,
-      forma_pago: formaPago,
-      email_recepcion_facturas: emailRecepcionFacturas,
-    };
-
-    // Enviar actualización
-    const response = await axiosInstance.put(`/invoices/${invoices.id}`, updatedData);
-
-    if (response.data && response.data.code === 1) {
-      await Swal.fire({
-        icon: "success",
-        theme: "dark",
-        title: "¡Factura actualizada!",
-        text: response.data.message || "La factura se actualizó correctamente.",
-        confirmButtonColor: "#8b5cf6",
-      });
-
-      // ✅ Aquí está el cambio importante:
-      if (response.data.invoice) {
-        // Si el backend devuelve la factura actualizada
-        onSave(response.data.invoice);
-      } else {
-        // Si no la devuelve, actualizamos la tabla con los valores actuales del formulario
-        onSave({ ...invoices, ...updatedData });
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          theme: "dark",
+          text: "Token no encontrado. Debes iniciar sesión.",
+          confirmButtonColor: "#8b5cf6",
+        });
+        return;
       }
 
-      onClose();
-    } else {
+      // Armar el cuerpo del request
+      const updatedData = {
+        name,
+        rfc,
+        tax_address: taxAddress,
+        tax_regime: taxRegime,
+        contact_name: contactName,
+        contact_email: contactEmail,
+        contact_phone: contactPhone,
+        uso_cfdi: usoCfdi,
+        regimen_fiscal_receptor: regimenFiscalReceptor,
+        domicilio_fiscal_receptor: domicilioFiscalReceptor,
+        metodo_pago: metodoPago,
+        forma_pago: formaPago,
+        email_recepcion_facturas: emailRecepcionFacturas,
+      };
+
+      // Enviar actualización
+      const response = await axiosInstance.put(
+        `/invoices/${invoices.id}`,
+        updatedData
+      );
+
+      if (response.data && response.data.code === 1) {
+        await Swal.fire({
+          icon: "success",
+          theme: "dark",
+          title: "¡Factura actualizada!",
+          text:
+            response.data.message || "La factura se actualizó correctamente.",
+          confirmButtonColor: "#8b5cf6",
+        });
+
+        // ✅ Aquí está el cambio importante:
+        if (response.data.invoice) {
+          // Si el backend devuelve la factura actualizada
+          onSave(response.data.invoice);
+        } else {
+          // Si no la devuelve, actualizamos la tabla con los valores actuales del formulario
+          onSave({ ...invoices, ...updatedData });
+        }
+
+        onClose();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          theme: "dark",
+          text: response.data.message || "No se pudo actualizar la factura.",
+          confirmButtonColor: "#8b5cf6",
+        });
+      }
+    } catch (error) {
+      console.error("Error al actualizar la factura:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
         theme: "dark",
-        text: response.data.message || "No se pudo actualizar la factura.",
+        text: "Ocurrió un error al actualizar la factura. Revisa la consola.",
         confirmButtonColor: "#8b5cf6",
       });
     }
-  } catch (error) {
-    console.error("Error al actualizar la factura:", error);
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      theme: "dark",
-      text: "Ocurrió un error al actualizar la factura. Revisa la consola.",
-      confirmButtonColor: "#8b5cf6",
-    });
-  }
-};
-
+  };
 
   // Función para cerrar al hacer clic fuera del modal
   const handleOverlayClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
       onClose();
+    }
+  };
+
+  // Selección de la imagen
+  const handleImgSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImgFile(file);
     }
   };
 
@@ -202,7 +221,7 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
                 </div>
               </div>
             </div>
-            
+
             <div className="row g-2">
               <div className="col-md-3 col-12">
                 <div className="mb-3">
@@ -264,7 +283,9 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
               </div>
               <div className="col-md-4 col-12">
                 <div className="mb-3">
-                  <label className="form-label">Domicilio Fiscal Receptor</label>
+                  <label className="form-label">
+                    Domicilio Fiscal Receptor
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -287,7 +308,7 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
             </div>
 
             <div className="row g-2">
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <div className="mb-3">
                   <label className="form-label">Forma Pago</label>
                   <input
@@ -298,7 +319,7 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
                   />
                 </div>
               </div>
-              <div className="col-md-6 col-12">
+              <div className="col-md-4 col-12">
                 <div className="mb-3">
                   <label className="form-label">Email Recepción Facturas</label>
                   <input
@@ -308,6 +329,72 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
                     onChange={(e) => setEmailRecepcionFacturas(e.target.value)}
                   />
                 </div>
+              </div>
+              <div className="col-md-4 col-12">
+                <div className="mb-3">
+                  <label className="form-label">Cantidad total</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={totalAmount}
+                    onChange={(e) => setTotalAmount(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="row g-2">
+              <div className="col-md-4 col-12">
+                <div className="mb-3">
+                  <label className="form-label">Fecha Vencimiento</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Segundo boton para subir imagenes de factura */}
+              <div className="col-md-4 col-12">
+                <label className="form-label">Subir Factura</label>
+                <div className="d-flex align-items-center gap-2">
+                  <label
+                    htmlFor="img-upload"
+                    className="btn addCliente"
+                    style={{ cursor: "pointer", marginRight: "0" }}
+                  >
+                    <FaFileUpload /> Seleccionar imagen
+                  </label>
+                  <input
+                    type="file"
+                    id="img-upload"
+                    accept="img/*"
+                    onChange={handleImgSelect}
+                    style={{ display: "none" }}
+                  />
+                  {imgFile && <span>{imgFile.name}</span>}
+                </div>
+              </div>
+
+              <div className="col-md-4 col-12">
+                <label className="form-label"></label>
+                {invoices.file ? (
+                  <p
+                    style={{
+                      cursor: "pointer",
+                      color: "#0d6efd",
+                      textDecoration: "underline",
+                      margin: 0,
+                    }}
+                    onClick={() => window.open(invoices.file, "_blank")}
+                  >
+                    Comprobante cargado
+                  </p>
+                ) : (
+                  <p className="text-warning m-0">Sin comprobante</p>
+                )}
               </div>
             </div>
 
