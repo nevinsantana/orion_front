@@ -137,7 +137,9 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
 
         // Actualizar inputs con los datos extraídos
         setName(parsedResponse.cliente || client.name || "");
-        setTotalAmount(parsedResponse.monto_total_factura || client.total_amount || "");
+        setTotalAmount(
+          parsedResponse.monto_total_factura || client.total_amount || ""
+        );
         setRfc(client.rfc || "");
         setTaxAddress(client.tax_address || "");
         setTaxRegime(client.tax_regime || "");
@@ -151,7 +153,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
         setFormaPago(client.forma_pago || "");
         setEmailRecepcionFacturas(client.email_recepcion_facturas || "");
         setDueDate(client.due_date || "");
-        setSelectedClientId(client.id || "")
+        setSelectedClientId(client.id || "");
         Swal.fire({
           icon: "success",
           title: "Datos cargados",
@@ -185,6 +187,7 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
 
     // Validaciones
     if (!selectedClientId) {
@@ -204,8 +207,6 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
       });
       return;
     }
-
-    const token = localStorage.getItem("token");
 
     // 👉 Se arma FormData SOLO para enviar file opcional
     const formData = new FormData();
@@ -281,117 +282,6 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   // Validación de campos obligatorios
-  //   if (
-  //     !name ||
-  //     !rfc ||
-  //     !taxAddress ||
-  //     !taxRegime ||
-  //     !contactName ||
-  //     !contactEmail ||
-  //     !contactPhone ||
-  //     !usoCfdi ||
-  //     !regimenFiscalReceptor ||
-  //     !domicilioFiscalReceptor ||
-  //     !metodoPago ||
-  //     !formaPago ||
-  //     !emailRecepcionFacturas ||
-  //     !totalAmount ||
-  //     !dueDate
-  //   ) {
-  //     Swal.fire({
-  //       icon: "warning",
-  //       title: "Campos incompletos",
-  //       theme: "dark",
-  //       text: "Por favor completa todos los campos requeridos.",
-  //       confirmButtonColor: "#8b5cf6",
-  //     });
-  //     return;
-  //   }
-
-  //   const token = localStorage.getItem("token");
-  //   if (!token) {
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Error",
-  //       theme: "dark",
-  //       text: "Token no encontrado. Debes iniciar sesión.",
-  //       confirmButtonColor: "#8b5cf6",
-  //     });
-  //     return;
-  //   }
-
-  //   const body = {
-  //     name,
-  //     rfc,
-  //     tax_address: taxAddress,
-  //     tax_regime: taxRegime,
-  //     contact_name: contactName,
-  //     contact_email: contactEmail,
-  //     contact_phone: contactPhone,
-  //     uso_cfdi: usoCfdi,
-  //     regimen_fiscal_receptor: regimenFiscalReceptor,
-  //     domicilio_fiscal_receptor: domicilioFiscalReceptor,
-  //     metodo_pago: metodoPago,
-  //     forma_pago: formaPago,
-  //     email_recepcion_facturas: emailRecepcionFacturas,
-  //     total_amount: totalAmount,
-  //     due_date: dueDate,
-  //   };
-
-  //   try {
-  //     Swal.fire({
-  //       title: "Guardando factura...",
-  //       theme: "dark",
-  //       allowOutsideClick: false,
-  //       didOpen: () => Swal.showLoading(),
-  //     });
-
-  //     // Guardar factura
-  //     const response = await axiosInstance.post("/invoices", body, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     Swal.close();
-
-  //     if (response.data?.code === 1 && response.data.invoice) {
-  //       Swal.fire({
-  //         icon: "success",
-  //         title: "Factura agregada",
-  //         theme: "dark",
-  //         text: response.data.message,
-  //         confirmButtonColor: "#8b5cf6",
-  //       });
-
-  //       onSave(response.data.invoice);
-  //       onClose();
-  //     } else {
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Error",
-  //         theme: "dark",
-  //         text: "No se pudo agregar la factura.",
-  //         confirmButtonColor: "#8b5cf6",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al guardar factura:", error);
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Error",
-  //       theme: "dark",
-  //       text: "Ocurrió un error al guardar la factura. Revisa la consola.",
-  //       confirmButtonColor: "#8b5cf6",
-  //     });
-  //   }
-  // };
-
   // Función para cerrar al hacer clic fuera del modal
   const handleOverlayClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
@@ -424,11 +314,6 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
       (inv) => inv.client_id === parseInt(clientId)
     );
 
-    // Buscar factura del cliente
-    const invoice = invoices.find(
-      (inv) => inv.client_id === parseInt(clientId)
-    );
-
     if (invoice) {
       setRfc(invoice.rfc || "");
       setTotalAmount(invoice.total_amount || "");
@@ -439,42 +324,6 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
       setTotalAmount("");
       setDueDate("");
     }
-  };
-
-  const handleUploadImage = async () => {
-    if (!imgFile) {
-      Swal.fire({
-        icon: "warning",
-        title: "Selecciona una imagen",
-        text: "Debes elegir una imagen antes de subirla.",
-        confirmButtonColor: "#8b5cf6",
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: "Subiendo factura...",
-      text: "Simulando carga, por favor espera...",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
-
-    // Simulación de envío
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    Swal.fire({
-      icon: "success",
-      title: "Factura subida",
-      text: "La imagen fue cargada correctamente (simulación).",
-      confirmButtonColor: "#8b5cf6",
-    });
-
-    // 👉 Limpia la imagen del estado
-    setImgFile(null);
-
-    // 👉 Limpia el input de archivo manualmente
-    const fileInput = document.getElementById("img-upload");
-    if (fileInput) fileInput.value = "";
   };
 
   return (
@@ -745,15 +594,6 @@ Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
                   />
                   {imgFile && <span>{imgFile.name}</span>}
                 </div>
-                {imgFile && (
-                  <button
-                    type="button"
-                    className="btn btn-analizar"
-                    onClick={handleUploadImage}
-                  >
-                    Subir Factura
-                  </button>
-                )}
               </div>
             </div>
 
