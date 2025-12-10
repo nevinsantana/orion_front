@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Obtiene la baseURL priorizando la variable de entorno
 function getBaseURL() {
   const envURL = process.env.REACT_APP_API_URL;
   if (envURL) return envURL;
@@ -9,40 +8,32 @@ function getBaseURL() {
   const DEV_PORTS = [7777, 9000];
   const fallbackPort = DEV_PORTS[0];
 
-  // Fallback a localhost si no hay variable de entorno
   return `${protocol}//${hostname}:${fallbackPort}/api`;
 }
 
 const axiosInstance = axios.create({
   baseURL: getBaseURL(),
-  // withCredentials: true,
-  timeout: 10000, // opcional: timeout de 10s
+  timeout: 10000,
 });
 
-// Interceptor para agregar token y Content-Type
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+// Interceptor para agregar token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
 
-  // Si es FormData → NO tocar Content-Type
-  if (config.data instanceof FormData) {
-    delete config.headers["Content-Type"];
+    // Si es FormData → axios se encarga del Content-Type automáticamente
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+    } else if (!config.data) {
+      delete config.headers["Content-Type"];
+    } else {
+      config.headers["Content-Type"] = "application/json";
+    }
+
     return config;
-  }
-
-  // Si NO tiene body → eliminar Content-Type
-  if (!config.data) {
-    delete config.headers["Content-Type"];
-    return config;
-  }
-
-  // Si tiene body JSON
-  config.headers["Content-Type"] = "application/json";
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+  },
+  (error) => Promise.reject(error)
+);
 
 export default axiosInstance;
