@@ -73,7 +73,7 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
       formData.append("due_date", dueDate);
 
       if (imgFile) {
-        formData.append("invoiceAttachment", imgFile); // nombre debe coincidir con lo que el backend espera
+        formData.append("file", imgFile); // nombre debe coincidir con lo que el backend espera
       }
 
       const response = await axiosInstance.put(
