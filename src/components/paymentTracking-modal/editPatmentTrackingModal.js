@@ -28,6 +28,9 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
         status: status, // <-- se envía ACEPATADO o RECHAZADO directo
       };
 
+      console.log("tracking Id:", tracking.id);
+        console.log("Objeto completo:", tracking);
+
       const res = await axiosInstance.post("/invoices/update-status", body);
 
       if (res.data.code === 1) {
@@ -119,7 +122,7 @@ function EditPaymentTrackingModal({ tracking, onClose, onSave }) {
                 {tracking.image ? (
                   <a
                     // href={`http://localhost:9000/validation_images/${tracking.image}`}
-                    href={`${serverURL}/validation_images/${tracking.image}`}
+                    href={tracking.image}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

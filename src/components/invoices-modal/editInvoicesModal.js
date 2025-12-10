@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./addInvoicesModal.css";
 import { FaTimes, FaFileUpload } from "react-icons/fa";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
