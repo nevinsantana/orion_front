@@ -480,7 +480,7 @@ function EditInvoicesModal({ invoices, onClose, onSave }) {
                       margin: 0,
                     }}
                     onClick={() =>
-                      window.open(`/invoices/${invoices.file}`, "_blank")
+                      window.open(`${invoices.file}`, "_blank")
                     }
                   >
                     Comprobante cargado
