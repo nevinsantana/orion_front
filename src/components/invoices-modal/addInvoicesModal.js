@@ -108,7 +108,7 @@ function AddInvoicesModal({ onClose, onSave }) {
       formData.append(
         "question",
         `Analiza el documento PDF proporcionado. Extrae únicamente los siguientes dos datos: el nombre completo del cliente y el monto total de la factura.
-Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON.`
+Devuelve tu respuesta EXCLUSIVAMENTE en formato JSON donde las variables sean cliente y monto_total_factura. Donde el monto_total_factura sea unicamente el numero.`
       );
 
       // Log para debug
